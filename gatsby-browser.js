@@ -1,5 +1,3 @@
-import * as dat from'dat.gui'
-
 /**
  * Implement Gatsby's Browser APIs in this file.
  *
@@ -7,7 +5,5 @@ import * as dat from'dat.gui'
  */
 
 export const onInitialClientRender = (_, opts) => {
-  // console.log(opts)
-  window.app = {}
-  window.app.gui = new dat.GUI({ autoPlace: false });
+  console.log('🎨🎨🎨 Initial Client Render 🎨🎨🎨')
 }

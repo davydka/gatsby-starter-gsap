@@ -9,10 +9,11 @@ const cx = classnames.bind(styles)
 const Canvas = ({width, height}) => {
   let canvasElement = useRef(null)
   let targetElement = useRef(null)
-  let gsTween = null
+  let gsTween = useRef({current: null})
 
   useEffect(() => {
-    gsTween = TweenMax.to(
+    console.log(canvasElement)
+    gsTween.current = TweenMax.to(
       targetElement,
       1,
       {
@@ -36,7 +37,6 @@ const Canvas = ({width, height}) => {
     });
   }
 
-  //onMouseEnter={scaleUp} onMouseLeave={scaleDown}
   return (
     <div className={cx('container')} width={width} height={height}>
       <canvas className={cx('canvas')} ref={element => {canvasElement = element}} width={width} height={height} />

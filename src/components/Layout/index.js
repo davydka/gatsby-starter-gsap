@@ -1,4 +1,8 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, {
+  useState,
+  useEffect,
+  useRef
+} from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import PropTypes from "prop-types"
 import classnames from 'classnames/bind'
@@ -10,9 +14,16 @@ import styles from './Layout.module.scss'
 const cx = classnames.bind(styles)
 
 const Index = ({ children }) => {
-  let guiElement = useRef(null)
-  const [controls, setControls] = useState({text: 'hello world', test: false})
-  const [test, setTest] = useState(false)
+  //GUIパラメータの準備
+  let gui = useRef(null);
+  let inletsHolder = useRef({
+    message: 'dat.guiのサンプル',
+    color: '#ff0000',
+    fontSize: '24',
+    border: false,
+    fontFamily: 'sans-serif'
+  })
+  let [inlets, setInlets] = useState('')
 
   const siteData = useStaticQuery(graphql`
     query SiteTitleQuery {
@@ -24,36 +35,27 @@ const Index = ({ children }) => {
     }
   `)
 
-  const [data, setData] = useState({
-    package: 'react-dat-gui',
-    power: 9000,
-    isAwesome: true,
-    feelsLike: '#2FA1D6',
-  })
+  const handleChange = () => {
+    setInlets(Object.assign({}, inletsHolder.current))
+    console.log(inlets)
+  }
 
   useEffect(() => {
-    console.log('layout mounted')
-    console.log(window.app.gui)
-    console.log(controls)
+    console.log('🌈 layout mounted')
 
-    guiElement.innerHTML = ''
-    guiElement.appendChild(window.app.gui.domElement)
-    window.app.gui.add(controls, 'test')
-    window.app.gui.add(controls, 'text')
+    gui.current = new window.dat.GUI()
+    const { current } = gui
+    current.add(inletsHolder.current, 'message').onChange(handleChange);
+    current.addColor(inletsHolder.current, 'color').onChange(handleChange);
+    current.add(inletsHolder.current, 'fontSize', 6, 48).onChange(handleChange);
+    current.add(inletsHolder.current, 'border').onChange(handleChange);
+    current.add(inletsHolder.current, 'fontFamily',["sans-serif", "serif", "cursive", "ＭＳ 明朝", "monospace"]).onChange(handleChange);
+    handleChange()
   }, [])
 
-  useEffect(() => {
-    console.log(window.app.gui.__controllers)
-    for (var i in window.app.gui.__controllers) {
-      window.app.gui.__controllers[i].updateDisplay();
-    }
-  }, [controls])
 
   const handleClick = () => {
-    setControls({
-      ...controls,
-      test: !controls.test
-    })
+    console.log('click')
   }
 
   return (
@@ -67,8 +69,13 @@ const Index = ({ children }) => {
           paddingTop: 0,
         }}
       >
-        <div className={cx('gui')} ref={element => {guiElement = element}} />
         <button onClick={handleClick}>test gui</button>
+        <div style={{
+          background: inlets.color,
+          fontSize: inlets.fontSize,
+          fontFamily: inlets.fontFamily,
+          border: inlets.border ? '10px solid black' : '',
+        }} className={cx('target')}>{inlets.message}</div>
         <main>{children}</main>
         <footer>
           © {new Date().getFullYear()}, Built with
