@@ -13,6 +13,7 @@ export default function HTML(props) {
         />
         {props.headComponents}
         <script src="/js/vendor/dat.gui.min.js"></script>
+        <script src="/js/vendor/stats.min.js"></script>
       </head>
       <body {...props.bodyAttributes}>
         {props.preBodyComponents}

@@ -18,6 +18,7 @@ const cx = classnames.bind(styles)
 const Index = ({ count, increment, set, children }) => {
   //GUIパラメータの準備
   let gui = useRef(null);
+  let stats = useRef(null);
   let inletsHolder = useRef({
     message: 'dat.guiのサンプル',
     count: 0,
@@ -52,6 +53,14 @@ const Index = ({ count, increment, set, children }) => {
   useEffect(() => {
     console.log('🌈 layout mounted')
 
+    stats.current = new window.Stats()
+    stats.current.showPanel( 0 ) // 0: fps, 1: ms, 2: mb, 3+: custom
+    stats.current.dom.style.top = 'auto'
+    stats.current.dom.style.left = 'auto'
+    stats.current.dom.style.right = '15px'
+    stats.current.dom.style.bottom = '0'
+    document.body.appendChild( stats.current.dom )
+
     gui.current = new window.dat.GUI()
     const { current } = gui
     current.add(inletsHolder.current, 'message').onChange(handleChange).listen()
@@ -68,6 +77,7 @@ const Index = ({ count, increment, set, children }) => {
     ]).onChange(handleChange).listen()
 
     handleChange()
+    animate()
   }, [])
 
   const handleClick = () => {
@@ -79,6 +89,15 @@ const Index = ({ count, increment, set, children }) => {
   useEffect(() => {
     inletsHolder.current.count = count
   }, [count])
+
+  const animate = () => {
+    stats && stats.current && stats.current.begin();
+
+    // stuff
+
+    requestAnimationFrame(animate)
+    stats.current.end();
+  };
 
   return (
     <Holder>
