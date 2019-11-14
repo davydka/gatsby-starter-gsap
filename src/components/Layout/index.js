@@ -3,13 +3,15 @@ import React, {
   useEffect,
   useRef
 } from "react"
-import { connect } from "react-redux"
-import { useStaticQuery, graphql } from "gatsby"
 import PropTypes from "prop-types"
+import { useStaticQuery, graphql } from "gatsby"
 import classnames from 'classnames/bind'
+import { connect } from "react-redux"
+import { TimelineMax, TweenMax, Linear } from "gsap"
 
 import Holder from './holder'
 import Header from "../header"
+
 import "./layout.css"
 import styles from './Layout.module.scss'
 
@@ -17,18 +19,50 @@ const cx = classnames.bind(styles)
 
 const Index = ({ count, increment, set, children }) => {
   //GUIパラメータの準備
-  let gui = useRef(null);
-  let stats = useRef(null);
+  let gui = useRef();
+
+  // GUI Inlets
   let inletsHolder = useRef({
     message: 'dat.guiのサンプル',
+    speed: 1.0,
     count: 0,
     color: '#ff0000',
     fontSize: '24',
     border: false,
     fontFamily: 'sans-serif'
   })
-  let [inlets, setInlets] = useState('')
+  let [inlets, setInlets] = useState()
 
+  // GUI Inlets Handler
+  const handleInletChange = () => {
+    setInlets(Object.assign({}, inletsHolder.current))
+    set(inletsHolder.current.count)
+  }
+
+  // GUI Inlets Console
+  useEffect(() => {
+    if(!inlets) {
+      return
+    }
+    console.log('inlets', inlets)
+
+    if(inlets.speed) {
+      setSpeed(inlets.speed)
+      gs.current.timeScale(speed)
+    }
+  }, [inlets])
+
+  // Stats
+  let stats = useRef();
+
+  // GSAP
+  let gs = useRef()
+
+  // Canvas
+  let canvasElement = useRef()
+  let targetElement = useRef()
+
+  // Gatsby
   const siteData = useStaticQuery(graphql`
     query SiteTitleQuery {
       site {
@@ -39,20 +73,11 @@ const Index = ({ count, increment, set, children }) => {
     }
   `)
 
-  const handleChange = () => {
-    setInlets(Object.assign({}, inletsHolder.current))
-    set(inletsHolder.current.count)
-  }
-
-  useEffect(() => {
-    if(inlets){
-      console.log('inlets', inlets)
-    }
-  }, [inlets])
-
+  // componentDidMount
   useEffect(() => {
     console.log('🌈 layout mounted')
 
+    /** Stats **/
     stats.current = new window.Stats()
     stats.current.showPanel( 0 ) // 0: fps, 1: ms, 2: mb, 3+: custom
     stats.current.dom.style.top = 'auto'
@@ -61,35 +86,71 @@ const Index = ({ count, increment, set, children }) => {
     stats.current.dom.style.bottom = '0'
     document.body.appendChild( stats.current.dom )
 
+    /** GUI **/
     gui.current = new window.dat.GUI()
     const { current } = gui
-    current.add(inletsHolder.current, 'message').onChange(handleChange).listen()
-    current.add(inletsHolder.current, 'count', 0, 100).onChange(handleChange).listen()
-    current.addColor(inletsHolder.current, 'color').onChange(handleChange).listen()
-    current.add(inletsHolder.current, 'fontSize', 6, 48).onChange(handleChange).listen()
-    current.add(inletsHolder.current, 'border').onChange(handleChange).listen()
+    current.add(inletsHolder.current, 'message').onChange(handleInletChange).listen()
+    current.add(inletsHolder.current, 'speed', 0.0, 2.0).onChange(handleInletChange).listen()
+    current.add(inletsHolder.current, 'count', 0, 100).onChange(handleInletChange).listen()
+    current.addColor(inletsHolder.current, 'color').onChange(handleInletChange).listen()
+    current.add(inletsHolder.current, 'fontSize', 6, 48).onChange(handleInletChange).listen()
+    current.add(inletsHolder.current, 'border').onChange(handleInletChange).listen()
     current.add(inletsHolder.current, 'fontFamily',[
       "sans-serif",
       "serif",
       "cursive",
       "ＭＳ 明朝",
       "monospace"
-    ]).onChange(handleChange).listen()
+    ]).onChange(handleInletChange).listen()
+    handleInletChange()
 
-    handleChange()
+    /** GSAP **/
+    gs.current = new TimelineMax({
+      repeat: -1,
+      timeScale: 1.0,
+      // paused: true,
+    })
+    gs.current.to(targetElement, 1, {
+      rotation: 360,
+      ease: Linear.easeNone,
+    })
+
+    /** Animate Kickoff **/
     animate()
   }, [])
 
-  const handleClick = () => {
-    console.log('click')
-    increment(2)
-    increment(2)
-  }
 
+
+
+  // Redux -> GUI Inlets
   useEffect(() => {
     inletsHolder.current.count = count
   }, [count])
 
+  const [speed, setSpeed] = useState(1.0)
+
+  // Redux + React
+  const handleClick = () => {
+    console.log('click')
+    increment(2)
+  }
+
+  function scaleUp() {
+    TweenMax.to(targetElement, 1, {
+      scale: 2.0,
+      ease: Linear.ease
+    });
+  }
+
+  function scaleDown() {
+    TweenMax.to(targetElement, 1, {
+      scale: 1.0
+    });
+  }
+
+
+
+  // ANIMATE
   const animate = () => {
     stats && stats.current && stats.current.begin();
 
@@ -113,16 +174,33 @@ const Index = ({ count, increment, set, children }) => {
         <div>{count} <span role='img' aria-label='emoji'>👈</span> counts</div>
         <button onClick={handleClick}>test gui REDUX</button>
 
+        {inlets &&
         <div style={{
           background: inlets.color,
           fontSize: `${inlets.fontSize}px`,
           fontFamily: inlets.fontFamily,
           border: inlets.border ? '10px solid black' : '',
-        }} className={cx('target')}>
+        }} className={cx('inlet-target')}>
           {inlets.message}
         </div>
+        }
 
-        <main>{children}</main>
+        <main>
+          <div className={cx('container')} width='640' height='480'>
+            <canvas className={cx('canvas')} ref={element => {canvasElement = element}} width='640' height='480' />
+
+            <div
+              onMouseEnter={scaleUp}
+              onMouseLeave={scaleDown}
+              ref={element => {targetElement = element}}
+              className={cx('target')}
+            >
+              hello!
+            </div>
+          </div>
+
+          {children}
+        </main>
 
         <footer>
           © {new Date().getFullYear()}, Built with
