@@ -7,8 +7,9 @@ import PropTypes from "prop-types"
 import { useStaticQuery, graphql } from "gatsby"
 import classnames from 'classnames/bind'
 import { connect } from "react-redux"
-import { TimelineMax, TweenMax, Linear } from "gsap"
+import gsap, { Linear } from "gsap"
 import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 import Holder from './holder'
 import Header from "../header"
@@ -20,7 +21,7 @@ const cx = classnames.bind(styles)
 
 const Index = ({ count, increment, set, children }) => {
   //GUIパラメータの準備
-  let gui = useRef();
+  let gui = useRef()
 
   // GUI Inlets
   let inletsHolder = useRef({
@@ -35,7 +36,7 @@ const Index = ({ count, increment, set, children }) => {
   let [inlets, setInlets] = useState()
 
   // GUI Inlets Handler
-  let handleInletChange = useRef();
+  let handleInletChange = useRef()
   handleInletChange.current = () => {
     setInlets(Object.assign({}, inletsHolder.current))
     set(inletsHolder.current.count)
@@ -50,12 +51,17 @@ const Index = ({ count, increment, set, children }) => {
 
     if(inlets.speed) {
       setSpeed(inlets.speed)
-      gs.current.timeScale(inlets.speed)
+
+      // 👇 specific timeline scale
+      // gs.current.timeScale(inlets.speed)
+
+      // 🌎 Global Scale
+      gsap.globalTimeline.timeScale(inlets.speed)
     }
   }, [inlets])
 
   // Stats
-  let stats = useRef();
+  let stats = useRef()
 
   // GSAP
   let gs = useRef()
@@ -75,18 +81,47 @@ const Index = ({ count, increment, set, children }) => {
     }
   `)
 
+  // THREE
+  const width = 960
+  const height = 540
+  let scene = useRef()
+  let camera = useRef()
+  let renderer = useRef()
+  let controls = useRef()
+  let mesh = useRef()
+
+  let initializeOrbits = useRef()
+  initializeOrbits.current = () => {
+    if(!controls) { return }
+    controls.current.rotateSpeed = 1.0
+    controls.current.zoomSpeed = 1.2
+    controls.current.panSpeed = 0.8
+  };
+
+  let initializeCamera = useRef()
+  initializeCamera.current = () => {
+    if(!camera) { return }
+    camera.current.position.x = 0
+    camera.current.position.y = 0
+    camera.current.position.z = 2.5
+  }
+
+
   // componentDidMount
   useEffect(() => {
     console.log('🌈 layout mounted')
 
+
     /** Stats **/
     stats.current = new window.Stats()
-    stats.current.showPanel( 0 ) // 0: fps, 1: ms, 2: mb, 3+: custom
+    stats.current.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
     stats.current.dom.style.top = 'auto'
     stats.current.dom.style.left = 'auto'
     stats.current.dom.style.right = '15px'
     stats.current.dom.style.bottom = '0'
-    document.body.appendChild( stats.current.dom )
+    document.body.appendChild(stats.current.dom)
+
+
 
     /** GUI **/
     gui.current = new window.dat.GUI()
@@ -97,7 +132,7 @@ const Index = ({ count, increment, set, children }) => {
     current.addColor(inletsHolder.current, 'color').onChange(handleInletChange.current).listen()
     current.add(inletsHolder.current, 'fontSize', 6, 48).onChange(handleInletChange.current).listen()
     current.add(inletsHolder.current, 'border').onChange(handleInletChange.current).listen()
-    current.add(inletsHolder.current, 'fontFamily',[
+    current.add(inletsHolder.current, 'fontFamily', [
       "sans-serif",
       "serif",
       "cursive",
@@ -106,19 +141,69 @@ const Index = ({ count, increment, set, children }) => {
     ]).onChange(handleInletChange).listen()
     handleInletChange.current()
 
+
+
+    /** THREE **/
+    scene.current = new THREE.Scene()
+    // scene.current.background = new THREE.Color( 0xff0000 )
+    camera.current = new THREE.PerspectiveCamera(75, width/height, 0.1, 10000)
+    renderer.current = new THREE.WebGLRenderer({
+      antialias: true,
+      canvas: canvasElement.current
+    })
+    renderer.current.setSize(width, height)
+    controls.current = new OrbitControls(camera.current, renderer.current.domElement)
+    // console.log(canvasElement)
+
+    initializeOrbits.current()
+    initializeCamera.current()
+
+    let geometry = new THREE.SphereGeometry(
+      3,
+      8,
+      8,
+      0,
+      Math.PI * 2,
+      0,
+      Math.PI * 2
+    )
+    let material = new THREE.MeshNormalMaterial({
+      // wireframe: true,
+      flatShading: true,
+    })
+    mesh.current = new THREE.Mesh(geometry, material)
+    scene.current.add(mesh.current)
+
+    const light = new THREE.AmbientLight( 0x404040 ); // soft white light
+    scene.current.add( light );
+
+
+
     /** GSAP **/
-    gs.current = new TimelineMax({
+    gs.current = gsap.timeline({
       repeat: -1,
       timeScale: 1.0,
       // paused: true,
     })
-    gs.current.to(targetElement, 1, {
+    gs.current.to(targetElement.current, 1, {
       rotation: 360,
       ease: Linear.easeNone,
-    })
+    }, 0)
+    gs.current.to(mesh.current.rotation, 1, {
+      y: Math.PI / 2,
+      ease: Linear.easeNone,
+    }, 0)
+
 
     /** Animate Kickoff **/
     animate.current()
+
+
+    /** CleanUp **/
+    return () => {
+      gui.current.destroy()
+      document.body.removeChild(stats.current.dom)
+    }
   }, [])
 
 
@@ -138,16 +223,20 @@ const Index = ({ count, increment, set, children }) => {
   }
 
   function scaleUp() {
-    TweenMax.to(targetElement, 1, {
-      scale: 2.0,
+    gsap.to(targetElement.current, 1, {
+      scale: 12.0,
       ease: Linear.ease
-    });
+    })
   }
 
   function scaleDown() {
-    TweenMax.to(targetElement, 1, {
-      scale: 1.0
-    });
+    gsap.to(targetElement.current, 1, {
+      scale: 1.0,
+      ease: Linear.ease,
+      onComplete: () => {
+        console.log('scaledown animation ended 🎬')
+      }
+    })
   }
 
 
@@ -155,13 +244,14 @@ const Index = ({ count, increment, set, children }) => {
   // ANIMATE
   let animate = useRef()
   animate.current = () => {
-    stats && stats.current && stats.current.begin();
+    stats && stats.current && stats.current.begin()
 
-    // stuff
+    // animate stuff
+    renderer.current.render(scene.current, camera.current)
 
     requestAnimationFrame(animate.current)
-    stats.current.end();
-  };
+    stats.current.end()
+  }
 
   return (
     <Holder>
@@ -170,8 +260,8 @@ const Index = ({ count, increment, set, children }) => {
         style={{
           margin: `0 auto`,
           maxWidth: 960,
-          padding: `0px 1.0875rem 1.45rem`,
-          paddingTop: 0,
+          padding: `0 0 1.45rem`,
+          boxSizing: 'border-box',
         }}
       >
         <div>{count} <span role='img' aria-label='emoji'>👈</span> counts</div>
@@ -190,13 +280,13 @@ const Index = ({ count, increment, set, children }) => {
         }
 
         <main>
-          <div className={cx('container')} width='640' height='480'>
-            <canvas className={cx('canvas')} ref={element => {canvasElement = element}} width='640' height='480' />
+          <div className={cx('container')}>
+            <canvas className={cx('canvas')} ref={canvasElement} width={width} height={height} />
 
             <div
               onMouseEnter={scaleUp}
               onMouseLeave={scaleDown}
-              ref={element => {targetElement = element}}
+              ref={targetElement}
               className={cx('target')}
             >
               hello!
