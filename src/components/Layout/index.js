@@ -203,8 +203,14 @@ const Index = ({ count, increment, set, children }) => {
 
     /** CleanUp **/
     return () => {
+      console.log('🧹tidying up 🧹')
+
       gui.current.destroy()
       document.body.removeChild(stats.current.dom)
+      if (animationID.current) {
+        window.cancelAnimationFrame(animationID.current);
+        animationID.current = undefined;
+      }
     }
   }, [])
 
@@ -245,14 +251,16 @@ const Index = ({ count, increment, set, children }) => {
 
 
   // ANIMATE
+  let animationID = useRef()
   let animate = useRef()
   animate.current = () => {
     stats && stats.current && stats.current.begin()
 
     // animate stuff
+    animationID.current = undefined
     renderer.current.render(scene.current, camera.current)
 
-    requestAnimationFrame(animate.current)
+    animationID.current = requestAnimationFrame(animate.current)
     stats.current.end()
   }
 
