@@ -8,6 +8,7 @@ import { useStaticQuery, graphql } from "gatsby"
 import classnames from 'classnames/bind'
 import { connect } from "react-redux"
 import { TimelineMax, TweenMax, Linear } from "gsap"
+import * as THREE from 'three'
 
 import Holder from './holder'
 import Header from "../header"
@@ -34,7 +35,8 @@ const Index = ({ count, increment, set, children }) => {
   let [inlets, setInlets] = useState()
 
   // GUI Inlets Handler
-  const handleInletChange = () => {
+  let handleInletChange = useRef();
+  handleInletChange.current = () => {
     setInlets(Object.assign({}, inletsHolder.current))
     set(inletsHolder.current.count)
   }
@@ -48,7 +50,7 @@ const Index = ({ count, increment, set, children }) => {
 
     if(inlets.speed) {
       setSpeed(inlets.speed)
-      gs.current.timeScale(speed)
+      gs.current.timeScale(inlets.speed)
     }
   }, [inlets])
 
@@ -102,7 +104,7 @@ const Index = ({ count, increment, set, children }) => {
       "ＭＳ 明朝",
       "monospace"
     ]).onChange(handleInletChange).listen()
-    handleInletChange()
+    handleInletChange.current()
 
     /** GSAP **/
     gs.current = new TimelineMax({
@@ -116,7 +118,7 @@ const Index = ({ count, increment, set, children }) => {
     })
 
     /** Animate Kickoff **/
-    animate()
+    animate.current()
   }, [])
 
 
@@ -151,12 +153,13 @@ const Index = ({ count, increment, set, children }) => {
 
 
   // ANIMATE
-  const animate = () => {
+  let animate = useRef()
+  animate.current = () => {
     stats && stats.current && stats.current.begin();
 
     // stuff
 
-    requestAnimationFrame(animate)
+    requestAnimationFrame(animate.current)
     stats.current.end();
   };
 
@@ -172,6 +175,7 @@ const Index = ({ count, increment, set, children }) => {
         }}
       >
         <div>{count} <span role='img' aria-label='emoji'>👈</span> counts</div>
+        <div>{speed} <span role='img' aria-label='emoji'>🚤</span> speed</div>
         <button onClick={handleClick}>test gui REDUX</button>
 
         {inlets &&
