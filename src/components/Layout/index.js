@@ -91,12 +91,12 @@ const Index = ({ count, increment, set, children }) => {
     /** GUI **/
     gui.current = new window.dat.GUI()
     const { current } = gui
-    current.add(inletsHolder.current, 'message').onChange(handleInletChange).listen()
-    current.add(inletsHolder.current, 'speed', 0.0, 2.0).onChange(handleInletChange).listen()
-    current.add(inletsHolder.current, 'count', 0, 100).onChange(handleInletChange).listen()
-    current.addColor(inletsHolder.current, 'color').onChange(handleInletChange).listen()
-    current.add(inletsHolder.current, 'fontSize', 6, 48).onChange(handleInletChange).listen()
-    current.add(inletsHolder.current, 'border').onChange(handleInletChange).listen()
+    current.add(inletsHolder.current, 'message').onChange(handleInletChange.current).listen()
+    current.add(inletsHolder.current, 'speed', 0.0, 2.0).onChange(handleInletChange.current).listen()
+    current.add(inletsHolder.current, 'count', 0, 100).onChange(handleInletChange.current).listen()
+    current.addColor(inletsHolder.current, 'color').onChange(handleInletChange.current).listen()
+    current.add(inletsHolder.current, 'fontSize', 6, 48).onChange(handleInletChange.current).listen()
+    current.add(inletsHolder.current, 'border').onChange(handleInletChange.current).listen()
     current.add(inletsHolder.current, 'fontFamily',[
       "sans-serif",
       "serif",
