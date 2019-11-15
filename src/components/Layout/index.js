@@ -29,7 +29,7 @@ const Index = ({ count, increment, set, children }) => {
     speed: 1.0,
     count: 0,
     color: '#ff0000',
-    fontSize: '24',
+    fontSize: 64,
     border: false,
     fontFamily: 'sans-serif'
   })
@@ -130,7 +130,7 @@ const Index = ({ count, increment, set, children }) => {
     current.add(inletsHolder.current, 'speed', 0.0, 2.0).onChange(handleInletChange.current).listen()
     current.add(inletsHolder.current, 'count', 0, 100).onChange(handleInletChange.current).listen()
     current.addColor(inletsHolder.current, 'color').onChange(handleInletChange.current).listen()
-    current.add(inletsHolder.current, 'fontSize', 6, 48).onChange(handleInletChange.current).listen()
+    current.add(inletsHolder.current, 'fontSize', 0, 256).onChange(handleInletChange.current).listen()
     current.add(inletsHolder.current, 'border').onChange(handleInletChange.current).listen()
     current.add(inletsHolder.current, 'fontFamily', [
       "sans-serif",
@@ -138,7 +138,7 @@ const Index = ({ count, increment, set, children }) => {
       "cursive",
       "ＭＳ 明朝",
       "monospace"
-    ]).onChange(handleInletChange).listen()
+    ]).onChange(handleInletChange.current).listen()
     handleInletChange.current()
 
 
@@ -185,11 +185,13 @@ const Index = ({ count, increment, set, children }) => {
       timeScale: 1.0,
       // paused: true,
     })
-    gs.current.to(targetElement.current, 1, {
+    gs.current.fromTo(targetElement.current, {rotation: 0}, {
+      duration: 1,
       rotation: 360,
       ease: Linear.easeNone,
     }, 0)
-    gs.current.to(mesh.current.rotation, 1, {
+    gs.current.fromTo(mesh.current.rotation, {y: 0}, {
+      duration: 1,
       y: Math.PI / 2,
       ease: Linear.easeNone,
     }, 0)
@@ -219,6 +221,7 @@ const Index = ({ count, increment, set, children }) => {
   // Redux + React
   const handleClick = () => {
     console.log('click')
+    console.log(renderer.current.info)
     increment(2)
   }
 
