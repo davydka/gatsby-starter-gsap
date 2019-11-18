@@ -11,12 +11,24 @@ const reducer = (state, action) => {
       count: action.payload ? action.payload : 0,
     })
   }
+  if (action.type === `TOGGLESHOWTARGET`) {
+    return Object.assign({}, state, {
+      showTransitionTarget: typeof action.payload !== 'undefined' ? action.payload : !state.showTransitionTarget,
+    })
+  }
+  if (action.type === `TOGGLESHOWGROUP`) {
+    return Object.assign({}, state, {
+      showTransitionGroup: typeof action.payload !== 'undefined' ? action.payload : !state.showTransitionGroup,
+    })
+  }
   return state
 }
 
 const initialState = {
-  count: 0
+  count: 0.1,
+  showTransitionTarget: false,
+  showTransitionGroup: false,
 }
 
-const createStore = () => reduxCreateStore(reducer, initialState)
+const createStore = () => reduxCreateStore(reducer, initialState, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
 export default createStore

@@ -1,25 +1,35 @@
 import React, {
   useState,
   useEffect,
-  useRef
+  useRef,
 } from "react"
 import PropTypes from "prop-types"
 import { useStaticQuery, graphql } from "gatsby"
-import classnames from 'classnames/bind'
+import classnames from "classnames/bind"
 import { connect } from "react-redux"
+import { Transition, TransitionGroup } from "react-transition-group"
 import gsap, { Linear } from "gsap"
-import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import * as THREE from "three"
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 
-import Holder from './holder'
+import Holder from "./holder"
 import Header from "../header"
 
 import "./layout.css"
-import styles from './Layout.module.scss'
+import styles from "./Layout.module.scss"
 
 const cx = classnames.bind(styles)
 
-const Index = ({ count, increment, set, children }) => {
+const Index = ({
+   count,
+   increment,
+   set,
+   showTransitionGroup,
+   toggleTransitionGroup,
+   showTransitionTarget,
+   toggleTransitionTarget,
+   children,
+ }) => {
   //GUIパラメータの準備
   let gui = useRef()
 
@@ -31,6 +41,8 @@ const Index = ({ count, increment, set, children }) => {
     color: '#ff0000',
     fontSize: 64,
     border: false,
+    showTransitionTarget: false,
+    showTransitionGroup: false,
     fontFamily: 'sans-serif'
   })
   let [inlets, setInlets] = useState()
@@ -40,16 +52,16 @@ const Index = ({ count, increment, set, children }) => {
   handleInletChange.current = () => {
     setInlets(Object.assign({}, inletsHolder.current))
     set(inletsHolder.current.count)
+    toggleTransitionTarget(inletsHolder.current.showTransitionTarget)
+    toggleTransitionGroup(inletsHolder.current.showTransitionGroup)
   }
 
   // GUI Inlets Console
   useEffect(() => {
-    if(!inlets) {
-      return
-    }
+    if (!inlets) { return }
     console.log('inlets', inlets)
 
-    if(inlets.speed) {
+    if (inlets.speed) {
       setSpeed(inlets.speed)
 
       // 👇 specific timeline scale
@@ -96,7 +108,7 @@ const Index = ({ count, increment, set, children }) => {
     controls.current.rotateSpeed = 1.0
     controls.current.zoomSpeed = 1.2
     controls.current.panSpeed = 0.8
-  };
+  }
 
   let initializeCamera = useRef()
   initializeCamera.current = () => {
@@ -122,7 +134,6 @@ const Index = ({ count, increment, set, children }) => {
     document.body.appendChild(stats.current.dom)
 
 
-
     /** GUI **/
     gui.current = new window.dat.GUI()
     const { current } = gui
@@ -132,24 +143,25 @@ const Index = ({ count, increment, set, children }) => {
     current.addColor(inletsHolder.current, 'color').onChange(handleInletChange.current).listen()
     current.add(inletsHolder.current, 'fontSize', 0, 256).onChange(handleInletChange.current).listen()
     current.add(inletsHolder.current, 'border').onChange(handleInletChange.current).listen()
+    current.add(inletsHolder.current, 'showTransitionTarget').onChange(handleInletChange.current).listen()
+    current.add(inletsHolder.current, 'showTransitionGroup').onChange(handleInletChange.current).listen()
     current.add(inletsHolder.current, 'fontFamily', [
-      "sans-serif",
-      "serif",
-      "cursive",
-      "ＭＳ 明朝",
-      "monospace"
+      'sans-serif',
+      'serif',
+      'cursive',
+      'ＭＳ 明朝',
+      'monospace',
     ]).onChange(handleInletChange.current).listen()
     handleInletChange.current()
-
 
 
     /** THREE **/
     scene.current = new THREE.Scene()
     // scene.current.background = new THREE.Color( 0xff0000 )
-    camera.current = new THREE.PerspectiveCamera(75, width/height, 0.1, 10000)
+    camera.current = new THREE.PerspectiveCamera(75, width / height, 0.1, 10000)
     renderer.current = new THREE.WebGLRenderer({
       antialias: true,
-      canvas: canvasElement.current
+      canvas: canvasElement.current,
     })
     renderer.current.setSize(width, height)
     controls.current = new OrbitControls(camera.current, renderer.current.domElement)
@@ -165,7 +177,7 @@ const Index = ({ count, increment, set, children }) => {
       0,
       Math.PI * 2,
       0,
-      Math.PI * 2
+      Math.PI * 2,
     )
     let material = new THREE.MeshNormalMaterial({
       // wireframe: true,
@@ -174,9 +186,8 @@ const Index = ({ count, increment, set, children }) => {
     mesh.current = new THREE.Mesh(geometry, material)
     scene.current.add(mesh.current)
 
-    const light = new THREE.AmbientLight( 0x404040 ); // soft white light
-    scene.current.add( light );
-
+    const light = new THREE.AmbientLight(0x404040) // soft white light
+    scene.current.add(light)
 
 
     /** GSAP **/
@@ -185,12 +196,12 @@ const Index = ({ count, increment, set, children }) => {
       timeScale: 1.0,
       // paused: true,
     })
-    gs.current.fromTo(targetElement.current, {rotation: 0}, {
+    gs.current.fromTo(targetElement.current, { rotation: 0 }, {
       duration: 1,
       rotation: 360,
       ease: Linear.easeNone,
     }, 0)
-    gs.current.fromTo(mesh.current.rotation, {y: 0}, {
+    gs.current.fromTo(mesh.current.rotation, { y: 0 }, {
       duration: 1,
       y: Math.PI / 2,
       ease: Linear.easeNone,
@@ -208,13 +219,11 @@ const Index = ({ count, increment, set, children }) => {
       gui.current.destroy()
       document.body.removeChild(stats.current.dom)
       if (animationID.current) {
-        window.cancelAnimationFrame(animationID.current);
-        animationID.current = undefined;
+        window.cancelAnimationFrame(animationID.current)
+        animationID.current = undefined
       }
     }
   }, [])
-
-
 
 
   // Redux -> GUI Inlets
@@ -227,14 +236,14 @@ const Index = ({ count, increment, set, children }) => {
   // Redux + React
   const handleClick = () => {
     console.log('click')
-    console.log(renderer.current.info)
+    // console.log(renderer.current.info)
     increment(2)
   }
 
   function scaleUp() {
     gsap.to(targetElement.current, 1, {
       scale: 12.0,
-      ease: Linear.ease
+      ease: Linear.ease,
     })
   }
 
@@ -244,10 +253,17 @@ const Index = ({ count, increment, set, children }) => {
       ease: Linear.ease,
       onComplete: () => {
         console.log('scaledown animation ended 🎬')
-      }
+      },
     })
   }
 
+  useEffect(() => {
+    gsap.to(camera.current.position, 1, {
+      z: count,
+      ease: Linear.ease,
+    })
+
+  }, [count])
 
 
   // ANIMATE
@@ -266,7 +282,7 @@ const Index = ({ count, increment, set, children }) => {
 
   return (
     <Holder>
-      <Header siteTitle={siteData.site.siteMetadata.title} />
+      <Header siteTitle={siteData.site.siteMetadata.title}/>
       <div
         style={{
           margin: `0 auto`,
@@ -275,16 +291,41 @@ const Index = ({ count, increment, set, children }) => {
           boxSizing: 'border-box',
         }}
       >
-        <div>{count} <span role='img' aria-label='emoji'>👈</span> counts</div>
+        <Transition
+          // timeout ignored when addEndListener exists
+          // timeout={1000}
+          mountOnEnter
+          unmountOnExit
+          in={showTransitionTarget}
+          addEndListener={(node, done) => {
+            gsap.fromTo(node, {
+              x: showTransitionTarget ? 100 : 0,
+              opacity: showTransitionTarget ? 0 : 1,
+            }, {
+              duration: 1.5,
+              x: showTransitionTarget ? 0 : 100,
+              opacity: showTransitionTarget ? 1 : 0,
+              onComplete: done,
+            })
+          }}
+        >
+          <div className={cx('transitionTarget')}>
+            <h2>transitiongroup single target 遷移グループ</h2>
+          </div>
+        </Transition>
+
+
+        <div>{count} <span role='img' aria-label='emoji'>👈</span> counts (counts is hooked up to camera position Z)
+        </div>
         <div>{speed} <span role='img' aria-label='emoji'>🚤</span> speed</div>
-        <button onClick={handleClick}>test gui REDUX</button>
+        <button onClick={handleClick}>test gui REDUX counts increment</button>
 
         {inlets &&
         <div style={{
           background: inlets.color,
           fontSize: `${inlets.fontSize}px`,
           fontFamily: inlets.fontFamily,
-          border: inlets.border ? '10px solid black' : '',
+          border: inlets.border ? '10px solid black' : "",
         }} className={cx('inlet-target')}>
           {inlets.message}
         </div>
@@ -292,9 +333,11 @@ const Index = ({ count, increment, set, children }) => {
 
         <main>
           <div className={cx('container')}>
-            <canvas className={cx('canvas')} ref={canvasElement} width={width} height={height} />
+            <canvas className={cx('canvas')} ref={canvasElement} width={width} height={height}/>
 
             <div
+              onTouchStart={scaleUp}
+              onTouchEnd={scaleDown}
               onMouseEnter={scaleUp}
               onMouseLeave={scaleDown}
               ref={targetElement}
@@ -310,7 +353,7 @@ const Index = ({ count, increment, set, children }) => {
         <footer>
           © {new Date().getFullYear()}, Built with
           {` `}
-          <a href="https://www.gatsbyjs.org">Gatsby</a>
+          <a href='https://www.gatsbyjs.org'>Gatsby</a>
         </footer>
       </div>
     </Holder>
@@ -321,16 +364,21 @@ Index.propTypes = {
   children: PropTypes.node.isRequired,
   count: PropTypes.number.isRequired,
   increment: PropTypes.func.isRequired,
+  set: PropTypes.func.isRequired,
+  toggleTransitionTarget: PropTypes.func.isRequired,
+  toggleTransitionGroup: PropTypes.func.isRequired,
 }
 
-const mapStateToProps = ({ count }) => {
-  return { count }
+const mapStateToProps = ({ count, showTransitionTarget, showTransitionGroup }) => {
+  return { count, showTransitionTarget, showTransitionGroup }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     increment: (amount) => dispatch({ type: `INCREMENT`, payload: amount }),
     set: (target) => dispatch({ type: `SET`, payload: target }),
+    toggleTransitionTarget: (target => dispatch({ type: 'TOGGLESHOWTARGET', payload: target })),
+    toggleTransitionGroup: (target => dispatch({ type: 'TOGGLESHOWGROUP', payload: target })),
   }
 }
 
