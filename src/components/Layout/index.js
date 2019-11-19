@@ -118,6 +118,25 @@ const Index = ({
     camera.current.position.z = 2.5
   }
 
+  const [items, setItems] = useState([
+    {
+      "id": "1729d38abee60593c8c5d2d2cb95f546",
+      "name": "Tamy",
+      "init": true
+    }, {
+      "id": "6bd5d6329026a15bf607118cdc95671b",
+      "name": "Derek",
+      "init": true
+    }, {
+      "id": "2df108538776b71a95fc5303d6104f46",
+      "name": "Emmit",
+      "init": true
+    }, {
+      "id": "fa106f03ec0d8b04f7e2d20b02b276ef",
+      "name": "Lilly",
+      "init": true
+    }
+  ])
 
   // componentDidMount
   useEffect(() => {
@@ -280,6 +299,35 @@ const Index = ({
     stats.current.end()
   }
 
+  const TransitionGroupItem = ({item, index, in: show, ...props}) => {
+    return (
+      <Transition
+        key={item.id}
+        index={index}
+        mountOnEnter
+        unmountOnExit
+        appear
+        in={show}
+        addEndListener={(node, done) => {
+          console.log(item.name, show)
+          gsap.to(node, 0.5, {
+            delay: index * 0.15,
+            x: show ? 0 : 100,
+            opacity: show ? 1 : 0,
+            onComplete: done,
+          })
+        }}
+      >
+        <li>
+          {item.name}
+          <button onClick={() => setItems(items.filter(_ => _.id !== item.id))}>
+            remove
+          </button>
+        </li>
+      </Transition>
+    )
+  }
+
   return (
     <Holder>
       <Header siteTitle={siteData.site.siteMetadata.title}/>
@@ -314,6 +362,13 @@ const Index = ({
           </div>
         </Transition>
 
+        {showTransitionGroup &&
+        <TransitionGroup className={cx('transitionGroup')} component='ul'>
+          {items.map((item, index) => {
+            return <TransitionGroupItem key={item.id} item={item} index={index} />
+          })}
+        </TransitionGroup>
+        }
 
         <div>{count} <span role='img' aria-label='emoji'>👈</span> counts (counts is hooked up to camera position Z)
         </div>
