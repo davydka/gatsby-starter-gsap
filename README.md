@@ -8,6 +8,8 @@
   Gatsby's default starter
 </h1>
 
+### The entire animation is controlled by the `in` prop, which triggers the `addEndListener()` and ultimately the animation. You may notice that we're not creating two different animations for the enter/exit state of the component. We create a single animation that uses the same DOM node and the same properties. By doing this, *GSAP's overwrite manager kills any existing animation affecting the same element and properties, giving us a seamless transition between the enter and exit animations.* 
+
 Kick off your project with this default boilerplate. This starter ships with the main Gatsby configuration files you might need to get up and running blazing fast with the blazing fast app generator for React.
 
 _Have another more specific idea? You may want to check out our vibrant collection of [official and community-created starters](https://www.gatsbyjs.org/docs/gatsby-starters/)._
