@@ -15,3 +15,16 @@ export const onRouteUpdate = ({ location, prevLocation }) => {
   if (location && location.state)
     location.state.prevLocation = prevLocation ? prevLocation : null
 }
+
+// disabling for now...
+export const shouldUpdateScroll = ({
+    routerProps: { location },
+    getSavedScrollPosition
+  }) => {
+  // const currentPosition = getSavedScrollPosition(location)
+  // const queriedPosition = getSavedScrollPosition({ pathname: `/random` })
+
+  // window.scrollTo(...(currentPosition || [0, 0]))
+
+  return false
+}

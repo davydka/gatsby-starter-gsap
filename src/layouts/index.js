@@ -88,6 +88,9 @@ const Layout = ({
   let canvasElement = useRef()
   let targetElement = useRef()
 
+  // Page Transition Container
+  let pageTransitionContainer = useRef()
+
   // Gatsby
   const siteData = useStaticQuery(graphql`
     query SiteTitleQuery {
@@ -150,7 +153,7 @@ const Layout = ({
 
   useEffect(() => {
     if (location && location.state){
-      console.log(location)
+      // console.log(location)
       setPrevLocation(location.state.prevLocation)
     }
   }, [location, setPrevLocation])
@@ -441,7 +444,65 @@ const Layout = ({
             </div>
           </div>
 
-          {children}
+          <div className={cx('pageTransitionContainer')} ref={pageTransitionContainer}>
+            <TransitionGroup>
+              <Transition
+                key={location.pathname}
+                appear
+                mountOnEnter
+                unmountOnExit
+                onEnter={(node, isAppearing) => {
+                  if(isAppearing) {
+                    // isAppearing happens on 1st render, this one (onEnter) happens before initialClientRender (gatsby event)
+                    return
+                  }
+                  console.log('📃 page: on enter')
+                  if(pageTransitionContainer.current) {
+                    const height = node.scrollHeight
+                    pageTransitionContainer.current.style.minHeight = `${height}px`
+                    node.style.position = 'absolute'
+                  }
+                }}
+                onEntering={(node, isAppearing) => {
+                  console.log('📃 page: on entering')
+                  if(pageTransitionContainer.current) {
+                    const height = node.scrollHeight
+                    pageTransitionContainer.current.style.minHeight = `${height}px`
+                    node.style.position = 'absolute'
+                  }
+                }}
+                onEntered={(node, isAppearing) => {
+                  console.log('📃 page: on entered')
+                  if(pageTransitionContainer.current) {
+                    const height = node.scrollHeight
+                    pageTransitionContainer.current.style.minHeight = `${height}px`
+                    node.style.position = 'absolute'
+                  }
+                }}
+                addEndListener={(node, done) => {
+                  const loaded = parseFloat(node.style.opacity) === 1
+                  gsap.to(node, 1.5, {
+                    opacity: loaded ? 0:1,
+                    x: loaded ? 100:0,
+                    startAt: {
+                      opacity: loaded ? 1:0,
+                      x: loaded ? 0:100
+                    },
+                    onComplete: () => {
+                      node.style.position = 'relative'
+                      console.log('📃 page transition end!!')
+                      done()
+                    },
+                  })
+                }}
+              >
+                <div>
+                  {children}
+                </div>
+              </Transition>
+            </TransitionGroup>
+          </div>
+          {/*  END transitionContainer */}
         </main>
 
         <footer>

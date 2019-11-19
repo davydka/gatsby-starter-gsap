@@ -42,3 +42,12 @@
     border: 1px solid darkblue;
   }
 }
+
+.pageTransitionContainer {
+  position: relative;
+  margin: 20px 0;
+  border: 1px solid orangered;
+  will-change: min-height;
+  transition: min-height 750ms;
+  overflow: hidden;
+}
