@@ -10,3 +10,8 @@ export const wrapRootElement = wrapWithProvider
 export const onInitialClientRender = (_, opts) => {
   console.log('🎨🎨🎨 Initial Client Render 🎨🎨🎨')
 }
+
+export const onRouteUpdate = ({ location, prevLocation }) => {
+  if (location && location.state)
+    location.state.prevLocation = prevLocation ? prevLocation : null
+}

@@ -2,34 +2,38 @@ import React, {
   useState,
   useEffect,
   useRef,
-} from "react"
-import PropTypes from "prop-types"
-import { useStaticQuery, graphql } from "gatsby"
-import classnames from "classnames/bind"
-import { connect } from "react-redux"
-import { Transition, TransitionGroup, SwitchTransition } from "react-transition-group"
-import gsap, { Linear } from "gsap"
-import * as THREE from "three"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
+} from 'react'
+import PropTypes from 'prop-types'
+import { useStaticQuery, graphql } from 'gatsby'
+import classnames from 'classnames/bind'
+import { connect } from 'react-redux'
+import { Transition, TransitionGroup, SwitchTransition } from 'react-transition-group'
+import gsap, { Linear } from 'gsap'
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-import Holder from "./holder"
-import Header from "../header"
+import Holder from './holder'
+import Header from '../header'
 
-import "./layout.css"
-import styles from "./Layout.module.scss"
+import './layout.css'
+import styles from './Layout.module.scss'
 
 const cx = classnames.bind(styles)
 
-const Index = ({
-   count,
-   increment,
-   set,
-   showTransitionGroup,
-   toggleTransitionGroup,
-   showTransitionTarget,
-   toggleTransitionTarget,
-   children,
- }) => {
+const Layout = ({
+  prevLocation,
+  setPrevLocation,
+  location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
+  count,
+  increment,
+  set,
+  showTransitionGroup,
+  toggleTransitionGroup,
+  showTransitionTarget,
+  toggleTransitionTarget,
+  children,
+  ...props
+}) => {
   //GUIパラメータの準備
   let gui = useRef()
 
@@ -43,7 +47,7 @@ const Index = ({
     border: false,
     showTransitionTarget: false,
     showTransitionGroup: false,
-    fontFamily: 'sans-serif'
+    fontFamily: 'sans-serif',
   })
   let [inlets, setInlets] = useState()
 
@@ -58,7 +62,9 @@ const Index = ({
 
   // GUI Inlets Console
   useEffect(() => {
-    if (!inlets) { return }
+    if (!inlets) {
+      return
+    }
     console.log('inlets', inlets)
 
     if (inlets.speed) {
@@ -104,7 +110,9 @@ const Index = ({
 
   let initializeOrbits = useRef()
   initializeOrbits.current = () => {
-    if(!controls) { return }
+    if (!controls) {
+      return
+    }
     controls.current.rotateSpeed = 1.0
     controls.current.zoomSpeed = 1.2
     controls.current.panSpeed = 0.8
@@ -112,7 +120,9 @@ const Index = ({
 
   let initializeCamera = useRef()
   initializeCamera.current = () => {
-    if(!camera) { return }
+    if (!camera) {
+      return
+    }
     camera.current.position.x = 0
     camera.current.position.y = 0
     camera.current.position.z = 2.5
@@ -120,28 +130,34 @@ const Index = ({
 
   const [items, setItems] = useState([
     {
-      "id": "1729d38abee60593c8c5d2d2cb95f546",
-      "name": "Tamy",
-      "init": true
+      'id': '1729d38abee60593c8c5d2d2cb95f546',
+      'name': 'Tamy',
+      'init': true,
     }, {
-      "id": "6bd5d6329026a15bf607118cdc95671b",
-      "name": "Derek",
-      "init": true
+      'id': '6bd5d6329026a15bf607118cdc95671b',
+      'name': 'Derek',
+      'init': true,
     }, {
-      "id": "2df108538776b71a95fc5303d6104f46",
-      "name": "Emmit",
-      "init": true
+      'id': '2df108538776b71a95fc5303d6104f46',
+      'name': 'Emmit',
+      'init': true,
     }, {
-      "id": "fa106f03ec0d8b04f7e2d20b02b276ef",
-      "name": "Lilly",
-      "init": true
-    }
+      'id': 'fa106f03ec0d8b04f7e2d20b02b276ef',
+      'name': 'Lilly',
+      'init': true,
+    },
   ])
+
+  useEffect(() => {
+    if (location && location.state){
+      console.log(location.state)
+      setPrevLocation(location.state.prevLocation)
+    }
+  }, [location, setPrevLocation])
 
   // componentDidMount
   useEffect(() => {
     console.log('🌈 layout mounted')
-
 
     /** Stats **/
     stats.current = new window.Stats()
@@ -302,7 +318,7 @@ const Index = ({
   const [testText, setTestText] = useState(false)
 
 
-  const TransitionGroupItem = ({item, index, in: show, ...props}) => {
+  const TransitionGroupItem = ({ item, index, in: show, ...props }) => {
     return (
       <Transition
         key={item.id}
@@ -368,7 +384,7 @@ const Index = ({
         {showTransitionGroup &&
         <TransitionGroup className={cx('transitionGroup')} component='ul'>
           {items.map((item, index) => {
-            return <TransitionGroupItem key={item.id} item={item} index={index} />
+            return <TransitionGroupItem key={item.id} item={item} index={index}/>
           })}
         </TransitionGroup>
         }
@@ -378,17 +394,17 @@ const Index = ({
             appear
             mountOnEnter
             unmountOnExit
-            key={testText ? "Goodbye, world!" : "Hello, world!"}
+            key={testText ? 'Goodbye, world!' : 'Hello, world!'}
             addEndListener={(node, done) => {
               const loaded = parseFloat(window.getComputedStyle(node).getPropertyValue('opacity'))
               gsap.to(node, 1.5, {
-                opacity: loaded===0 ? 1:0,
+                opacity: loaded === 0 ? 1 : 0,
                 onComplete: done,
               })
             }}
           >
-            <button style={{opacity: 0}} onClick={() => setTestText(testText => !testText)}>
-              Switch transition: {testText ? "Goodbye, world!" : "Hello, world!"}
+            <button style={{ opacity: 0 }} onClick={() => setTestText(testText => !testText)}>
+              Switch transition: {testText ? 'Goodbye, world!' : 'Hello, world!'}
             </button>
           </Transition>
         </SwitchTransition>
@@ -403,7 +419,7 @@ const Index = ({
           background: inlets.color,
           fontSize: `${inlets.fontSize}px`,
           fontFamily: inlets.fontFamily,
-          border: inlets.border ? '10px solid black' : "",
+          border: inlets.border ? '10px solid black' : '',
         }} className={cx('inlet-target')}>
           {inlets.message}
         </div>
@@ -438,8 +454,9 @@ const Index = ({
   )
 }
 
-Index.propTypes = {
+Layout.propTypes = {
   children: PropTypes.node.isRequired,
+  prevLocation: PropTypes.object,
   count: PropTypes.number.isRequired,
   increment: PropTypes.func.isRequired,
   set: PropTypes.func.isRequired,
@@ -447,12 +464,13 @@ Index.propTypes = {
   toggleTransitionGroup: PropTypes.func.isRequired,
 }
 
-const mapStateToProps = ({ count, showTransitionTarget, showTransitionGroup }) => {
-  return { count, showTransitionTarget, showTransitionGroup }
+const mapStateToProps = ({ prevLocation, count, showTransitionTarget, showTransitionGroup }) => {
+  return { prevLocation, count, showTransitionTarget, showTransitionGroup }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
+    setPrevLocation: (loc) => dispatch({ type: `SETPREVLOCATION`, payload: loc }),
     increment: (amount) => dispatch({ type: `INCREMENT`, payload: amount }),
     set: (target) => dispatch({ type: `SET`, payload: target }),
     toggleTransitionTarget: (target => dispatch({ type: 'TOGGLESHOWTARGET', payload: target })),
@@ -460,4 +478,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Index)
+export default connect(mapStateToProps, mapDispatchToProps)(Layout)

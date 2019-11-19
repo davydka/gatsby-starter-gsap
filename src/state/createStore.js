@@ -1,6 +1,11 @@
 import { createStore as reduxCreateStore } from "redux"
 
 const reducer = (state, action) => {
+  if (action.type === `SETPREVLOCATION`) {
+    return Object.assign({}, state, {
+      prevLocation: typeof action.payload !== 'undefined' ? action.payload : initialState.prevLocation,
+    })
+  }
   if (action.type === `INCREMENT`) {
     return Object.assign({}, state, {
       count: state.count + (action.payload ? action.payload : 1),
@@ -28,6 +33,7 @@ const initialState = {
   count: 0.1,
   showTransitionTarget: false,
   showTransitionGroup: false,
+  prevLocation: {}
 }
 
 const createStore = () => reduxCreateStore(
