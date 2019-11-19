@@ -30,5 +30,8 @@ const initialState = {
   showTransitionGroup: false,
 }
 
-const createStore = () => reduxCreateStore(reducer, initialState, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+const createStore = () => reduxCreateStore(
+  reducer,
+  initialState,
+  typeof window !== 'undefined' ? window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() : (() => {})())
 export default createStore
