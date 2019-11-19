@@ -490,6 +490,7 @@ const Layout = ({
                     },
                     onComplete: () => {
                       node.style.position = 'relative'
+                      node.style.minHeight = 'auto'
                       console.log('📃 page transition end!!')
                       done()
                     },
