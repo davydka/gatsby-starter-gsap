@@ -13,7 +13,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 import Holder from './holder'
-import Header from '../header'
+import Header from '../components/header'
 
 import './layout.css'
 import styles from './Layout.module.scss'
@@ -150,7 +150,7 @@ const Layout = ({
 
   useEffect(() => {
     if (location && location.state){
-      console.log(location.state)
+      console.log(location)
       setPrevLocation(location.state.prevLocation)
     }
   }, [location, setPrevLocation])
