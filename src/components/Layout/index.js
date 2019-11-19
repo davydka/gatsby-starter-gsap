@@ -7,7 +7,7 @@ import PropTypes from "prop-types"
 import { useStaticQuery, graphql } from "gatsby"
 import classnames from "classnames/bind"
 import { connect } from "react-redux"
-import { Transition, TransitionGroup } from "react-transition-group"
+import { Transition, TransitionGroup, SwitchTransition } from "react-transition-group"
 import gsap, { Linear } from "gsap"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
@@ -37,7 +37,7 @@ const Index = ({
   let inletsHolder = useRef({
     message: 'dat.guiのサンプル',
     speed: 1.0,
-    count: 0,
+    count: 0.5,
     color: '#ff0000',
     fontSize: 64,
     border: false,
@@ -299,6 +299,9 @@ const Index = ({
     stats.current.end()
   }
 
+  const [testText, setTestText] = useState(false)
+
+
   const TransitionGroupItem = ({item, index, in: show, ...props}) => {
     return (
       <Transition
@@ -309,7 +312,7 @@ const Index = ({
         appear
         in={show}
         addEndListener={(node, done) => {
-          console.log(item.name, show)
+          // console.log(item.name, show)
           gsap.to(node, 0.5, {
             delay: index * 0.15,
             x: show ? 0 : 100,
@@ -369,6 +372,26 @@ const Index = ({
           })}
         </TransitionGroup>
         }
+
+        <SwitchTransition>
+          <Transition
+            appear
+            mountOnEnter
+            unmountOnExit
+            key={testText ? "Goodbye, world!" : "Hello, world!"}
+            addEndListener={(node, done) => {
+              const loaded = parseFloat(window.getComputedStyle(node).getPropertyValue('opacity'))
+              gsap.to(node, 1.5, {
+                opacity: loaded===0 ? 1:0,
+                onComplete: done,
+              })
+            }}
+          >
+            <button style={{opacity: 0}} onClick={() => setTestText(testText => !testText)}>
+              Switch transition: {testText ? "Goodbye, world!" : "Hello, world!"}
+            </button>
+          </Transition>
+        </SwitchTransition>
 
         <div>{count} <span role='img' aria-label='emoji'>👈</span> counts (counts is hooked up to camera position Z)
         </div>
