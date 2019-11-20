@@ -91,6 +91,19 @@ const Layout = ({
   // Page Transition Container
   let pageTransitionContainer = useRef()
 
+  // Knockout Text
+  let knockoutText = useRef()
+  let knockoutCanvas = useRef()
+  let knockoutCanvas2 = useRef()
+  const [knockoutContext, setKnockoutContext] = useState(null)
+  const [knockoutContext2, setKnockoutContext2] = useState(null)
+  useEffect(() => {
+    setKnockoutContext(knockoutCanvas.current.getContext('2d'))
+  }, [knockoutCanvas])
+  useEffect(() => {
+    setKnockoutContext2(knockoutCanvas2.current.getContext('2d'))
+  }, [knockoutCanvas2])
+
   // Gatsby
   const siteData = useStaticQuery(graphql`
     query SiteTitleQuery {
@@ -203,7 +216,6 @@ const Layout = ({
     })
     renderer.current.setSize(width, height)
     controls.current = new OrbitControls(camera.current, renderer.current.domElement)
-    // console.log(canvasElement)
 
     initializeOrbits.current()
     initializeCamera.current()
@@ -247,6 +259,7 @@ const Layout = ({
 
 
     /** Animate Kickoff **/
+    flip.current = 0
     animate.current()
 
 
@@ -307,12 +320,24 @@ const Layout = ({
   // ANIMATE
   let animationID = useRef()
   let animate = useRef()
+  let flip = useRef()
   animate.current = () => {
     stats && stats.current && stats.current.begin()
 
     // animate stuff
     animationID.current = undefined
     renderer.current.render(scene.current, camera.current)
+
+    flip.current = flip.current+1
+    if(flip.current >= 3) {
+      if(knockoutContext){
+        knockoutContext.drawImage(canvasElement.current, 0, 0, 320, 180)
+      }
+      if(knockoutContext2){
+        knockoutContext2.drawImage(canvasElement.current, 0, 0, 640, 360)
+      }
+      flip.current = 0
+    }
 
     animationID.current = requestAnimationFrame(animate.current)
     stats.current.end()
@@ -442,7 +467,50 @@ const Layout = ({
             >
               hello!
             </div>
+            <div ref={knockoutText} className={cx('knockout')}>
+              <h2 className={cx('knockout-header')}>knockout text</h2>
+              <p>
+                Nisi debitis excepturi omnis sed autem tempora. Ut ea quod. Qui porro perferendis. Neque eos nisi minima
+                esse et ut vel aut. Sit sed earum est. Consectetur consequatur et ad est beatae sapiente. Doloribus et
+                sunt a.
+              </p>
+            </div>
           </div>
+
+          <div style={{position: 'relative', width: '320px', height: '180px'}}>
+            <canvas ref={knockoutCanvas} width={320} height={180} />
+            <div className={cx('knockout2')}>
+              <p>
+                More knockout text.
+              </p>
+              <p>
+                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </p>
+              <p>
+                Yadda yadda yadda
+              </p>
+            </div>
+          </div>
+
+          <div style={{marginLeft: '320px', position: 'relative', width: '640px', height: '360px'}}>
+            <canvas ref={knockoutCanvas2} width={640} height={360} />
+            <div className={cx('knockout2')}>
+              <h2>
+                Even more knockout text.
+              </h2>
+              <h6>
+                This approach for cloning canvas elements isn't sustainable for more than 1 canvas unless you start lowering frame rates.
+              </h6>
+              <p>
+                Leo integer malesuada nunc vel risus commodo viverra maecenas accumsan. Leo duis ut diam quam nulla porttitor massa id neque. Quis viverra nibh cras pulvinar mattis nunc. Eros in cursus turpis massa tincidunt dui. Id consectetur purus ut faucibus pulvinar elementum integer enim.
+              </p>
+              <p>
+                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                Dui accumsan sit amet nulla facilisi morbi tempus iaculis. Enim tortor at auctor urna. Fermentum odio eu feugiat pretium.
+              </p>
+            </div>
+          </div>
+
 
           <div className={cx('pageTransitionContainer')} ref={pageTransitionContainer}>
             <TransitionGroup>
