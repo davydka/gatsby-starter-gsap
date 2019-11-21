@@ -1,3 +1,4 @@
+import './src/styles/fonts.scss'
 import './src/styles/resets.scss'
 import './src/styles/defaults.scss'
 
