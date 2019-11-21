@@ -1,10 +1,22 @@
-
 $grid-gutter-widths: (
   xs: $grid-gap-sm,
   /* "sm" takes the same width as "xs" automatically */
   md: $grid-gap-md,
   lg: $grid-gap-lg,
   xl: $grid-gap-xl,
+);
+
+$grid-breakpoints: (
+  // Extra small screen / phone
+  xs: 0,
+  // Small screen / phone
+  sm: $bp-small,
+  // Medium screen / tablet
+  md: $bp-medium,
+  // Large screen / desktop
+  lg: $bp-large,
+  // Extra large screen / wide desktop
+  xl: $bp-extra-large
 );
 
 /* You don't need to change anything below */

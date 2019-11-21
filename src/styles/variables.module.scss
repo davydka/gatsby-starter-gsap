@@ -14,6 +14,8 @@ $bp-medium: 768px;
 $bp-large: 992px;
 $bp-extra-large: 1200px;
 
+$site-max-width: 960px;
+
 /* GRID SYSTEM */
 $grid-columns-xl: 12;
 $grid-columns-lg: 12;
@@ -43,5 +45,7 @@ $z-index-6: 60;
   colsMd: $grid-columns-md;
   colsSm: $grid-columns-sm;
   colsXs: $grid-columns-xs;
+
+  siteMaxWidth: $site-max-width;
 }
 /* stylelint-enable */

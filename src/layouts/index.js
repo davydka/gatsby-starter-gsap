@@ -12,7 +12,6 @@ import Holder from './Holder'
 import Header from '@components/header'
 import Text from '@components/Text'
 
-// import 'bootstrap/dist/css/bootstrap-grid.css'
 import styles from './Layout.module.scss'
 
 const cx = classnames.bind(styles)
@@ -420,8 +419,6 @@ const Layout = ({
       <Header siteTitle={siteData.site.siteMetadata.title} />
       <div
         style={{
-          margin: `0 auto`,
-          maxWidth: 960,
           padding: `0 0 1.45rem`,
           boxSizing: 'border-box',
         }}
@@ -448,20 +445,24 @@ const Layout = ({
             )
           }}
         >
-          <div className={cx('transitionTarget')}>
-            <Text type="h2" tag="h2">
-              transitiongroup single target 遷移グループ
-            </Text>
+          <div className={cx('module-container')}>
+            <div className={cx('transitionTarget', 'module')}>
+              <Text type="h2" tag="h2">
+                transitiongroup single target 遷移グループ
+              </Text>
+            </div>
           </div>
         </Transition>
 
         {showTransitionGroup && (
-          <TransitionGroup className={cx('transitionGroup')} component="ul">
-            {items.map((item, index) => {
-              // eslint-disable-next-line
-              return <TransitionGroupItem key={item.id} item={item} index={index} />
-            })}
-          </TransitionGroup>
+          <div className={cx('module-container')}>
+            <TransitionGroup className={cx('transitionGroup', 'module')} component="ul">
+              {items.map((item, index) => {
+                // eslint-disable-next-line
+                return <TransitionGroupItem key={item.id} item={item} index={index} />
+              })}
+            </TransitionGroup>
+          </div>
         )}
 
         <SwitchTransition>
@@ -478,27 +479,47 @@ const Layout = ({
               })
             }}
           >
-            <button style={{ opacity: 0 }} onClick={() => setTestText(testText => !testText)}>
-              Switch transition: {testText ? 'Goodbye, world!' : 'Hello, world!'}
-            </button>
+            <div style={{ opacity: 0 }} className={cx('module-container')}>
+              <div className={cx('module')}>
+                <button onClick={() => setTestText(testText => !testText)}>
+                  <Text tag="h4" type="h4">
+                    Switch transition: {testText ? 'Goodbye, world!' : 'Hello, world!'}
+                  </Text>
+                </button>
+              </div>
+            </div>
           </Transition>
         </SwitchTransition>
 
-        <div>
-          {count}{' '}
-          <span role="img" aria-label="emoji">
-            👈
-          </span>{' '}
-          counts (counts is hooked up to camera position Z)
+        <div className={cx('module-container')}>
+          <div className={cx('module')}>
+            <div style={{ border: '1px solid gold', margin: '1rem 0' }}>
+              <Text tag="h4" type="h4">
+                {count}{' '}
+                <span role="img" aria-label="emoji">
+                  👈
+                </span>{' '}
+                counts (counts is hooked up to camera position Z)
+              </Text>
+            </div>
+
+            <div style={{ border: '1px solid teal', marginBottom: '1rem' }}>
+              <Text tag="h4" type="h4">
+                {speed}{' '}
+                <span role="img" aria-label="emoji">
+                  🚤
+                </span>{' '}
+                speed
+              </Text>
+            </div>
+
+            <button onClick={handleClick}>
+              <Text tag="h4" type="h4">
+                test gui REDUX counts increment
+              </Text>
+            </button>
+          </div>
         </div>
-        <div>
-          {speed}{' '}
-          <span role="img" aria-label="emoji">
-            🚤
-          </span>{' '}
-          speed
-        </div>
-        <button onClick={handleClick}>test gui REDUX counts increment</button>
 
         {inlets && (
           <div
@@ -506,78 +527,100 @@ const Layout = ({
               background: inlets.color,
               fontSize: `${inlets.fontSize}px`,
               fontFamily: inlets.fontFamily,
-              border: inlets.border ? '10px solid black' : '',
             }}
             className={cx('inlet-target')}
           >
-            {inlets.message}
+            <div style={{ border: inlets.border ? '10px solid black' : '' }} className={cx('module-container')}>
+              <div className={cx('module')}>{inlets.message}</div>
+            </div>
           </div>
         )}
 
         <main>
-          <div className={cx('canvas-container')}>
-            <canvas className={cx('canvas')} ref={canvasElement} width={width} height={height} />
+          <div className={cx('module-container')}>
+            <div className={cx('canvas-container', 'module')}>
+              <canvas className={cx('canvas')} ref={canvasElement} width={width} height={height} />
 
-            <div
-              onTouchStart={scaleUp}
-              onTouchEnd={scaleDown}
-              onMouseEnter={scaleUp}
-              onMouseLeave={scaleDown}
-              ref={targetElement}
-              className={cx('target')}
-            >
-              hello!
-            </div>
-            <div ref={knockoutText} className={cx('knockout')}>
-              <Text tag="h2" type="h2" className={cx('knockout-header')}>
-                knockout text
-              </Text>
-              <p>
-                Nisi debitis excepturi omnis sed autem tempora. Ut ea quod. Qui porro perferendis. Neque eos nisi minima
-                esse et ut vel aut. Sit sed earum est. Consectetur consequatur et ad est beatae sapiente. Doloribus et
-                sunt a.
-              </p>
+              <div
+                onTouchStart={scaleUp}
+                onTouchEnd={scaleDown}
+                onMouseEnter={scaleUp}
+                onMouseLeave={scaleDown}
+                ref={targetElement}
+                className={cx('target')}
+              >
+                hover!
+              </div>
+              <div ref={knockoutText} className={cx('knockout')}>
+                <Text tag="h2" type="h2" className={cx('knockout-header')}>
+                  knockout text
+                </Text>
+                <p>
+                  Nisi debitis excepturi omnis sed autem tempora. Ut ea quod. Qui porro perferendis. Neque eos nisi
+                  minima esse et ut vel aut. Sit sed earum est. Consectetur consequatur et ad est beatae sapiente.
+                  Doloribus et sunt a.
+                </p>
+              </div>
             </div>
           </div>
 
           {showKnockouts && (
-            <div style={{ position: 'relative', width: '320px', height: '180px' }}>
-              <canvas ref={knockoutCanvas} width={320} height={180} />
-              <div className={cx('knockout2')}>
-                <p>More knockout text.</p>
-                <p>
-                  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-                  laborum.
-                </p>
-                <p>Yadda yadda yadda</p>
+            <div className={cx('module-container')}>
+              <div className={cx('module')}>
+                <div style={{ position: 'relative', width: '320px', height: '180px' }}>
+                  <canvas ref={knockoutCanvas} width={320} height={180} />
+                  <div className={cx('knockout2')}>
+                    <p>More knockout text.</p>
+                    <p>
+                      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+                      est laborum.
+                    </p>
+                    <p>Yadda yadda yadda</p>
+                  </div>
+                </div>
+                <div style={{ marginLeft: '320px', position: 'relative', width: '640px', height: '360px' }}>
+                  <canvas ref={knockoutCanvas2} width={640} height={360} />
+                  <div className={cx('knockout2')}>
+                    <Text tag="h2" type="h2">
+                      Even more knockout text.
+                    </Text>
+                    <Text tag="h6" type="h6">
+                      {`This approach for cloning canvas elements isn't sustainable for more than 1 canvas unless you start
+                      lowering frame rates.`}
+                    </Text>
+                    <p>
+                      Leo integer malesuada nunc vel risus commodo viverra maecenas accumsan. Leo duis ut diam quam
+                      nulla porttitor massa id neque. Quis viverra nibh cras pulvinar mattis nunc. Eros in cursus turpis
+                      massa tincidunt dui. Id consectetur purus ut faucibus pulvinar elementum integer enim.
+                    </p>
+                    <p>
+                      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                      pariatur. Dui accumsan sit amet nulla facilisi morbi tempus iaculis. Enim tortor at auctor urna.
+                      Fermentum odio eu feugiat pretium.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
-          {showKnockouts && (
-            <div style={{ marginLeft: '320px', position: 'relative', width: '640px', height: '360px' }}>
-              <canvas ref={knockoutCanvas2} width={640} height={360} />
-              <div className={cx('knockout2')}>
-                <Text tag="h2" type="h2">
-                  Even more knockout text.
+          <div className={cx('breakout-module')}>
+            <div className={cx('module-container')}>
+              <div className={cx('module')}>
+                <Text type="h3" tag="h3">
+                  Breakout Module
                 </Text>
-                <Text tag="h6" type="h6">
-                  {`This approach for cloning canvas elements isn't sustainable for more than 1 canvas unless you start
-                  lowering frame rates.`}
-                </Text>
-                <p>
-                  Leo integer malesuada nunc vel risus commodo viverra maecenas accumsan. Leo duis ut diam quam nulla
-                  porttitor massa id neque. Quis viverra nibh cras pulvinar mattis nunc. Eros in cursus turpis massa
-                  tincidunt dui. Id consectetur purus ut faucibus pulvinar elementum integer enim.
-                </p>
-                <p>
-                  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                  Dui accumsan sit amet nulla facilisi morbi tempus iaculis. Enim tortor at auctor urna. Fermentum odio
-                  eu feugiat pretium.
-                </p>
+                <p>{"Don't put a max-width on the page, but put the max on each module container"}</p>
               </div>
             </div>
-          )}
+          </div>
+
+          <div className={cx('breakout-module-full')}>
+            <Text type="h3" tag="h3">
+              Breakout With no Container
+            </Text>
+            <p>This module has no container</p>
+          </div>
 
           <div className={cx('pageTransitionContainer')} ref={pageTransitionContainer}>
             <TransitionGroup>
@@ -632,7 +675,7 @@ const Layout = ({
                   })
                 }}
               >
-                <div>{children}</div>
+                <div style={{ width: '100%' }}>{children}</div>
               </Transition>
             </TransitionGroup>
           </div>

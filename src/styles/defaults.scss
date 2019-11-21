@@ -1,3 +1,5 @@
+@import 'styles/includes';
+
 *,
 *::after,
 *::before {
@@ -13,4 +15,11 @@ body {
   font-size: 1.6rem; // resets default font-size to 16px (and scales what user defines in browser settings)
   line-height: 1;
   box-sizing: border-box;
+}
+
+.module-container {
+  .module {
+    max-width: $site-max-width;
+    margin: 0 auto;
+  }
 }

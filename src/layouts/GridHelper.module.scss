@@ -2,6 +2,7 @@
 
 .grid-helper,
 .row-helper,
+.row-container,
 .col-helper,
 .col-content-helper {
   height: 100%;
@@ -15,6 +16,11 @@
   width: 100%;
   pointer-events: none;
   background: #FFDAB933;
+}
+
+.row-container {
+  max-width: $site-max-width;
+  margin: 0 auto;
 }
 
 .col-content-helper {

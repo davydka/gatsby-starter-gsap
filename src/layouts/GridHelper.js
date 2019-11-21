@@ -38,19 +38,21 @@ const GridHelper = ({ showGridHelper }) => {
 
   return (
     <div className={cx('grid-helper')}>
-      {Object.keys(gridSetup).map((_, index) => {
-        return (
-          <div key={index} className={cx('row-helper', 'row', `${_}-helper`)}>
-            {Array(gridSetup[_].cols)
-              .fill(null)
-              .map((__, _index) => (
-                <div key={_index} className={cx('col-helper', 'col')}>
-                  <div className={cx('col-content-helper')} />
-                </div>
-              ))}
-          </div>
-        )
-      })}
+      <div className={cx('row-container')}>
+        {Object.keys(gridSetup).map((_, index) => {
+          return (
+            <div key={index} className={cx('row-helper', 'row', `${_}-helper`)}>
+              {Array(gridSetup[_].cols)
+                .fill(null)
+                .map((__, _index) => (
+                  <div key={_index} className={cx('col-helper', 'col')}>
+                    <div className={cx('col-content-helper')} />
+                  </div>
+                ))}
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
