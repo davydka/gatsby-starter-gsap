@@ -44,11 +44,15 @@ const GridHelper = ({ showGridHelper }) => {
             <div key={index} className={cx('row-helper', 'row', `${_}-helper`)}>
               {Array(gridSetup[_].cols)
                 .fill(null)
-                .map((__, _index) => (
-                  <div key={_index} className={cx('col-helper', 'col')}>
-                    <div className={cx('col-content-helper')} />
-                  </div>
-                ))}
+                .map((__, _index) => {
+                  // or use `col` rather than col-lg, col-md, etc
+                  // <div key={_index} className={cx('col-helper', 'col')}>
+                  return (
+                    <div key={_index} className={cx('col-helper', gridSetup[_].colClass)}>
+                      <div className={cx('col-content-helper')} />
+                    </div>
+                  )
+                })}
             </div>
           )
         })}
