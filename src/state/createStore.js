@@ -1,4 +1,4 @@
-import { createStore as reduxCreateStore } from "redux"
+import { createStore as reduxCreateStore } from 'redux'
 
 const reducer = (state, action) => {
   if (action.type === `SETPREVLOCATION`) {
@@ -26,18 +26,28 @@ const reducer = (state, action) => {
       showTransitionGroup: typeof action.payload !== 'undefined' ? action.payload : !state.showTransitionGroup,
     })
   }
+  if (action.type === `TOGGLESHOWGRID`) {
+    return Object.assign({}, state, {
+      showGridHelper: typeof action.payload !== 'undefined' ? action.payload : !state.showGridHelper,
+    })
+  }
   return state
 }
 
 const initialState = {
   count: 0.1,
+  showGridHelper: false,
   showTransitionTarget: false,
   showTransitionGroup: false,
-  prevLocation: {}
+  prevLocation: {},
 }
 
-const createStore = () => reduxCreateStore(
-  reducer,
-  initialState,
-  typeof window !== 'undefined' ? window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() : (() => {})())
+const createStore = () =>
+  reduxCreateStore(
+    reducer,
+    initialState,
+    typeof window !== 'undefined'
+      ? window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+      : (() => {})()
+  )
 export default createStore

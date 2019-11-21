@@ -8,10 +8,11 @@ import gsap, { Linear } from 'gsap'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-import Holder from './holder'
+import Holder from './Holder'
 import Header from '@components/header'
 import Text from '@components/Text'
 
+// import 'bootstrap/dist/css/bootstrap-grid.css'
 import styles from './Layout.module.scss'
 
 const cx = classnames.bind(styles)
@@ -23,6 +24,7 @@ const Layout = ({
   count,
   increment,
   set,
+  toggleGrid,
   showTransitionGroup,
   toggleTransitionGroup,
   showTransitionTarget,
@@ -41,6 +43,7 @@ const Layout = ({
     color: '#ff0000',
     fontSize: 64,
     border: false,
+    gridHelper: false,
     showTransitionTarget: false,
     showTransitionGroup: false,
     showKnockouts: false,
@@ -53,6 +56,7 @@ const Layout = ({
   handleInletChange.current = () => {
     setInlets(Object.assign({}, inletsHolder.current))
     set(inletsHolder.current.count)
+    toggleGrid(inletsHolder.current.gridHelper)
     toggleTransitionTarget(inletsHolder.current.showTransitionTarget)
     toggleTransitionGroup(inletsHolder.current.showTransitionGroup)
     setShowKnockouts(inletsHolder.current.showKnockouts)
@@ -217,6 +221,11 @@ const Layout = ({
     gui.current
       .add(inletsHolder.current, 'border')
       .onChange(handleInletChange.current)
+      .listen()
+    gui.current
+      .add(inletsHolder.current, 'gridHelper')
+      .onChange(handleInletChange.current)
+      .name('grid helper')
       .listen()
     gui.current
       .add(inletsHolder.current, 'showTransitionTarget')
@@ -506,7 +515,7 @@ const Layout = ({
         )}
 
         <main>
-          <div className={cx('container')}>
+          <div className={cx('canvas-container')}>
             <canvas className={cx('canvas')} ref={canvasElement} width={width} height={height} />
 
             <div
@@ -648,10 +657,11 @@ Layout.propTypes = {
   count: PropTypes.number.isRequired,
   increment: PropTypes.func.isRequired,
   set: PropTypes.func.isRequired,
+  toggleGrid: PropTypes.func,
   toggleTransitionTarget: PropTypes.func.isRequired,
   toggleTransitionGroup: PropTypes.func.isRequired,
-  showTransitionTarget: PropTypes.func,
-  showTransitionGroup: PropTypes.func,
+  showTransitionTarget: PropTypes.bool,
+  showTransitionGroup: PropTypes.bool,
 }
 
 const mapStateToProps = ({ prevLocation, count, showTransitionTarget, showTransitionGroup }) => {
@@ -663,6 +673,7 @@ const mapDispatchToProps = dispatch => {
     setPrevLocation: loc => dispatch({ type: `SETPREVLOCATION`, payload: loc }),
     increment: amount => dispatch({ type: `INCREMENT`, payload: amount }),
     set: target => dispatch({ type: `SET`, payload: target }),
+    toggleGrid: target => dispatch({ type: `TOGGLESHOWGRID`, payload: target }),
     toggleTransitionTarget: target => dispatch({ type: 'TOGGLESHOWTARGET', payload: target }),
     toggleTransitionGroup: target => dispatch({ type: 'TOGGLESHOWGROUP', payload: target }),
   }

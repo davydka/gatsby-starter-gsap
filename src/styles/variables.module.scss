@@ -7,3 +7,41 @@ $font-serif: georgia, serif;
 $font-regular: 400;
 $font-medium: 500;
 $font-bold: 700;
+
+/* BREAKPOINTS */
+$bp-small: 576px;
+$bp-medium: 768px;
+$bp-large: 992px;
+$bp-extra-large: 1200px;
+
+/* GRID SYSTEM */
+$grid-columns-xl: 12;
+$grid-columns-lg: 12;
+$grid-columns-md: 8;
+$grid-columns-sm: 8;
+$grid-columns-xs: 10;
+
+$grid-gap-xl: 2rem;
+$grid-gap-lg: 2rem;
+$grid-gap-md: 2rem;
+$grid-gap-sm: .5rem;
+
+/* Z-INDEX */
+$z-index-negative-1: -1;
+$z-index-1: 10;
+$z-index-2: 20;
+$z-index-3: 30;
+$z-index-4: 40;
+$z-index-5: 50;
+$z-index-6: 60;
+
+/* stylelint-disable */
+:export {
+  /* GRID SYSTEM */
+  colsXl: $grid-columns-xl;
+  colsLg: $grid-columns-lg;
+  colsMd: $grid-columns-md;
+  colsSm: $grid-columns-sm;
+  colsXs: $grid-columns-xs;
+}
+/* stylelint-enable */

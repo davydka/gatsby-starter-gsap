@@ -1,5 +1,11 @@
-@import 'resets';
-@import 'defaults';
+@import "node_modules/bootstrap/scss/_functions.scss";
+@import "node_modules/bootstrap/scss/_variables.scss";
+@import "node_modules/bootstrap/scss/_mixins.scss";
+@import "node_modules/bootstrap/scss/_grid.scss";
+
+
+// See gatsby-browser.js for `resets` and `defaults`
+@import 'variables.module';
 @import 'mixins';
 @import 'type';
-@import 'variables.module';
+@import 'grid';

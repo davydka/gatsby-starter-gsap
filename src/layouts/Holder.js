@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
 import { connect } from 'react-redux'
 
+import GridHelper from './GridHelper'
+
 const Counter = ({ count, increment }) => (
   <div>
     <p>Count: {count}</p>
@@ -31,6 +33,7 @@ class Holder extends React.Component {
 
     return (
       <div className={props.className}>
+        <GridHelper />
         <Link to="/">
           <h3>Redux example</h3>
         </Link>

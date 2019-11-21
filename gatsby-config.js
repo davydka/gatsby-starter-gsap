@@ -22,7 +22,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-sass`,
       options: {
-        includePaths: ['src', 'src/styles'],
+        includePaths: [require('path').resolve(__dirname, 'node_modules'), 'src', 'src/styles'],
         cssLoaderOptions: {
           camelCase: false,
         },

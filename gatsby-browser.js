@@ -1,3 +1,6 @@
+import './src/styles/resets.scss'
+import './src/styles/defaults.scss'
+
 import wrapWithProvider from './wrap-with-provider'
 
 export const wrapRootElement = wrapWithProvider
