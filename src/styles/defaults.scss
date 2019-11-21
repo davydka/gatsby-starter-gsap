@@ -1,0 +1,16 @@
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+}
+
+html {
+  // defines what 1rem is
+  font-size: 62.5%; //1 rem = 10px; 10px/16px = 62.5%
+}
+
+body {
+  font-size: 1.6rem; // resets default font-size to 16px (and scales what user defines in browser settings)
+  line-height: 1;
+  box-sizing: border-box;
+}

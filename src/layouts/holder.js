@@ -1,7 +1,7 @@
-import React from "react"
-import PropTypes from "prop-types"
-import { Link } from "gatsby"
-import { connect } from "react-redux"
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Link } from 'gatsby'
+import { connect } from 'react-redux'
 
 const Counter = ({ count, increment }) => (
   <div>
@@ -27,16 +27,23 @@ const ConnectedCounter = connect(mapStateToProps, mapDispatchToProps)(Counter)
 
 class Holder extends React.Component {
   render() {
+    const props = this.props
+
     return (
-      <div>
+      <div className={props.className}>
         <Link to="/">
           <h3>Redux example</h3>
         </Link>
         <ConnectedCounter />
-        {this.props.children}
+        {props.children}
       </div>
     )
   }
+}
+
+Holder.propTypes = {
+  className: PropTypes.string,
+  children: PropTypes.node,
 }
 
 export default Holder

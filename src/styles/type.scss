@@ -1,0 +1,40 @@
+/* Typography Mixins */
+
+@mixin type-headline-1 {
+  font-family: $font-sans-serif;
+  font-weight: $font-bold;
+  font-size: 4.3rem;
+  line-height: 1;
+}
+
+@mixin type-headline-2 {
+  font-family: $font-sans-serif;
+  font-weight: $font-bold;
+  font-size: 3.225rem;
+}
+
+@mixin type-headline-3 {
+  font-family: $font-sans-serif;
+  font-weight: $font-bold;
+  font-size: 3.225rem;
+}
+
+@mixin type-headline-4 {
+  font-family: $font-sans-serif;
+  font-weight: $font-bold;
+  font-size: 2.5155rem;
+}
+
+@mixin type-headline-5 {
+  font-family: $font-sans-serif;
+  font-weight: $font-bold;
+  font-size: 2.408rem;
+}
+
+@mixin type-headline-6 {
+  font-family: $font-sans-serif;
+  font-weight: $font-bold;
+  font-size: 1.6125rem;
+}
+
+

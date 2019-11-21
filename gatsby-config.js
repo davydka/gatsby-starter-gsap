@@ -1,3 +1,7 @@
+/* eslint-env node */
+
+const path = require('path')
+
 module.exports = {
   siteMetadata: {
     title: `Gatsby GSAP`,
@@ -18,6 +22,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-sass`,
       options: {
+        includePaths: ['src', 'src/styles'],
         cssLoaderOptions: {
           camelCase: false,
         },
@@ -39,6 +44,15 @@ module.exports = {
       resolve: `gatsby-plugin-layout`,
       options: {
         component: require.resolve(`./src/layouts/index.js`),
+      },
+    },
+    {
+      resolve: 'gatsby-plugin-root-import',
+      options: {
+        '@src': path.join(__dirname, 'src'),
+        '@components': path.join(__dirname, 'src/components'),
+        '@pages': path.join(__dirname, 'src/pages'),
+        '@styles': path.join(__dirname, 'src/styles'),
       },
     },
     // this (optional) plugin enables Progressive Web App + Offline functionality
