@@ -123,8 +123,9 @@ const Layout = ({
 
   const handleOrientationChange = () => {
     // note - we're not updating 100vh (cover) params onresize, only on orientation change
-    // reasoning is taht these items are generally for "above the fold" features
+    // reasoning is that these items are generally for "above the fold" features
     // and we don't want too much resize thrashing (at this point)
+    // also calling this change onScroll causes visible jumps on Mobile Safari
     // iOS 100vh - https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
     let vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)

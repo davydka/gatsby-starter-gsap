@@ -2,8 +2,6 @@
 
 .index-page {
   .logo-container {
-    will-change: height;
-    transition: height, 125ms;
     margin-top: -#{$header-height + $holder-margin-top};
     height: 100vh;
     height: calc(var(--vh, 1vh) * 100);
