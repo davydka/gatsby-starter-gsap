@@ -1,0 +1,21 @@
+@import 'styles/includes';
+
+.index-page {
+  .logo-container {
+    will-change: height;
+    transition: height, 125ms;
+    margin-top: -#{$header-height + $holder-margin-top};
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+
+    .logo {
+      padding: #{$header-height + $holder-margin-top * 2} 0 2rem;
+    }
+  }
+}
+
+.borders {
+  .logo-container {
+    border: 1px solid red;
+  }
+}

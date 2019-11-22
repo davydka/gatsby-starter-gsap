@@ -15,10 +15,26 @@ body {
   font-size: 1.6rem; // resets default font-size to 16px (and scales what user defines in browser settings)
   line-height: 1;
   box-sizing: border-box;
+  background: $grey-background;
 }
 
-.module-container {
-  .module {
+// GUI パラメータの準備
+.dg.ac {
+  z-index: 9999 !important;
+
+  @include extraSmallOnly {
+    display: none !important;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: $black;
+}
+
+.section-container {
+  padding: 0 $holder-margin-sides;
+  .section {
     max-width: $site-max-width;
     margin: 0 auto;
   }

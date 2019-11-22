@@ -6,24 +6,9 @@ const reducer = (state, action) => {
       prevLocation: typeof action.payload !== 'undefined' ? action.payload : initialState.prevLocation,
     })
   }
-  if (action.type === `INCREMENT`) {
-    return Object.assign({}, state, {
-      count: state.count + (action.payload ? action.payload : 1),
-    })
-  }
-  if (action.type === `SET`) {
+  if (action.type === `SETPARAM`) {
     return Object.assign({}, state, {
       count: action.payload ? action.payload : 0,
-    })
-  }
-  if (action.type === `TOGGLESHOWTARGET`) {
-    return Object.assign({}, state, {
-      showTransitionTarget: typeof action.payload !== 'undefined' ? action.payload : !state.showTransitionTarget,
-    })
-  }
-  if (action.type === `TOGGLESHOWGROUP`) {
-    return Object.assign({}, state, {
-      showTransitionGroup: typeof action.payload !== 'undefined' ? action.payload : !state.showTransitionGroup,
     })
   }
   if (action.type === `TOGGLESHOWGRID`) {
@@ -31,14 +16,18 @@ const reducer = (state, action) => {
       showGridHelper: typeof action.payload !== 'undefined' ? action.payload : !state.showGridHelper,
     })
   }
+  if (action.type === `TOGGLESHOWBORDERS`) {
+    return Object.assign({}, state, {
+      showBorders: typeof action.payload !== 'undefined' ? action.payload : !state.showBorders,
+    })
+  }
   return state
 }
 
 const initialState = {
-  count: 0.1,
+  param: 0.5,
   showGridHelper: false,
-  showTransitionTarget: false,
-  showTransitionGroup: false,
+  showBorders: false,
   prevLocation: {},
 }
 

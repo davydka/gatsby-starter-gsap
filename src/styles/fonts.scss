@@ -2,33 +2,40 @@
 
 /*
 @font-face {
-  font-family: 'Chronicle Display Roman';
+  font-family: 'simple font with no bold or italics';
+  src: url('./fonts/simple-regular.otf') format('opentype');
+}
+*/
+
+/* For complex (fully featured) fonts, declare 1 font-family and do this setup for the bold and italics. */
+/*
+@font-face {
+  font-family: 'complex font';
   font-style: normal;
-  font-weight: 400;
-  src: url('./fonts/Chronicle-Display-Roman.otf') format('opentype');
+  font-weight: normal;
+  src: url('./fonts/complex-font.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Larsseit';
+  font-family: 'complex font';
   font-style: normal;
-  font-weight: 400;
-  src: url('./fonts/Larsseit-Regular.ttf') format('truetype'),
-  url('./fonts/Larsseit-Regular.otf') format('opentype');
+  font-weight: bold;
+  src: url('./fonts/complex-font.ttf') format('truetype'), // mix and match availability of otf and ttf
+  url('./fonts/complex-font.otf') format('opentype');
 }
 
 @font-face {
-  font-family: 'Larsseit';
-  font-style: normal;
-  font-weight: 500;
-  src: url('./fonts/Larsseit-Medium.ttf') format('truetype'),
-  url('./fonts/Larsseit-Medium.otf') format('opentype');
+  font-family: 'complex font';
+  font-style: italic;
+  font-weight: normal;
+  src: url('./fonts/complex-font.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Larsseit';
-  font-style: normal;
-  font-weight: 700;
-  src: url('./fonts/Larsseit-Bold.ttf') format('truetype'),
-  url('./fonts/Larsseit-Bold.otf') format('opentype');
+  font-family: 'complex font';
+  font-style: italic;
+  font-weight: bold;
+  src: url('./fonts/complex-font.ttf') format('truetype'),
+  url('./fonts/complex-font.otf') format('opentype');
 }
- */
+*/

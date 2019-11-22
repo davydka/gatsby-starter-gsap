@@ -3,14 +3,14 @@ import PropTypes from 'prop-types'
 import { useStaticQuery, graphql } from 'gatsby'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
-import { Transition, TransitionGroup, SwitchTransition } from 'react-transition-group'
+import { Transition, TransitionGroup } from 'react-transition-group'
 import gsap, { Linear } from 'gsap'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 import Holder from './Holder'
-import Header from '@components/header'
-import Text from '@components/Text'
+import Header from '@components/Header'
+import debounce from '@src/utils/debounce'
 
 import styles from './Layout.module.scss'
 
@@ -20,14 +20,11 @@ const Layout = ({
   prevLocation, // eslint-disable-line no-unused-vars
   setPrevLocation,
   location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
-  count,
-  increment,
-  set,
+  param,
+  setparam,
   toggleGrid,
-  showTransitionGroup,
-  toggleTransitionGroup,
-  showTransitionTarget,
-  toggleTransitionTarget,
+  showBorders,
+  toggleBorders,
   children,
   // ...props
 }) => {
@@ -36,17 +33,10 @@ const Layout = ({
 
   // GUI Inlets
   let inletsHolder = useRef({
-    message: 'dat.guiのサンプル',
     speed: 1.0,
-    count: 0.5,
-    color: '#ff0000',
-    fontSize: 64,
-    border: false,
+    param: 0.5,
     gridHelper: false,
-    showTransitionTarget: false,
-    showTransitionGroup: false,
-    showKnockouts: false,
-    fontFamily: 'sans-serif',
+    showBorders: false,
   })
   let [inlets, setInlets] = useState()
 
@@ -54,11 +44,12 @@ const Layout = ({
   let handleInletChange = useRef()
   handleInletChange.current = () => {
     setInlets(Object.assign({}, inletsHolder.current))
-    set(inletsHolder.current.count)
+    setparam(inletsHolder.current.param)
     toggleGrid(inletsHolder.current.gridHelper)
-    toggleTransitionTarget(inletsHolder.current.showTransitionTarget)
-    toggleTransitionGroup(inletsHolder.current.showTransitionGroup)
-    setShowKnockouts(inletsHolder.current.showKnockouts)
+    toggleBorders(inletsHolder.current.showBorders)
+
+    // 🌎 Global Scale
+    gsap.globalTimeline.timeScale(inletsHolder.current.speed)
   }
 
   // GUI Inlets Console
@@ -67,16 +58,6 @@ const Layout = ({
       return
     }
     console.log('inlets', inlets)
-
-    if (inlets.speed) {
-      setSpeed(inlets.speed)
-
-      // 👇 specific timeline scale
-      // gs.current.timeScale(inlets.speed)
-
-      // 🌎 Global Scale
-      gsap.globalTimeline.timeScale(inlets.speed)
-    }
   }, [inlets])
 
   // Stats
@@ -87,30 +68,10 @@ const Layout = ({
 
   // Canvas
   let canvasElement = useRef()
-  let targetElement = useRef()
 
   // Page Transition Container
-  let pageTransitionContainer = useRef()
-
-  // Knockout Text
-  const [showKnockouts, setShowKnockouts] = useState(false)
-  let knockoutText = useRef()
-  let knockoutCanvas = useRef()
-  let knockoutCanvas2 = useRef()
-  const [knockoutContext, setKnockoutContext] = useState(null)
-  const [knockoutContext2, setKnockoutContext2] = useState(null)
-  useEffect(() => {
-    if (!knockoutCanvas.current) {
-      return
-    }
-    setKnockoutContext(knockoutCanvas.current.getContext('2d'))
-  }, [knockoutCanvas, showKnockouts])
-  useEffect(() => {
-    if (!knockoutCanvas2.current) {
-      return
-    }
-    setKnockoutContext2(knockoutCanvas2.current.getContext('2d'))
-  }, [knockoutCanvas2, showKnockouts])
+  let pageContainer = useRef()
+  let pageContainerNode = useRef()
 
   // Gatsby
   const siteData = useStaticQuery(graphql`
@@ -132,6 +93,7 @@ const Layout = ({
   let controls = useRef()
   let mesh = useRef()
 
+  // todo: does this need to be a ref?
   let initializeOrbits = useRef()
   initializeOrbits.current = () => {
     if (!controls) {
@@ -142,6 +104,7 @@ const Layout = ({
     controls.current.panSpeed = 0.8
   }
 
+  // todo: does this need to be a ref?
   let initializeCamera = useRef()
   initializeCamera.current = () => {
     if (!camera) {
@@ -152,43 +115,42 @@ const Layout = ({
     camera.current.position.z = 2.5
   }
 
-  const [items, setItems] = useState([
-    {
-      id: '1729d38abee60593c8c5d2d2cb95f546',
-      name: 'Tamy',
-      init: true,
-    },
-    {
-      id: '6bd5d6329026a15bf607118cdc95671b',
-      name: 'Derek',
-      init: true,
-    },
-    {
-      id: '2df108538776b71a95fc5303d6104f46',
-      name: 'Emmit',
-      init: true,
-    },
-    {
-      id: 'fa106f03ec0d8b04f7e2d20b02b276ef',
-      name: 'Lilly',
-      init: true,
-    },
-  ])
-
   useEffect(() => {
     if (location && location.state) {
-      // console.log(location)
       setPrevLocation(location.state.prevLocation)
     }
   }, [location, setPrevLocation])
+
+  const handleOrientationChange = () => {
+    // note - we're not updating 100vh (cover) params onresize, only on orientation change
+    // reasoning is taht these items are generally for "above the fold" features
+    // and we don't want too much resize thrashing (at this point)
+    // iOS 100vh - https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
+    let vh = window.innerHeight * 0.01
+    document.documentElement.style.setProperty('--vh', `${vh}px`)
+  }
+
+  const handleResize = () => {
+    const height = pageContainerNode && pageContainerNode.current && pageContainerNode.current.scrollHeight
+    if (height && pageContainer && pageContainer.current) {
+      pageContainer.current.style.minHeight = `${height}px`
+    }
+  }
 
   // componentDidMount
   useEffect(() => {
     console.log('🌈 layout mounted')
 
+    window.addEventListener('orientationchange', debounce(handleOrientationChange, 200))
+    handleOrientationChange()
+
+    window.addEventListener('resize', debounce(handleResize, 200))
+    handleResize()
+
     /** Stats **/
     stats.current = new window.Stats()
     stats.current.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
+    stats.current.dom.style.zIndex = '9999'
     stats.current.dom.style.top = 'auto'
     stats.current.dom.style.left = 'auto'
     stats.current.dom.style.right = '15px'
@@ -198,27 +160,11 @@ const Layout = ({
     /** GUI **/
     gui.current = new window.dat.GUI()
     gui.current
-      .add(inletsHolder.current, 'message')
-      .onChange(handleInletChange.current)
-      .listen()
-    gui.current
       .add(inletsHolder.current, 'speed', 0.0, 2.0)
       .onChange(handleInletChange.current)
       .listen()
     gui.current
-      .add(inletsHolder.current, 'count', 0, 100)
-      .onChange(handleInletChange.current)
-      .listen()
-    gui.current
-      .addColor(inletsHolder.current, 'color')
-      .onChange(handleInletChange.current)
-      .listen()
-    gui.current
-      .add(inletsHolder.current, 'fontSize', 0, 256)
-      .onChange(handleInletChange.current)
-      .listen()
-    gui.current
-      .add(inletsHolder.current, 'border')
+      .add(inletsHolder.current, 'param', 0, 100)
       .onChange(handleInletChange.current)
       .listen()
     gui.current
@@ -227,22 +173,9 @@ const Layout = ({
       .name('grid helper')
       .listen()
     gui.current
-      .add(inletsHolder.current, 'showTransitionTarget')
+      .add(inletsHolder.current, 'showBorders')
       .onChange(handleInletChange.current)
-      .name('transition single')
-      .listen()
-    gui.current
-      .add(inletsHolder.current, 'showTransitionGroup')
-      .onChange(handleInletChange.current)
-      .name('transition group')
-      .listen()
-    gui.current
-      .add(inletsHolder.current, 'showKnockouts')
-      .onChange(handleInletChange.current)
-      .listen()
-    gui.current
-      .add(inletsHolder.current, 'fontFamily', ['sans-serif', 'serif', 'cursive', 'ＭＳ 明朝', 'monospace'])
-      .onChange(handleInletChange.current)
+      .name('show borders')
       .listen()
     handleInletChange.current()
 
@@ -278,16 +211,6 @@ const Layout = ({
       // paused: true,
     })
     gs.current.fromTo(
-      targetElement.current,
-      { rotation: 0 },
-      {
-        duration: 1,
-        rotation: 360,
-        ease: Linear.easeNone,
-      },
-      0
-    )
-    gs.current.fromTo(
       mesh.current.rotation,
       { y: 0 },
       {
@@ -312,46 +235,17 @@ const Layout = ({
         window.cancelAnimationFrame(animationID.current)
         animationID.current = undefined
       }
+      window.removeEventListener('orientationchange', debounce(handleOrientationChange, 200))
+      window.removeEventListener('resize', debounce(handleResize, 200))
     }
   }, [])
 
-  // Redux -> GUI Inlets
-  useEffect(() => {
-    inletsHolder.current.count = count
-  }, [count])
-
-  const [speed, setSpeed] = useState(1.0)
-
-  // Redux + React
-  const handleClick = () => {
-    console.log('click')
-    // console.log(renderer.current.info)
-    increment(2)
-  }
-
-  function scaleUp() {
-    gsap.to(targetElement.current, 1, {
-      scale: 12.0,
-      ease: Linear.ease,
-    })
-  }
-
-  function scaleDown() {
-    gsap.to(targetElement.current, 1, {
-      scale: 1.0,
-      ease: Linear.ease,
-      onComplete: () => {
-        console.log('scaledown animation ended 🎬')
-      },
-    })
-  }
-
   useEffect(() => {
     gsap.to(camera.current.position, 1, {
-      z: count,
+      z: param,
       ease: Linear.ease,
     })
-  }, [count])
+  }, [param])
 
   // ANIMATE
   let animationID = useRef()
@@ -366,12 +260,7 @@ const Layout = ({
 
     flip.current = flip.current + 1
     if (flip.current >= 3) {
-      if (showKnockouts && knockoutContext) {
-        knockoutContext.drawImage(canvasElement.current, 0, 0, 320, 180)
-      }
-      if (showKnockouts && knockoutContext2) {
-        knockoutContext2.drawImage(canvasElement.current, 0, 0, 640, 360)
-      }
+      // do something at a lower framerate here
       flip.current = 0
     }
 
@@ -379,315 +268,65 @@ const Layout = ({
     stats.current.end()
   }
 
-  const [testText, setTestText] = useState(false)
-
-  const TransitionGroupItem = ({ item, index, in: show /*...props*/ }) => {
-    return (
-      <Transition
-        key={item.id}
-        index={index}
-        mountOnEnter
-        unmountOnExit
-        appear
-        in={show}
-        addEndListener={(node, done) => {
-          // console.log(item.name, show)
-          gsap.to(node, 0.5, {
-            // delay: index * 0.15,
-            x: show ? 0 : 100,
-            opacity: show ? 1 : 0,
-            onComplete: done,
-          })
-        }}
-      >
-        <li>
-          {item.name}
-          <button onClick={() => setItems(items.filter(_ => _.id !== item.id))}>remove</button>
-        </li>
-      </Transition>
-    )
-  }
-
-  TransitionGroupItem.propTypes = {
-    item: PropTypes.object,
-    index: PropTypes.number,
-    in: PropTypes.bool,
-  }
-
   return (
-    <Holder className={cx('holder')}>
-      <Header siteTitle={siteData.site.siteMetadata.title} />
-      <div
-        style={{
-          padding: `0 0 1.45rem`,
-          boxSizing: 'border-box',
-        }}
-      >
-        <Transition
-          // timeout ignored when addEndListener exists
-          // timeout={1000}
-          mountOnEnter
-          unmountOnExit
-          in={showTransitionTarget}
-          addEndListener={(node, done) => {
-            gsap.fromTo(
-              node,
-              {
-                x: showTransitionTarget ? 100 : 0,
-                opacity: showTransitionTarget ? 0 : 1,
-              },
-              {
-                duration: 1.5,
-                x: showTransitionTarget ? 0 : 100,
-                opacity: showTransitionTarget ? 1 : 0,
-                onComplete: done,
-              }
-            )
-          }}
-        >
-          <div className={cx('module-container')}>
-            <div className={cx('transitionTarget', 'module')}>
-              <Text type="h2" tag="h2">
-                transitiongroup single target 遷移グループ
-              </Text>
-            </div>
-          </div>
-        </Transition>
-
-        {showTransitionGroup && (
-          <div className={cx('module-container')}>
-            <TransitionGroup className={cx('transitionGroup', 'module')} component="ul">
-              {items.map((item, index) => {
-                // eslint-disable-next-line
-                return <TransitionGroupItem key={item.id} item={item} index={index} />
-              })}
-            </TransitionGroup>
-          </div>
-        )}
-
-        <SwitchTransition>
-          <Transition
-            appear
-            mountOnEnter
-            unmountOnExit
-            key={testText ? 'Goodbye, world!' : 'Hello, world!'}
-            addEndListener={(node, done) => {
-              const loaded = parseFloat(window.getComputedStyle(node).getPropertyValue('opacity'))
-              gsap.to(node, 1.5, {
-                opacity: loaded === 0 ? 1 : 0,
-                onComplete: done,
-              })
-            }}
-          >
-            <div style={{ opacity: 0 }} className={cx('module-container')}>
-              <div className={cx('module')}>
-                <button onClick={() => setTestText(testText => !testText)}>
-                  <Text tag="h4" type="h4">
-                    Switch transition: {testText ? 'Goodbye, world!' : 'Hello, world!'}
-                  </Text>
-                </button>
-              </div>
-            </div>
-          </Transition>
-        </SwitchTransition>
-
-        <div className={cx('module-container')}>
-          <div className={cx('module')}>
-            <div style={{ border: '1px solid gold', margin: '1rem 0' }}>
-              <Text tag="h4" type="h4">
-                {count}{' '}
-                <span role="img" aria-label="emoji">
-                  👈
-                </span>{' '}
-                counts (counts is hooked up to camera position Z)
-              </Text>
-            </div>
-
-            <div style={{ border: '1px solid teal', marginBottom: '1rem' }}>
-              <Text tag="h4" type="h4">
-                {speed}{' '}
-                <span role="img" aria-label="emoji">
-                  🚤
-                </span>{' '}
-                speed
-              </Text>
-            </div>
-
-            <button onClick={handleClick}>
-              <Text tag="h4" type="h4">
-                test gui REDUX counts increment
-              </Text>
-            </button>
-          </div>
-        </div>
-
-        {inlets && (
-          <div
-            style={{
-              background: inlets.color,
-              fontSize: `${inlets.fontSize}px`,
-              fontFamily: inlets.fontFamily,
-            }}
-            className={cx('inlet-target')}
-          >
-            <div style={{ border: inlets.border ? '10px solid black' : '' }} className={cx('module-container')}>
-              <div className={cx('module')}>{inlets.message}</div>
-            </div>
-          </div>
-        )}
-
-        <main>
-          <div className={cx('module-container')}>
-            <div className={cx('canvas-container', 'module')}>
-              <canvas className={cx('canvas')} ref={canvasElement} width={width} height={height} />
-
-              <div
-                onTouchStart={scaleUp}
-                onTouchEnd={scaleDown}
-                onMouseEnter={scaleUp}
-                onMouseLeave={scaleDown}
-                ref={targetElement}
-                className={cx('target')}
-              >
-                hover!
-              </div>
-              <div ref={knockoutText} className={cx('knockout')}>
-                <Text tag="h2" type="h2" className={cx('knockout-header')}>
-                  knockout text
-                </Text>
-                <p>
-                  Nisi debitis excepturi omnis sed autem tempora. Ut ea quod. Qui porro perferendis. Neque eos nisi
-                  minima esse et ut vel aut. Sit sed earum est. Consectetur consequatur et ad est beatae sapiente.
-                  Doloribus et sunt a.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {showKnockouts && (
-            <div className={cx('module-container')}>
-              <div className={cx('module')}>
-                <div style={{ position: 'relative', width: '320px', height: '180px' }}>
-                  <canvas ref={knockoutCanvas} width={320} height={180} />
-                  <div className={cx('knockout2')}>
-                    <p>More knockout text.</p>
-                    <p>
-                      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                      est laborum.
-                    </p>
-                    <p>Yadda yadda yadda</p>
-                  </div>
-                </div>
-                <div style={{ marginLeft: '320px', position: 'relative', width: '640px', height: '360px' }}>
-                  <canvas ref={knockoutCanvas2} width={640} height={360} />
-                  <div className={cx('knockout2')}>
-                    <Text tag="h2" type="h2">
-                      Even more knockout text.
-                    </Text>
-                    <Text tag="h6" type="h6">
-                      {`This approach for cloning canvas elements isn't sustainable for more than 1 canvas unless you start
-                      lowering frame rates.`}
-                    </Text>
-                    <p>
-                      Leo integer malesuada nunc vel risus commodo viverra maecenas accumsan. Leo duis ut diam quam
-                      nulla porttitor massa id neque. Quis viverra nibh cras pulvinar mattis nunc. Eros in cursus turpis
-                      massa tincidunt dui. Id consectetur purus ut faucibus pulvinar elementum integer enim.
-                    </p>
-                    <p>
-                      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                      pariatur. Dui accumsan sit amet nulla facilisi morbi tempus iaculis. Enim tortor at auctor urna.
-                      Fermentum odio eu feugiat pretium.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className={cx('breakout-module')}>
-            <div className={cx('module-container')}>
-              <div className={cx('module')}>
-                <Text type="h3" tag="h3">
-                  Breakout Module
-                </Text>
-                <p>{"Don't put a max-width on the page, but put the max on each module container"}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className={cx('breakout-module-full')}>
-            <Text type="h3" tag="h3">
-              Breakout With no Container
-            </Text>
-            <p>This module has no container</p>
-          </div>
-
-          <div className={cx('pageTransitionContainer')} ref={pageTransitionContainer}>
-            <TransitionGroup>
-              <Transition
-                key={location.pathname}
-                appear
-                mountOnEnter
-                unmountOnExit
-                onEnter={(node, isAppearing) => {
-                  if (isAppearing) {
-                    // isAppearing happens on 1st render, this one (onEnter) happens before initialClientRender (gatsby event)
-                    return
-                  }
-                  console.log('📃 page: on enter')
-                  if (pageTransitionContainer.current) {
-                    const height = node.scrollHeight
-                    pageTransitionContainer.current.style.minHeight = `${height}px`
-                    node.style.position = 'absolute'
-                  }
-                }}
-                onEntering={(node /*isAppearing*/) => {
+    <Holder className={cx('holder', { borders: showBorders })}>
+      <Header siteTitle={siteData.site.siteMetadata.title} className={cx('header-container')} />
+      <main>
+        <div className={cx('page-container')} ref={pageContainer}>
+          <TransitionGroup className={cx('page-container__transition-group')}>
+            <Transition
+              // timeout={100} // turn this off when using addEndListener
+              key={location.pathname}
+              appear
+              mountOnEnter
+              unmountOnExit
+              onEnter={(node, isAppearing) => {
+                // isAppearing happens on 1st render, this one (onEnter) happens before initialClientRender (gatsby event)
+                if (isAppearing) {
+                  return
+                }
+                console.log('📃 page: on enter')
+                handleResize()
+              }}
+              onEntering={
+                (/*node, isAppearing*/) => {
                   console.log('📃 page: on entering')
-                  if (pageTransitionContainer.current) {
-                    const height = node.scrollHeight
-                    pageTransitionContainer.current.style.minHeight = `${height}px`
-                    node.style.position = 'absolute'
-                  }
-                }}
-                onEntered={(node /*isAppearing*/) => {
+                  handleResize()
+                }
+              }
+              onEntered={
+                (/*node, isAppearing*/) => {
                   console.log('📃 page: on entered')
-                  if (pageTransitionContainer.current) {
-                    const height = node.scrollHeight
-                    pageTransitionContainer.current.style.minHeight = `${height}px`
-                    node.style.position = 'absolute'
-                  }
-                }}
-                addEndListener={(node, done) => {
-                  const loaded = parseFloat(node.style.opacity) === 1
-                  gsap.to(node, 1.5, {
-                    opacity: loaded ? 0 : 1,
-                    x: loaded ? 100 : 0,
-                    startAt: {
-                      opacity: loaded ? 1 : 0,
-                      x: loaded ? 0 : 100,
-                    },
-                    onComplete: () => {
-                      node.style.position = 'relative'
-                      node.style.minHeight = 'auto'
-                      console.log('📃 page transition end!!')
-                      done()
-                    },
-                  })
-                }}
-              >
-                <div style={{ width: '100%' }}>{children}</div>
-              </Transition>
-            </TransitionGroup>
-          </div>
-          {/*  END transitionContainer */}
-        </main>
+                  handleResize()
+                }
+              }
+              addEndListener={(node, done) => {
+                const loadingOut = parseFloat(node.style.opacity) === 1
+                gsap.to(node, 1.5, {
+                  opacity: loadingOut ? 0 : 1,
+                  x: loadingOut ? 100 : 0,
+                  startAt: {
+                    opacity: loadingOut ? 1 : 0,
+                    x: loadingOut ? 0 : 100,
+                  },
+                  onComplete: () => {
+                    handleResize()
+                    console.log('📃 page transition end!!')
+                    done()
+                  },
+                })
+              }}
+            >
+              <div ref={pageContainerNode} className={cx('page-container__node')}>
+                {children}
+              </div>
+            </Transition>
+          </TransitionGroup>
+        </div>
+        {/*  END transitionContainer */}
+      </main>
 
-        <footer>
-          © {new Date().getFullYear()}, Built with
-          {` `}
-          <a href="https://www.gatsbyjs.org">Gatsby</a>
-        </footer>
-      </div>
+      <footer className={cx('footer')}>© {new Date().getFullYear()}, Footer goes here</footer>
     </Holder>
   )
 }
@@ -697,28 +336,23 @@ Layout.propTypes = {
   location: PropTypes.object,
   prevLocation: PropTypes.object,
   setPrevLocation: PropTypes.func,
-  count: PropTypes.number.isRequired,
-  increment: PropTypes.func.isRequired,
-  set: PropTypes.func.isRequired,
+  param: PropTypes.number.isRequired,
+  setparam: PropTypes.func.isRequired,
   toggleGrid: PropTypes.func,
-  toggleTransitionTarget: PropTypes.func.isRequired,
-  toggleTransitionGroup: PropTypes.func.isRequired,
-  showTransitionTarget: PropTypes.bool,
-  showTransitionGroup: PropTypes.bool,
+  showBorders: PropTypes.bool,
+  toggleBorders: PropTypes.func,
 }
 
-const mapStateToProps = ({ prevLocation, count, showTransitionTarget, showTransitionGroup }) => {
-  return { prevLocation, count, showTransitionTarget, showTransitionGroup }
+const mapStateToProps = ({ prevLocation, param, showBorders }) => {
+  return { prevLocation, param, showBorders }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     setPrevLocation: loc => dispatch({ type: `SETPREVLOCATION`, payload: loc }),
-    increment: amount => dispatch({ type: `INCREMENT`, payload: amount }),
-    set: target => dispatch({ type: `SET`, payload: target }),
+    setparam: target => dispatch({ type: `SETPARAM`, payload: target }),
     toggleGrid: target => dispatch({ type: `TOGGLESHOWGRID`, payload: target }),
-    toggleTransitionTarget: target => dispatch({ type: 'TOGGLESHOWTARGET', payload: target }),
-    toggleTransitionGroup: target => dispatch({ type: 'TOGGLESHOWGROUP', payload: target }),
+    toggleBorders: target => dispatch({ type: `TOGGLESHOWBORDERS`, payload: target }),
   }
 }
 

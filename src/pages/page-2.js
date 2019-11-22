@@ -1,32 +1,40 @@
 import React from 'react'
-import { Link } from 'gatsby'
+// import { Link } from 'gatsby'
+import classnames from 'classnames/bind'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
 
+import styles from './Index.module.scss'
 import SEO from '@components/seo'
-import Text from '@components/Text'
+// import Text from '@components/Text'
+import Logo from '@components/Logo'
 
-const SecondPage = () => (
-  <>
-    <SEO title="Page two" />
-    <div className="module-container">
-      <div className="module">
-        <Text className="h1" tag="h1">
-          Hi from the second page
-        </Text>
-        <p>Welcome to page 2</p>
-        <Link to="/">Go back to the homepage using gatsby Link</Link>
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <p>more content</p>
+const cx = classnames.bind(styles)
+
+const IndexPage = ({ showBorders }) => (
+  <div className={cx('index-page', { borders: showBorders })}>
+    <SEO title="Page Two - GSAP Starter" />
+
+    <div className="section-container">
+      <div className="section">
+        <div className={cx('row')}>
+          <div className={cx('col')}>
+            <div className={cx('logo-container')}>
+              <Logo className={cx('logo')} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <Text tag="h5" type="h5">
-      Example outside module-container.
-    </Text>
-  </>
+  </div>
 )
 
-export default SecondPage
+IndexPage.propTypes = {
+  showBorders: PropTypes.bool,
+}
+
+const mapStateToProps = ({ showBorders }) => {
+  return { showBorders }
+}
+
+export default connect(mapStateToProps)(IndexPage)

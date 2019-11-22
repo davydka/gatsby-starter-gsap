@@ -13,7 +13,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: calc(100% - #{$holder-margin-sides * 2});
+  margin: 0 $holder-margin-sides;
   pointer-events: none;
   background: #FFDAB933;
 }
@@ -28,7 +29,6 @@
 }
 
 .xl-helper {
-  //background: fuchsia;
   display: none;
   @include extraLargeOnly {
     display: flex;
@@ -36,7 +36,6 @@
 }
 
 .lg-helper {
-  //background: darkblue;
   display: none;
   @include largeOnly {
     display: flex;
@@ -44,7 +43,6 @@
 }
 
 .md-helper {
-  //background: orangered;
   display: none;
   @include mediumOnly {
     display: flex;
@@ -52,7 +50,6 @@
 }
 
 .sm-helper {
-  //background: cornflowerblue;
   display: none;
   @include smallOnly {
     display: flex;
@@ -60,7 +57,6 @@
 }
 
 .xs-helper {
-  //background: lawngreen;
   display: none;
   @include extraSmallOnly {
     display: flex;
