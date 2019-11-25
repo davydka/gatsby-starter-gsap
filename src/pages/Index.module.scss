@@ -6,14 +6,18 @@
     height: 100vh;
     height: calc(var(--vh, 1vh) * 100);
 
+    .moon,
     .logo {
       padding: #{$header-height + $holder-margin-top * 2} 0 2rem;
     }
   }
 }
 
-.borders {
+.page-borders {
   .logo-container {
     border: 1px solid red;
   }
+   .content-container {
+     border: 1px solid rebeccapurple;
+   }
 }

@@ -1,18 +1,15 @@
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-import { useStaticQuery, graphql } from 'gatsby'
 import classnames from 'classnames/bind'
+import { useStaticQuery, graphql } from 'gatsby'
 import { connect } from 'react-redux'
-import { Transition, TransitionGroup } from 'react-transition-group'
 import gsap, { Linear } from 'gsap'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-import Holder from './Holder'
-import Header from '@components/Header'
-import debounce from '@src/utils/debounce'
-
 import styles from './Layout.module.scss'
+import GridHelper from './GridHelper'
+import Header from '@components/Header'
 
 const cx = classnames.bind(styles)
 
@@ -23,11 +20,21 @@ const Layout = ({
   param,
   setparam,
   toggleGrid,
-  showBorders,
   toggleBorders,
   children,
   // ...props
 }) => {
+  // Gatsby
+  const siteData = useStaticQuery(graphql`
+    query SiteTitleQuery {
+      site {
+        siteMetadata {
+          title
+        }
+      }
+    }
+  `)
+
   //GUIパラメータの準備
   let gui = useRef()
 
@@ -69,21 +76,6 @@ const Layout = ({
   // Canvas
   let canvasElement = useRef()
 
-  // Page Transition Container
-  let pageContainer = useRef()
-  let pageContainerNode = useRef()
-
-  // Gatsby
-  const siteData = useStaticQuery(graphql`
-    query SiteTitleQuery {
-      site {
-        siteMetadata {
-          title
-        }
-      }
-    }
-  `)
-
   // THREE
   const width = 960
   const height = 540
@@ -121,7 +113,6 @@ const Layout = ({
     }
   }, [location, setPrevLocation])
 
-  /*
   const handleOrientationChange = () => {
     // note - we're not updating 100vh (cover) params onresize, only on orientation change
     // reasoning is that these items are generally for "above the fold" features
@@ -131,36 +122,13 @@ const Layout = ({
     let vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)
   }
-   */
-
-  const handleResize = () => {
-    const height = pageContainerNode && pageContainerNode.current && pageContainerNode.current.scrollHeight
-    console.log('handleresize', pageContainerNode)
-    if (height && pageContainer && pageContainer.current) {
-      pageContainer.current.style.minHeight = `${height}px`
-    }
-  }
-
-  const TransitionGroupNode = forwardRef((props, ref) => {
-    const thisRef = useRef(null)
-    useImperativeHandle(ref, () => thisRef.current)
-    return (
-      <div ref={thisRef} className={cx('page-container__node')}>
-        {children}
-      </div>
-    )
-  })
-  TransitionGroupNode.displayName = 'TransitionGroupNode'
 
   // componentDidMount
   useEffect(() => {
     console.log('🌈 layout mounted')
 
-    // window.addEventListener('orientationchange', debounce(handleOrientationChange, 200))
-    // handleOrientationChange()
-
-    window.addEventListener('resize', debounce(handleResize, 200))
-    handleResize()
+    window.addEventListener('orientationchange', handleOrientationChange)
+    handleOrientationChange()
 
     /** Stats **/
     stats.current = new window.Stats()
@@ -250,8 +218,7 @@ const Layout = ({
         window.cancelAnimationFrame(animationID.current)
         animationID.current = undefined
       }
-      // window.removeEventListener('orientationchange', debounce(handleOrientationChange, 200))
-      window.removeEventListener('resize', debounce(handleResize, 200))
+      window.removeEventListener('orientationchange', handleOrientationChange)
     }
   }, [])
 
@@ -284,70 +251,14 @@ const Layout = ({
   }
 
   return (
-    <Holder className={cx('holder', { borders: showBorders })}>
+    <main className={cx('main')}>
+      <GridHelper />
       <Header siteTitle={siteData.site.siteMetadata.title} className={cx('header-container')} />
-      <main>
-        <div className={cx('page-container')} ref={pageContainer}>
-          <TransitionGroup className={cx('page-container__transition-group')}>
-            <Transition
-              // timeout={100} // turn this off when using addEndListener
-              key={location.pathname}
-              appear
-              mountOnEnter
-              unmountOnExit
-              onEnter={(node, isAppearing) => {
-                // isAppearing happens on 1st render, this one (onEnter) happens before initialClientRender (gatsby event)
-                if (isAppearing) {
-                  return
-                }
-                console.log('📃 page: on enter')
-                const loadingOut = parseFloat(node.style.opacity) === 1
-                console.log(loadingOut)
-                console.log(node.scrollHeight)
-                handleResize()
-              }}
-              onEntering={(node /*isAppearing*/) => {
-                console.log('📃 page: on entering')
-                const loadingOut = parseFloat(node.style.opacity) === 1
-                console.log(loadingOut)
-                console.log(node.scrollHeight)
-                handleResize()
-              }}
-              onEntered={(node /*isAppearing*/) => {
-                console.log('📃 page: on entered')
-                const loadingOut = parseFloat(node.style.opacity) === 1
-                console.log(loadingOut)
-                console.log(node.scrollHeight)
-                handleResize()
-              }}
-              addEndListener={(node, done) => {
-                const loadingOut = parseFloat(node.style.opacity) === 1
-                gsap.to(node, 1.5, {
-                  opacity: loadingOut ? 0 : 1,
-                  x: loadingOut ? 100 : 0,
-                  startAt: {
-                    opacity: loadingOut ? 1 : 0,
-                    x: loadingOut ? 0 : 100,
-                  },
-                  onComplete: () => {
-                    console.log('📃 page transition end!!')
-                    console.log(loadingOut)
-                    console.log(node.scrollHeight)
-                    handleResize()
-                    done()
-                  },
-                })
-              }}
-            >
-              <TransitionGroupNode ref={pageContainerNode}>{children}</TransitionGroupNode>
-            </Transition>
-          </TransitionGroup>
-        </div>
-        {/*  END transitionContainer */}
-      </main>
+
+      <div className={cx('page-container')}>{children}</div>
 
       <footer className={cx('footer')}>© {new Date().getFullYear()}, Footer goes here</footer>
-    </Holder>
+    </main>
   )
 }
 

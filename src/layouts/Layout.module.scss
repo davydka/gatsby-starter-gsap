@@ -1,6 +1,6 @@
 @import 'styles/includes';
 
-.holder {
+.main {
   color: $black;
   background: $grey-background;
   font-family: $font-serif;
@@ -36,19 +36,9 @@
 
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  //min-height: 100vh;
   max-width: 100vw;
 
-
-  .page-container__transition-group {
-    margin: auto 0;
-
-    .page-container__node {
-      position: absolute;
-      top: 0;
-      width: 100%;
-    }
-  }
 }
 
 .footer {
