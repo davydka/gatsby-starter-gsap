@@ -121,31 +121,22 @@ const Layout = ({
     }
   }, [location, setPrevLocation])
 
-  /*
-  const handleOrientationChange = () => {
-    // note - we're not updating 100vh (cover) params onresize, only on orientation change
-    // reasoning is that these items are generally for "above the fold" features
-    // and we don't want too much resize thrashing (at this point)
-    // also calling this change onScroll causes visible jumps on Mobile Safari
-    // iOS 100vh - https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
-    let vh = window.innerHeight * 0.01
-    document.documentElement.style.setProperty('--vh', `${vh}px`)
-  }
-   */
-
   const handleResize = () => {
     const height = pageContainerNode && pageContainerNode.current && pageContainerNode.current.scrollHeight
-    console.log('handleresize', pageContainerNode)
     if (height && pageContainer && pageContainer.current) {
       pageContainer.current.style.minHeight = `${height}px`
     }
   }
 
-  const TransitionGroupNode = forwardRef((props, ref) => {
+  const TransitionGroupNode = forwardRef(({ children }, ref) => {
+    let opacity = 1
+    if (prevLocation && typeof prevLocation.pathname !== 'undefined') {
+      opacity = 0
+    }
     const thisRef = useRef(null)
     useImperativeHandle(ref, () => thisRef.current)
     return (
-      <div ref={thisRef} className={cx('page-container__node')}>
+      <div ref={thisRef} className={cx('page-container__node')} style={{ opacity }}>
         {children}
       </div>
     )
@@ -155,9 +146,6 @@ const Layout = ({
   // componentDidMount
   useEffect(() => {
     console.log('🌈 layout mounted')
-
-    // window.addEventListener('orientationchange', debounce(handleOrientationChange, 200))
-    // handleOrientationChange()
 
     window.addEventListener('resize', debounce(handleResize, 200))
     handleResize()
@@ -295,34 +283,23 @@ const Layout = ({
               appear
               mountOnEnter
               unmountOnExit
-              onEnter={(node, isAppearing) => {
-                // isAppearing happens on 1st render, this one (onEnter) happens before initialClientRender (gatsby event)
-                if (isAppearing) {
-                  return
-                }
+              onEnter={(node /*isAppearing*/) => {
                 console.log('📃 page: on enter')
-                const loadingOut = parseFloat(node.style.opacity) === 1
-                console.log(loadingOut)
-                console.log(node.scrollHeight)
+                // console.log(node)
+                node.pathname = location.pathname
                 handleResize()
               }}
-              onEntering={(node /*isAppearing*/) => {
+              onEntering={() => {
                 console.log('📃 page: on entering')
-                const loadingOut = parseFloat(node.style.opacity) === 1
-                console.log(loadingOut)
-                console.log(node.scrollHeight)
                 handleResize()
               }}
-              onEntered={(node /*isAppearing*/) => {
+              onEntered={() => {
                 console.log('📃 page: on entered')
-                const loadingOut = parseFloat(node.style.opacity) === 1
-                console.log(loadingOut)
-                console.log(node.scrollHeight)
                 handleResize()
               }}
               addEndListener={(node, done) => {
-                const loadingOut = parseFloat(node.style.opacity) === 1
-                gsap.to(node, 1.5, {
+                const loadingOut = typeof node.pathname === 'undefined'
+                gsap.to(pageContainerNode.current, 1.5, {
                   opacity: loadingOut ? 0 : 1,
                   x: loadingOut ? 100 : 0,
                   startAt: {
@@ -331,8 +308,6 @@ const Layout = ({
                   },
                   onComplete: () => {
                     console.log('📃 page transition end!!')
-                    console.log(loadingOut)
-                    console.log(node.scrollHeight)
                     handleResize()
                     done()
                   },
