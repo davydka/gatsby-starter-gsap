@@ -1,11 +1,11 @@
 import React from 'react'
-import { Link } from 'gatsby'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
+import { connect } from 'react-redux'
 
 import styles from './Header.module.scss'
+import Link from '@components/Link'
 import Text from '@components/Text'
-import { connect } from 'react-redux'
 
 const cx = classnames.bind(styles)
 
@@ -51,6 +51,7 @@ const Header = ({ className, showBorders }) => {
 Header.propTypes = {
   className: PropTypes.string,
   showBorders: PropTypes.bool,
+  setPageNavigate: PropTypes.func,
 }
 
 const mapStateToProps = ({ showBorders }) => {

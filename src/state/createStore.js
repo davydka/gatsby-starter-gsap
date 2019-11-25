@@ -11,6 +11,16 @@ const reducer = (state, action) => {
       count: action.payload ? action.payload : 0,
     })
   }
+  if (action.type === `SETPAGENAVIGATE`) {
+    return Object.assign({}, state, {
+      pageNavigate: action.payload ? action.payload : false,
+    })
+  }
+  if (action.type === `SETPAGENAVIGATING`) {
+    return Object.assign({}, state, {
+      pageNavigating: action.payload ? action.payload : false,
+    })
+  }
   if (action.type === `TOGGLESHOWGRID`) {
     return Object.assign({}, state, {
       showGridHelper: typeof action.payload !== 'undefined' ? action.payload : !state.showGridHelper,
@@ -26,6 +36,8 @@ const reducer = (state, action) => {
 
 const initialState = {
   param: 0.5,
+  pageNavigate: false,
+  pageNavigating: false,
   showGridHelper: false,
   showBorders: false,
   prevLocation: {},

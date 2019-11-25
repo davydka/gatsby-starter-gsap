@@ -64,7 +64,7 @@ const Layout = ({
     if (!inlets) {
       return
     }
-    console.log('inlets', inlets)
+    // console.log('inlets', inlets)
   }, [inlets])
 
   // Stats
@@ -108,7 +108,7 @@ const Layout = ({
   }
 
   useEffect(() => {
-    if (location && location.state) {
+    if (location && location.state && location.state.prevLocation) {
       setPrevLocation(location.state.prevLocation)
     }
   }, [location, setPrevLocation])
@@ -254,9 +254,7 @@ const Layout = ({
     <main className={cx('main')}>
       <GridHelper />
       <Header siteTitle={siteData.site.siteMetadata.title} className={cx('header-container')} />
-
-      <div className={cx('page-container')}>{children}</div>
-
+      {children}
       <footer className={cx('footer')}>© {new Date().getFullYear()}, Footer goes here</footer>
     </main>
   )

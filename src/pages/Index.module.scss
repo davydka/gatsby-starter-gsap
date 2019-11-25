@@ -1,6 +1,8 @@
 @import 'styles/includes';
 
 .index-page {
+  overflow: hidden;
+
   .logo-container {
     margin-top: -#{$header-height + $holder-margin-top};
     height: 100vh;

@@ -1,20 +1,76 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { navigate } from 'gatsby'
 import { Transition } from 'react-transition-group'
 import gsap from 'gsap'
 
-const PageTransition = ({ children, pagePath, location, prevLocation }) => {
+const PageTransition = ({
+  children,
+  pagePath,
+  location,
+  prevLocation,
+  pageNavigate,
+  setPageNavigate,
+  setPageNavigating,
+}) => {
   const [locationHolder, setLocationHolder] = useState('')
-  const [opacity, setOpacity] = useState(1)
+  const [opacity, setOpacity] = useState(0)
   useEffect(() => {
     if (prevLocation && typeof prevLocation.pathname !== 'undefined' && locationHolder !== location.pathname) {
       setOpacity(0)
     }
-  }, [opacity])
+  }, [opacity, prevLocation])
+
+  const refContainer = useRef(null)
+  useEffect(() => {
+    if (pageNavigate !== false) {
+      // console.log('🛵 Page navigate')
+      // console.log('going to:', pageNavigate.replace('/', ''))
+      // console.log('coming from:', location.pathname.replace('/', ''))
+      // console.log('is animating:', gsap.isTweening(refContainer.current))
+      if (gsap.isTweening(refContainer.current)) {
+        setPageNavigating(true)
+        setPageNavigate(false)
+      } else {
+        setPageNavigating(false)
+        setPageNavigate(false)
+      }
+    }
+    if (
+      pageNavigate !== false &&
+      pageNavigate.replace('/', '') !== location.pathname.replace('/', '') &&
+      !gsap.isTweening(refContainer.current)
+    ) {
+      gsap.to(refContainer.current, 0.5, {
+        opacity: 0,
+        x: 100,
+        startAt: {
+          opacity: 1,
+          x: 0,
+        },
+        onStart: () => {
+          setPageNavigating(true)
+          setPageNavigate(false)
+        },
+        onComplete: () => {
+          setPageNavigating(false)
+          setPageNavigate(false)
+          navigate(pageNavigate)
+        },
+      })
+    }
+  }, [pageNavigate, location, pagePath])
+
+  const TransitionNode = forwardRef(({ children }, ref) => {
+    const thisRef = useRef(null)
+    useImperativeHandle(ref, () => thisRef.current)
+    return <div ref={thisRef}>{children}</div>
+  })
+  TransitionNode.displayName = 'TransitionNode'
 
   useEffect(() => {
-    console.log('𝍌 PageTransition mounted')
+    console.log('𝍌𝍌𝍌 PageTransition mounted')
   }, [])
 
   return (
@@ -26,13 +82,13 @@ const PageTransition = ({ children, pagePath, location, prevLocation }) => {
       mountOnEnter
       unmountOnExit
       onEnter={() => {
-        console.log('📃 page: on enter')
+        // console.log('📃 transition: on enter')
       }}
       onEntering={() => {
-        console.log('📃 page: on entering')
+        // console.log('📃 transition: on entering')
       }}
       onEntered={() => {
-        console.log('📃 page: on entered')
+        // console.log('📃 transition: entered complete')
       }}
       addEndListener={(node, done) => {
         const loadingOut = !location.pathname.includes(pagePath)
@@ -44,7 +100,7 @@ const PageTransition = ({ children, pagePath, location, prevLocation }) => {
             x: loadingOut ? 0 : 100,
           },
           onComplete: () => {
-            console.log('📃 page transition end!!')
+            // console.log('📃 page transition end!!')
             if (!loadingOut) {
               setLocationHolder(location.pathname)
             }
@@ -53,7 +109,9 @@ const PageTransition = ({ children, pagePath, location, prevLocation }) => {
         })
       }}
     >
-      <div style={{ opacity }}>{children}</div>
+      <div ref={refContainer} style={{ opacity }}>
+        {children}
+      </div>
     </Transition>
   )
 }
@@ -63,10 +121,20 @@ PageTransition.propTypes = {
   pagePath: PropTypes.string,
   location: PropTypes.object,
   prevLocation: PropTypes.object,
+  pageNavigate: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+  setPageNavigate: PropTypes.func,
+  setPageNavigating: PropTypes.func,
 }
 
-const mapStateToProps = ({ prevLocation }) => {
-  return { prevLocation }
+const mapStateToProps = ({ prevLocation, pageNavigate, setPageNavigate }) => {
+  return { prevLocation, pageNavigate, setPageNavigate }
 }
 
-export default connect(mapStateToProps)(PageTransition)
+const mapDispatchToProps = dispatch => {
+  return {
+    setPageNavigate: target => dispatch({ type: `SETPAGENAVIGATE`, payload: target }),
+    setPageNavigating: target => dispatch({ type: `SETPAGENAVIGATING`, payload: target }),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PageTransition)
