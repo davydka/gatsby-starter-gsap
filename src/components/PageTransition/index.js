@@ -10,9 +10,9 @@ const PageTransition = ({
   pagePath,
   location,
   prevLocation,
-  pageNavigate,
-  setPageNavigate,
-  setPageNavigating,
+  pageTransitionURLTarget,
+  setPageTranstionURLTarget,
+  setPageTransitioning,
 }) => {
   const [locationHolder, setLocationHolder] = useState('')
   const [opacity, setOpacity] = useState(0)
@@ -24,22 +24,22 @@ const PageTransition = ({
 
   const refContainer = useRef(null)
   useEffect(() => {
-    if (pageNavigate !== false) {
+    if (pageTransitionURLTarget !== false) {
       // console.log('🛵 Page navigate')
       // console.log('going to:', pageNavigate.replace('/', ''))
       // console.log('coming from:', location.pathname.replace('/', ''))
       // console.log('is animating:', gsap.isTweening(refContainer.current))
       if (gsap.isTweening(refContainer.current)) {
-        setPageNavigating(true)
-        setPageNavigate(false)
+        setPageTransitioning(true)
+        setPageTranstionURLTarget(false)
       } else {
-        setPageNavigating(false)
-        setPageNavigate(false)
+        setPageTransitioning(false)
+        setPageTranstionURLTarget(false)
       }
     }
     if (
-      pageNavigate !== false &&
-      pageNavigate.replace('/', '') !== location.pathname.replace('/', '') &&
+      pageTransitionURLTarget !== false &&
+      pageTransitionURLTarget.replace('/', '') !== location.pathname.replace('/', '') &&
       !gsap.isTweening(refContainer.current)
     ) {
       gsap.to(refContainer.current, 0.5, {
@@ -50,17 +50,17 @@ const PageTransition = ({
           x: 0,
         },
         onStart: () => {
-          setPageNavigating(true)
-          setPageNavigate(false)
+          setPageTransitioning(true)
+          setPageTranstionURLTarget(false)
         },
         onComplete: () => {
-          setPageNavigating(false)
-          setPageNavigate(false)
-          navigate(pageNavigate)
+          setPageTransitioning(false)
+          setPageTranstionURLTarget(false)
+          navigate(pageTransitionURLTarget)
         },
       })
     }
-  }, [pageNavigate, location, pagePath])
+  }, [pageTransitionURLTarget, location, pagePath])
 
   const TransitionNode = forwardRef(({ children }, ref) => {
     const thisRef = useRef(null)
@@ -121,19 +121,19 @@ PageTransition.propTypes = {
   pagePath: PropTypes.string,
   location: PropTypes.object,
   prevLocation: PropTypes.object,
-  pageNavigate: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
-  setPageNavigate: PropTypes.func,
-  setPageNavigating: PropTypes.func,
+  pageTransitionURLTarget: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+  setPageTranstionURLTarget: PropTypes.func,
+  setPageTransitioning: PropTypes.func,
 }
 
-const mapStateToProps = ({ prevLocation, pageNavigate, setPageNavigate }) => {
-  return { prevLocation, pageNavigate, setPageNavigate }
+const mapStateToProps = ({ prevLocation, pageTransitionURLTarget }) => {
+  return { prevLocation, pageTransitionURLTarget }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    setPageNavigate: target => dispatch({ type: `SETPAGENAVIGATE`, payload: target }),
-    setPageNavigating: target => dispatch({ type: `SETPAGENAVIGATING`, payload: target }),
+    setPageTranstionURLTarget: target => dispatch({ type: `SETPAGETRANSITIONURLTARGET`, payload: target }),
+    setPageTransitioning: target => dispatch({ type: `SETPAGETRANSITIONING`, payload: target }),
   }
 }
 

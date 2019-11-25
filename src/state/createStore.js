@@ -11,14 +11,14 @@ const reducer = (state, action) => {
       count: action.payload ? action.payload : 0,
     })
   }
-  if (action.type === `SETPAGENAVIGATE`) {
+  if (action.type === `SETPAGETRANSITIONURLTARGET`) {
     return Object.assign({}, state, {
-      pageNavigate: action.payload ? action.payload : false,
+      pageTransitionURLTarget: action.payload ? action.payload : false,
     })
   }
-  if (action.type === `SETPAGENAVIGATING`) {
+  if (action.type === `SETPAGETRANSITIONING`) {
     return Object.assign({}, state, {
-      pageNavigating: action.payload ? action.payload : false,
+      pageTransitioning: action.payload ? action.payload : false,
     })
   }
   if (action.type === `TOGGLESHOWGRID`) {
@@ -36,8 +36,8 @@ const reducer = (state, action) => {
 
 const initialState = {
   param: 0.5,
-  pageNavigate: false,
-  pageNavigating: false,
+  pageTransitionURLTarget: false,
+  pageTransitioning: false,
   showGridHelper: false,
   showBorders: false,
   prevLocation: {},

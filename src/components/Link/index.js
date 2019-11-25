@@ -26,7 +26,7 @@ Link.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setPageNavigate: target => dispatch({ type: `SETPAGENAVIGATE`, payload: target }),
+    setPageNavigate: target => dispatch({ type: `SETPAGETRANSITIONURLTARGET`, payload: target }),
   }
 }
 
