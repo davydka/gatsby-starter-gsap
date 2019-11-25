@@ -21,6 +21,11 @@ const reducer = (state, action) => {
       pageTransitioning: action.payload ? action.payload : false,
     })
   }
+  if (action.type === `SETISMOBILESAFARI`) {
+    return Object.assign({}, state, {
+      isMobileSafari: typeof action.payload !== 'undefined' ? action.payload : false,
+    })
+  }
   if (action.type === `TOGGLESHOWGRID`) {
     return Object.assign({}, state, {
       showGridHelper: typeof action.payload !== 'undefined' ? action.payload : !state.showGridHelper,
@@ -36,6 +41,7 @@ const reducer = (state, action) => {
 
 const initialState = {
   param: 0.5,
+  isMobileSafari: false,
   pageTransitionURLTarget: false,
   pageTransitioning: false,
   showGridHelper: false,

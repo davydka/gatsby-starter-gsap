@@ -14,7 +14,7 @@ import Logo from '@components/Logo'
 
 const cx = classnames.bind({ ...styles, ...layoutStyles })
 
-const IndexPage = ({ location, showBorders }) => {
+const IndexPage = ({ location, isMobileSafari, showBorders }) => {
   // componentDidMount
   useEffect(() => {
     console.log('📟 Page mounted')
@@ -25,7 +25,7 @@ const IndexPage = ({ location, showBorders }) => {
 
   return (
     <PageTransition location={location} pagePath="/">
-      <div className={cx('index-page', { 'page-borders': showBorders })}>
+      <div className={cx('index-page', { 'page-borders': showBorders, 'mobile-safari': isMobileSafari })}>
         <SEO title="GSAP - Starter" />
 
         <div className="section-container">
@@ -104,11 +104,12 @@ const IndexPage = ({ location, showBorders }) => {
 
 IndexPage.propTypes = {
   location: PropTypes.object,
+  isMobileSafari: PropTypes.bool,
   showBorders: PropTypes.bool,
 }
 
-const mapStateToProps = ({ showBorders }) => {
-  return { showBorders }
+const mapStateToProps = ({ isMobileSafari, showBorders }) => {
+  return { isMobileSafari, showBorders }
 }
 
 export default connect(mapStateToProps)(IndexPage)

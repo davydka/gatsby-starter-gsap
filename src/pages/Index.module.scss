@@ -17,6 +17,12 @@
   }
 }
 
+.mobile-safari {
+  .logo-container {
+    transition: none;
+  }
+}
+
 .page-borders {
   .logo-container {
     border: 1px solid red;

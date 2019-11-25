@@ -18,6 +18,7 @@ const Layout = ({
   prevLocation, // eslint-disable-line no-unused-vars
   setPrevLocation,
   location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
+  setIsMobileSafari,
   param,
   setparam,
   toggleGrid,
@@ -130,8 +131,10 @@ const Layout = ({
   useEffect(() => {
     console.log('🌈 layout mounted')
 
-    const mobileSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
-    if (window && 'ontouchstart' in window && mobileSafari) {
+    const mobileSafari =
+      window && 'ontouchstart' in window && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+    if (mobileSafari) {
+      setIsMobileSafari(true)
       window.addEventListener('orientationchange', debounce(handleOrientationChange, 100))
     } else {
       window.addEventListener('resize', debounce(handleOrientationChange, 50))
@@ -276,6 +279,7 @@ Layout.propTypes = {
   setPrevLocation: PropTypes.func,
   param: PropTypes.number.isRequired,
   setparam: PropTypes.func.isRequired,
+  setIsMobileSafari: PropTypes.func,
   toggleGrid: PropTypes.func,
   showBorders: PropTypes.bool,
   toggleBorders: PropTypes.func,
@@ -289,6 +293,7 @@ const mapDispatchToProps = dispatch => {
   return {
     setPrevLocation: loc => dispatch({ type: `SETPREVLOCATION`, payload: loc }),
     setparam: target => dispatch({ type: `SETPARAM`, payload: target }),
+    setIsMobileSafari: target => dispatch({ type: `SETISMOBILESAFARI`, payload: target }),
     toggleGrid: target => dispatch({ type: `TOGGLESHOWGRID`, payload: target }),
     toggleBorders: target => dispatch({ type: `TOGGLESHOWBORDERS`, payload: target }),
   }
