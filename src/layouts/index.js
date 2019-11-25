@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import PropTypes from 'prop-types'
 import { useStaticQuery, graphql } from 'gatsby'
 import classnames from 'classnames/bind'
@@ -121,6 +121,7 @@ const Layout = ({
     }
   }, [location, setPrevLocation])
 
+  /*
   const handleOrientationChange = () => {
     // note - we're not updating 100vh (cover) params onresize, only on orientation change
     // reasoning is that these items are generally for "above the fold" features
@@ -130,20 +131,33 @@ const Layout = ({
     let vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)
   }
+   */
 
   const handleResize = () => {
     const height = pageContainerNode && pageContainerNode.current && pageContainerNode.current.scrollHeight
+    console.log('handleresize', pageContainerNode)
     if (height && pageContainer && pageContainer.current) {
       pageContainer.current.style.minHeight = `${height}px`
     }
   }
 
+  const TransitionGroupNode = forwardRef((props, ref) => {
+    const thisRef = useRef(null)
+    useImperativeHandle(ref, () => thisRef.current)
+    return (
+      <div ref={thisRef} className={cx('page-container__node')}>
+        {children}
+      </div>
+    )
+  })
+  TransitionGroupNode.displayName = 'TransitionGroupNode'
+
   // componentDidMount
   useEffect(() => {
     console.log('🌈 layout mounted')
 
-    window.addEventListener('orientationchange', debounce(handleOrientationChange, 200))
-    handleOrientationChange()
+    // window.addEventListener('orientationchange', debounce(handleOrientationChange, 200))
+    // handleOrientationChange()
 
     window.addEventListener('resize', debounce(handleResize, 200))
     handleResize()
@@ -236,7 +250,7 @@ const Layout = ({
         window.cancelAnimationFrame(animationID.current)
         animationID.current = undefined
       }
-      window.removeEventListener('orientationchange', debounce(handleOrientationChange, 200))
+      // window.removeEventListener('orientationchange', debounce(handleOrientationChange, 200))
       window.removeEventListener('resize', debounce(handleResize, 200))
     }
   }, [])
@@ -287,20 +301,25 @@ const Layout = ({
                   return
                 }
                 console.log('📃 page: on enter')
+                const loadingOut = parseFloat(node.style.opacity) === 1
+                console.log(loadingOut)
+                console.log(node.scrollHeight)
                 handleResize()
               }}
-              onEntering={
-                (/*node, isAppearing*/) => {
-                  console.log('📃 page: on entering')
-                  handleResize()
-                }
-              }
-              onEntered={
-                (/*node, isAppearing*/) => {
-                  console.log('📃 page: on entered')
-                  handleResize()
-                }
-              }
+              onEntering={(node /*isAppearing*/) => {
+                console.log('📃 page: on entering')
+                const loadingOut = parseFloat(node.style.opacity) === 1
+                console.log(loadingOut)
+                console.log(node.scrollHeight)
+                handleResize()
+              }}
+              onEntered={(node /*isAppearing*/) => {
+                console.log('📃 page: on entered')
+                const loadingOut = parseFloat(node.style.opacity) === 1
+                console.log(loadingOut)
+                console.log(node.scrollHeight)
+                handleResize()
+              }}
               addEndListener={(node, done) => {
                 const loadingOut = parseFloat(node.style.opacity) === 1
                 gsap.to(node, 1.5, {
@@ -311,16 +330,16 @@ const Layout = ({
                     x: loadingOut ? 0 : 100,
                   },
                   onComplete: () => {
-                    handleResize()
                     console.log('📃 page transition end!!')
+                    console.log(loadingOut)
+                    console.log(node.scrollHeight)
+                    handleResize()
                     done()
                   },
                 })
               }}
             >
-              <div ref={pageContainerNode} className={cx('page-container__node')}>
-                {children}
-              </div>
+              <TransitionGroupNode ref={pageContainerNode}>{children}</TransitionGroupNode>
             </Transition>
           </TransitionGroup>
         </div>
