@@ -5,6 +5,8 @@
 
   .logo-container {
     margin-top: -#{$header-height + $holder-margin-top};
+    will-change: height;
+    transition: height, 250ms;
     height: 100vh;
     height: calc(var(--vh, 1vh) * 100);
 

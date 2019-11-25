@@ -53,6 +53,7 @@ module.exports = {
         '@components': path.join(__dirname, 'src/components'),
         '@pages': path.join(__dirname, 'src/pages'),
         '@styles': path.join(__dirname, 'src/styles'),
+        '@utils': path.join(__dirname, 'src/utils'),
       },
     },
     // this (optional) plugin enables Progressive Web App + Offline functionality

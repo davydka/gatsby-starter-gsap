@@ -10,6 +10,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import styles from './Layout.module.scss'
 import GridHelper from './GridHelper'
 import Header from '@components/Header'
+import debounce from '@utils/debounce'
 
 const cx = classnames.bind(styles)
 
@@ -114,11 +115,13 @@ const Layout = ({
   }, [location, setPrevLocation])
 
   const handleOrientationChange = () => {
-    // note - we're not updating 100vh (cover) params onresize, only on orientation change
+    // note - for mobileSafari, we're not updating 100vh (cover) params onresize,
+    //                                                only on orientation change
     // reasoning is that these items are generally for "above the fold" features
     // and we don't want too much resize thrashing (at this point)
     // also calling this change onScroll causes visible jumps on Mobile Safari
     // iOS 100vh - https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
+    // for Chome on Android, it's not too bad * Tested Pixel 3, Android 9
     let vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)
   }
@@ -127,7 +130,12 @@ const Layout = ({
   useEffect(() => {
     console.log('🌈 layout mounted')
 
-    window.addEventListener('orientationchange', handleOrientationChange)
+    const mobileSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+    if (window && 'ontouchstart' in window && mobileSafari) {
+      window.addEventListener('orientationchange', debounce(handleOrientationChange, 100))
+    } else {
+      window.addEventListener('resize', debounce(handleOrientationChange, 50))
+    }
     handleOrientationChange()
 
     /** Stats **/
@@ -219,6 +227,7 @@ const Layout = ({
         animationID.current = undefined
       }
       window.removeEventListener('orientationchange', handleOrientationChange)
+      window.removeEventListener('resize', debounce(handleOrientationChange, 50))
     }
   }, [])
 
