@@ -13,6 +13,7 @@ const PageTransition = ({
   pageTransitionURLTarget,
   setPageTranstionURLTarget,
   setPageTransitioning,
+  setPageTransitioningIn,
 }) => {
   const [locationHolder, setLocationHolder] = useState('')
   const [opacity, setOpacity] = useState(0)
@@ -71,6 +72,7 @@ const PageTransition = ({
 
   useEffect(() => {
     console.log('𝍌𝍌𝍌 PageTransition mounted')
+    setPageTransitioningIn(true)
   }, [])
 
   return (
@@ -101,6 +103,7 @@ const PageTransition = ({
           },
           onComplete: () => {
             // console.log('📃 page transition end!!')
+            setPageTransitioningIn(false)
             if (!loadingOut) {
               setLocationHolder(location.pathname)
             }
@@ -124,6 +127,7 @@ PageTransition.propTypes = {
   pageTransitionURLTarget: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
   setPageTranstionURLTarget: PropTypes.func,
   setPageTransitioning: PropTypes.func,
+  setPageTransitioningIn: PropTypes.func,
 }
 
 const mapStateToProps = ({ prevLocation, pageTransitionURLTarget }) => {
@@ -134,6 +138,7 @@ const mapDispatchToProps = dispatch => {
   return {
     setPageTranstionURLTarget: target => dispatch({ type: `SETPAGETRANSITIONURLTARGET`, payload: target }),
     setPageTransitioning: target => dispatch({ type: `SETPAGETRANSITIONING`, payload: target }),
+    setPageTransitioningIn: target => dispatch({ type: `SETPAGETRANSITIONINGIN`, payload: target }),
   }
 }
 

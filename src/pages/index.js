@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useCallback } from 'react'
 // import { Link } from 'gatsby'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
@@ -11,10 +11,11 @@ import PageTransition from '@components/PageTransition'
 import SEO from '@components/seo'
 // import Text from '@components/Text'
 import Logo from '@components/Logo'
+import isiOS from '@utils/isiOS'
 
 const cx = classnames.bind({ ...styles, ...layoutStyles })
 
-const IndexPage = ({ location, isMobileSafari, showBorders }) => {
+const IndexPage = ({ location, showBorders, setHeroRef }) => {
   // componentDidMount
   useEffect(() => {
     console.log('📟 Page mounted')
@@ -23,9 +24,15 @@ const IndexPage = ({ location, isMobileSafari, showBorders }) => {
     return () => {}
   }, [])
 
+  const localHeroRef = useCallback(node => {
+    if (node !== null) {
+      setHeroRef(node)
+    }
+  }, [])
+
   return (
     <PageTransition location={location} pagePath="/">
-      <div className={cx('index-page', { 'page-borders': showBorders, 'mobile-safari': isMobileSafari })}>
+      <div className={cx('index-page', { 'page-borders': showBorders, 'mobile-safari': isiOS() })}>
         <SEO title="GSAP - Starter" />
 
         <div className="section-container">
@@ -33,7 +40,7 @@ const IndexPage = ({ location, isMobileSafari, showBorders }) => {
             <div className={cx('row')}>
               <div className={cx('col')}>
                 <div className={cx('logo-container')}>
-                  <Logo className={cx('logo')} />
+                  <Logo ref={localHeroRef} className={cx('logo')} />
                 </div>
               </div>
             </div>
@@ -104,12 +111,18 @@ const IndexPage = ({ location, isMobileSafari, showBorders }) => {
 
 IndexPage.propTypes = {
   location: PropTypes.object,
-  isMobileSafari: PropTypes.bool,
   showBorders: PropTypes.bool,
+  setHeroRef: PropTypes.func,
 }
 
-const mapStateToProps = ({ isMobileSafari, showBorders }) => {
-  return { isMobileSafari, showBorders }
+const mapStateToProps = ({ showBorders }) => {
+  return { showBorders }
 }
 
-export default connect(mapStateToProps)(IndexPage)
+const mapDispatchToProps = dispatch => {
+  return {
+    setHeroRef: target => dispatch({ type: `SETHEROREF`, payload: target }),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(IndexPage)
