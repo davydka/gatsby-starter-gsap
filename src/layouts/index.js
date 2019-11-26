@@ -127,6 +127,8 @@ const Layout = ({
   }
 
   const handleResize = () => {
+    // https://webglfundamentals.org/webgl/lessons/webgl-anti-patterns.html
+    // tldr; set canvas to 100vw, 100vh, and use canvas.clientWidth and canvas.clientHeight for renderer calculations
     const target = {
       width: canvasElement.current.clientWidth,
       height: canvasElement.current.clientHeight,
@@ -147,6 +149,7 @@ const Layout = ({
     console.log('🌈 layout mounted')
 
     const debounceAmount = 50
+
     const mobileSafari =
       window && 'ontouchstart' in window && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
     if (mobileSafari) {
