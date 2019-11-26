@@ -8,7 +8,7 @@ const reducer = (state, action) => {
   }
   if (action.type === `SETPARAM`) {
     return Object.assign({}, state, {
-      count: action.payload ? action.payload : 0,
+      param: action.payload ? action.payload : 0,
     })
   }
   if (action.type === `SETPAGETRANSITIONURLTARGET`) {

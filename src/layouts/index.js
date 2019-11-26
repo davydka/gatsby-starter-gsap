@@ -43,7 +43,7 @@ const Layout = ({
   // GUI Inlets
   let inletsHolder = useRef({
     speed: 1.0,
-    param: 0.5,
+    param: 6.5,
     gridHelper: false,
     showBorders: false,
   })
@@ -79,8 +79,7 @@ const Layout = ({
   let canvasElement = useRef()
 
   // THREE
-  const width = 960
-  const height = 540
+  const [size, setSize] = useState({ width: 960, height: 540 })
   let scene = useRef()
   let camera = useRef()
   let renderer = useRef()
@@ -127,19 +126,39 @@ const Layout = ({
     document.documentElement.style.setProperty('--vh', `${vh}px`)
   }
 
+  const handleResize = () => {
+    const target = {
+      width: canvasElement.current.clientWidth,
+      height: canvasElement.current.clientHeight,
+    }
+    setSize(target)
+  }
+
+  useEffect(() => {
+    if (renderer && renderer.current) {
+      renderer.current.setSize(size.width, size.height)
+      camera.current.aspect = size.width / size.height
+      camera.current.updateProjectionMatrix()
+    }
+  }, [size])
+
   // componentDidMount
   useEffect(() => {
     console.log('🌈 layout mounted')
 
+    const debounceAmount = 50
     const mobileSafari =
       window && 'ontouchstart' in window && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
     if (mobileSafari) {
       setIsMobileSafari(true)
-      window.addEventListener('orientationchange', debounce(handleOrientationChange, 100))
+      window.addEventListener('orientationchange', debounce(handleOrientationChange, debounceAmount))
     } else {
-      window.addEventListener('resize', debounce(handleOrientationChange, 50))
+      window.addEventListener('resize', debounce(handleOrientationChange, debounceAmount))
     }
     handleOrientationChange()
+
+    window.addEventListener('resize', debounce(handleResize, debounceAmount))
+    handleResize()
 
     /** Stats **/
     stats.current = new window.Stats()
@@ -176,12 +195,12 @@ const Layout = ({
     /** THREE **/
     scene.current = new THREE.Scene()
     // scene.current.background = new THREE.Color( 0xff0000 )
-    camera.current = new THREE.PerspectiveCamera(75, width / height, 0.1, 10000)
+    camera.current = new THREE.PerspectiveCamera(75, size.width / size.height, 0.1, 10000)
     renderer.current = new THREE.WebGLRenderer({
       antialias: true,
       canvas: canvasElement.current,
     })
-    renderer.current.setSize(width, height)
+    renderer.current.setSize(size.width, size.height)
     controls.current = new OrbitControls(camera.current, renderer.current.domElement)
 
     initializeOrbits.current()
@@ -229,8 +248,9 @@ const Layout = ({
         window.cancelAnimationFrame(animationID.current)
         animationID.current = undefined
       }
-      window.removeEventListener('orientationchange', handleOrientationChange)
-      window.removeEventListener('resize', debounce(handleOrientationChange, 50))
+      window.removeEventListener('orientationchange', debounce(handleOrientationChange, debounceAmount))
+      window.removeEventListener('resize', debounce(handleOrientationChange, debounceAmount))
+      window.removeEventListener('resize', debounce(handleResize, debounceAmount))
     }
   }, [])
 
@@ -239,7 +259,7 @@ const Layout = ({
       z: param,
       ease: Linear.ease,
     })
-  }, [param])
+  }, [param, inlets])
 
   // ANIMATE
   let animationID = useRef()
@@ -268,6 +288,7 @@ const Layout = ({
       <Header siteTitle={siteData.site.siteMetadata.title} className={cx('header-container')} />
       {children}
       <footer className={cx('footer')}>© {new Date().getFullYear()}, Footer goes here</footer>
+      <canvas className={cx('canvas')} ref={canvasElement} />
     </main>
   )
 }
