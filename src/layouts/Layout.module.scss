@@ -2,7 +2,7 @@
 
 .main {
   color: $black;
-  background: $grey-background;
+  background: transparent;
   font-family: $font-serif;
   font-size: 1.8rem;
   line-height: 1.444;
@@ -27,6 +27,15 @@
   background-color: inherit;
 }
 
+.canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: block;
+  z-index: -1;
+  width: 100% !important;
+  height: 100vh !important;
+}
 
 .footer {
   display: flex;

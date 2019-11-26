@@ -10,7 +10,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import styles from './Layout.module.scss'
 import GridHelper from './GridHelper'
 import Header from '@components/Header'
+import Target from '@components/Target'
 import debounce from '@utils/debounce'
+import isiOS from '@utils/isiOS'
 
 const cx = classnames.bind(styles)
 
@@ -18,7 +20,6 @@ const Layout = ({
   prevLocation, // eslint-disable-line no-unused-vars
   setPrevLocation,
   location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
-  setIsMobileSafari,
   param,
   setparam,
   toggleGrid,
@@ -43,7 +44,7 @@ const Layout = ({
   // GUI Inlets
   let inletsHolder = useRef({
     speed: 1.0,
-    param: 0.5,
+    param: 6.5,
     gridHelper: false,
     showBorders: false,
   })
@@ -76,11 +77,13 @@ const Layout = ({
   let gs = useRef()
 
   // Canvas
-  let canvasElement = useRef()
+  let canvasElement = useRef(null)
+  let target = useRef(null)
 
   // THREE
-  const width = 960
-  const height = 540
+  const [size, setSize] = useState({ width: 960, height: 540 })
+  const [tanFOV, setTanFOV] = useState(0)
+  const [heightHolder, setHeightHolder] = useState(0)
   let scene = useRef()
   let camera = useRef()
   let renderer = useRef()
@@ -127,19 +130,45 @@ const Layout = ({
     document.documentElement.style.setProperty('--vh', `${vh}px`)
   }
 
+  const handleResize = () => {
+    // https://webglfundamentals.org/webgl/lessons/webgl-anti-patterns.html
+    // tldr; set canvas to 100vw, 100vh, and use canvas.clientWidth and canvas.clientHeight for renderer calculations
+    const target = {
+      width: canvasElement.current.clientWidth,
+      height: canvasElement.current.clientHeight,
+    }
+    setSize(target)
+  }
+
+  useEffect(() => {
+    if (renderer && renderer.current) {
+      renderer.current.setSize(size.width, size.height)
+      camera.current.aspect = size.width / size.height
+      camera.current.fov = (360 / Math.PI) * Math.atan(tanFOV * (size.height / heightHolder))
+      camera.current.updateProjectionMatrix()
+    }
+  }, [size])
+
   // componentDidMount
   useEffect(() => {
     console.log('🌈 layout mounted')
+    console.log(
+      `%c    THREE JS version - ${THREE.REVISION}    `,
+      'background-color: fuchsia; color: white; font-weight: bold;'
+    )
 
-    const mobileSafari =
-      window && 'ontouchstart' in window && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
-    if (mobileSafari) {
-      setIsMobileSafari(true)
-      window.addEventListener('orientationchange', debounce(handleOrientationChange, 100))
+    const debounceAmount = 50
+
+    if (isiOS()) {
+      window.addEventListener('orientationchange', debounce(handleOrientationChange, debounceAmount))
     } else {
-      window.addEventListener('resize', debounce(handleOrientationChange, 50))
+      window.addEventListener('resize', debounce(handleOrientationChange, debounceAmount))
     }
     handleOrientationChange()
+
+    window.addEventListener('resize', debounce(handleResize, debounceAmount))
+    handleResize()
+    setHeightHolder(size.height)
 
     /** Stats **/
     stats.current = new window.Stats()
@@ -176,16 +205,17 @@ const Layout = ({
     /** THREE **/
     scene.current = new THREE.Scene()
     // scene.current.background = new THREE.Color( 0xff0000 )
-    camera.current = new THREE.PerspectiveCamera(75, width / height, 0.1, 10000)
+    camera.current = new THREE.PerspectiveCamera(75, size.width / size.height, 0.1, 10000)
     renderer.current = new THREE.WebGLRenderer({
       antialias: true,
       canvas: canvasElement.current,
     })
-    renderer.current.setSize(width, height)
+    renderer.current.setSize(size.width, size.height)
     controls.current = new OrbitControls(camera.current, renderer.current.domElement)
 
     initializeOrbits.current()
     initializeCamera.current()
+    setTanFOV(Math.tan(((Math.PI / 180) * camera.current.fov) / 2))
 
     let geometry = new THREE.SphereGeometry(3, 8, 8, 0, Math.PI * 2, 0, Math.PI * 2)
     let material = new THREE.MeshNormalMaterial({
@@ -204,16 +234,16 @@ const Layout = ({
       timeScale: 1.0,
       // paused: true,
     })
-    gs.current.fromTo(
-      mesh.current.rotation,
-      { y: 0 },
-      {
-        duration: 1,
-        y: Math.PI / 2,
-        ease: Linear.easeNone,
-      },
-      0
-    )
+    // gs.current.fromTo(
+    //   mesh.current.rotation,
+    //   { y: 0 },
+    //   {
+    //     duration: 1,
+    //     y: Math.PI / 2,
+    //     ease: Linear.easeNone,
+    //   },
+    //   0
+    // )
 
     /** Animate Kickoff **/
     flip.current = 0
@@ -229,8 +259,9 @@ const Layout = ({
         window.cancelAnimationFrame(animationID.current)
         animationID.current = undefined
       }
-      window.removeEventListener('orientationchange', handleOrientationChange)
-      window.removeEventListener('resize', debounce(handleOrientationChange, 50))
+      window.removeEventListener('orientationchange', debounce(handleOrientationChange, debounceAmount))
+      window.removeEventListener('resize', debounce(handleOrientationChange, debounceAmount))
+      window.removeEventListener('resize', debounce(handleResize, debounceAmount))
     }
   }, [])
 
@@ -239,7 +270,7 @@ const Layout = ({
       z: param,
       ease: Linear.ease,
     })
-  }, [param])
+  }, [param, inlets])
 
   // ANIMATE
   let animationID = useRef()
@@ -255,6 +286,7 @@ const Layout = ({
     flip.current = flip.current + 1
     if (flip.current >= 3) {
       // do something at a lower framerate here
+      // handleHeroRef()
       flip.current = 0
     }
 
@@ -265,24 +297,27 @@ const Layout = ({
   return (
     <main className={cx('main')}>
       <GridHelper />
+      <Target ref={target} />
       <Header siteTitle={siteData.site.siteMetadata.title} className={cx('header-container')} />
       {children}
       <footer className={cx('footer')}>© {new Date().getFullYear()}, Footer goes here</footer>
+      <canvas className={cx('canvas')} ref={canvasElement} />
     </main>
   )
 }
 
 Layout.propTypes = {
   children: PropTypes.node.isRequired,
+  heroRef: PropTypes.object,
   location: PropTypes.object,
   prevLocation: PropTypes.object,
   setPrevLocation: PropTypes.func,
   param: PropTypes.number.isRequired,
   setparam: PropTypes.func.isRequired,
-  setIsMobileSafari: PropTypes.func,
   toggleGrid: PropTypes.func,
   showBorders: PropTypes.bool,
   toggleBorders: PropTypes.func,
+  pageTransitioning: PropTypes.bool,
 }
 
 const mapStateToProps = ({ prevLocation, param, showBorders }) => {
@@ -293,7 +328,6 @@ const mapDispatchToProps = dispatch => {
   return {
     setPrevLocation: loc => dispatch({ type: `SETPREVLOCATION`, payload: loc }),
     setparam: target => dispatch({ type: `SETPARAM`, payload: target }),
-    setIsMobileSafari: target => dispatch({ type: `SETISMOBILESAFARI`, payload: target }),
     toggleGrid: target => dispatch({ type: `TOGGLESHOWGRID`, payload: target }),
     toggleBorders: target => dispatch({ type: `TOGGLESHOWBORDERS`, payload: target }),
   }

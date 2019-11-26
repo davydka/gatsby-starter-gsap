@@ -8,7 +8,7 @@ const reducer = (state, action) => {
   }
   if (action.type === `SETPARAM`) {
     return Object.assign({}, state, {
-      count: action.payload ? action.payload : 0,
+      param: action.payload ? action.payload : 0,
     })
   }
   if (action.type === `SETPAGETRANSITIONURLTARGET`) {
@@ -21,9 +21,14 @@ const reducer = (state, action) => {
       pageTransitioning: action.payload ? action.payload : false,
     })
   }
-  if (action.type === `SETISMOBILESAFARI`) {
+  if (action.type === `SETPAGETRANSITIONINGIN`) {
     return Object.assign({}, state, {
-      isMobileSafari: typeof action.payload !== 'undefined' ? action.payload : false,
+      pageTransitioningIn: action.payload ? action.payload : false,
+    })
+  }
+  if (action.type === `SETHEROREF`) {
+    return Object.assign({}, state, {
+      heroRef: typeof action.payload !== 'undefined' ? action.payload : null,
     })
   }
   if (action.type === `TOGGLESHOWGRID`) {
@@ -41,12 +46,13 @@ const reducer = (state, action) => {
 
 const initialState = {
   param: 0.5,
-  isMobileSafari: false,
   pageTransitionURLTarget: false,
   pageTransitioning: false,
+  pageTransitioningIn: false,
   showGridHelper: false,
   showBorders: false,
   prevLocation: {},
+  heroRef: null,
 }
 
 const createStore = () =>
