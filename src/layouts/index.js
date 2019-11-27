@@ -20,8 +20,14 @@ const Layout = ({
   prevLocation, // eslint-disable-line no-unused-vars
   setPrevLocation,
   location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
+  heroRef,
+  showBorders,
   param,
+  param2,
+  param3,
   setparam,
+  setparam2,
+  setparam3,
   toggleGrid,
   toggleBorders,
   children,
@@ -45,6 +51,8 @@ const Layout = ({
   let inletsHolder = useRef({
     speed: 1.0,
     param: 6.5,
+    param2: 0,
+    param3: 0,
     gridHelper: false,
     showBorders: false,
   })
@@ -55,6 +63,8 @@ const Layout = ({
   handleInletChange.current = () => {
     setInlets(Object.assign({}, inletsHolder.current))
     setparam(inletsHolder.current.param)
+    setparam2(inletsHolder.current.param2)
+    setparam3(inletsHolder.current.param3)
     toggleGrid(inletsHolder.current.gridHelper)
     toggleBorders(inletsHolder.current.showBorders)
 
@@ -82,13 +92,16 @@ const Layout = ({
 
   // THREE
   const [size, setSize] = useState({ width: 960, height: 540 })
-  const [tanFOV, setTanFOV] = useState(0)
-  const [heightHolder, setHeightHolder] = useState(0)
+  // const [tanFOV, setTanFOV] = useState(0)
+  // const [heightHolder, setHeightHolder] = useState(0)
   let scene = useRef()
   let camera = useRef()
   let renderer = useRef()
   let controls = useRef()
   let mesh = useRef()
+  let axisHelper = useRef()
+  let pageVec = useRef()
+  let pagePos = useRef()
 
   // todo: does this need to be a ref?
   let initializeOrbits = useRef()
@@ -144,7 +157,7 @@ const Layout = ({
     if (renderer && renderer.current) {
       renderer.current.setSize(size.width, size.height)
       camera.current.aspect = size.width / size.height
-      camera.current.fov = (360 / Math.PI) * Math.atan(tanFOV * (size.height / heightHolder))
+      // camera.current.fov = (360 / Math.PI) * Math.atan(tanFOV * (size.height / heightHolder))
       camera.current.updateProjectionMatrix()
     }
   }, [size])
@@ -168,7 +181,9 @@ const Layout = ({
 
     window.addEventListener('resize', debounce(handleResize, debounceAmount))
     handleResize()
-    setHeightHolder(size.height)
+    // setHeightHolder(size.height)
+
+    window.addEventListener('click', handleClick)
 
     /** Stats **/
     stats.current = new window.Stats()
@@ -187,7 +202,15 @@ const Layout = ({
       .onChange(handleInletChange.current)
       .listen()
     gui.current
-      .add(inletsHolder.current, 'param', 0, 100)
+      .add(inletsHolder.current, 'param', 0.01, 15)
+      .onChange(handleInletChange.current)
+      .listen()
+    gui.current
+      .add(inletsHolder.current, 'param2', -7.5, 7.5)
+      .onChange(handleInletChange.current)
+      .listen()
+    gui.current
+      .add(inletsHolder.current, 'param3', -7.5, 7.5)
       .onChange(handleInletChange.current)
       .listen()
     gui.current
@@ -203,6 +226,16 @@ const Layout = ({
     handleInletChange.current()
 
     /** THREE **/
+    if (heroRef) {
+      const bounds = heroRef.getBoundingClientRect()
+      const targetCenter = [
+        window.pageYOffset + bounds.x + bounds.width / 2,
+        window.pageXOffset + bounds.top + bounds.height / 2,
+      ]
+      console.log('Target Center:', targetCenter)
+      console.log(window.innerHeight / 2)
+    }
+
     scene.current = new THREE.Scene()
     // scene.current.background = new THREE.Color( 0xff0000 )
     camera.current = new THREE.PerspectiveCamera(75, size.width / size.height, 0.1, 10000)
@@ -215,7 +248,7 @@ const Layout = ({
 
     initializeOrbits.current()
     initializeCamera.current()
-    setTanFOV(Math.tan(((Math.PI / 180) * camera.current.fov) / 2))
+    // setTanFOV(Math.tan(((Math.PI / 180) * camera.current.fov) / 2))
 
     let geometry = new THREE.SphereGeometry(3, 8, 8, 0, Math.PI * 2, 0, Math.PI * 2)
     let material = new THREE.MeshNormalMaterial({
@@ -228,6 +261,12 @@ const Layout = ({
     const light = new THREE.AmbientLight(0x404040) // soft white light
     scene.current.add(light)
 
+    axisHelper.current = new THREE.AxesHelper(5)
+    scene.current.add(axisHelper.current)
+
+    pageVec.current = new THREE.Vector3()
+    pagePos.current = new THREE.Vector3()
+
     /** GSAP **/
     gs.current = gsap.timeline({
       repeat: -1,
@@ -238,8 +277,8 @@ const Layout = ({
     //   mesh.current.rotation,
     //   { y: 0 },
     //   {
-    //     duration: 1,
-    //     y: Math.PI / 2,
+    //     duration: 4,
+    //     y: (Math.PI / 2),
     //     ease: Linear.easeNone,
     //   },
     //   0
@@ -266,11 +305,59 @@ const Layout = ({
   }, [])
 
   useEffect(() => {
+    axisHelper.current.visible = showBorders
+  }, [showBorders])
+
+  useEffect(() => {
     gsap.to(camera.current.position, 1, {
+      // gsap.to(controls.current.object.position, 1, {
       z: param,
       ease: Linear.ease,
     })
   }, [param, inlets])
+
+  useEffect(() => {
+    gsap.to(camera.current.position, 1, {
+      x: param2,
+      ease: Linear.ease,
+    })
+  }, [param2, inlets])
+
+  useEffect(() => {
+    gsap.to(camera.current.position, 1, {
+      y: param3,
+      ease: Linear.ease,
+    })
+  }, [param3, inlets])
+
+  const handleClick = () => {
+    /*
+    console.log('click')
+    console.log(e.pageX)
+    console.log(e.pageY)
+    pageVec.current.set(
+      (e.pageX / canvasElement.current.clientWidth) * 2 - 1,
+      -(e.pageY / canvasElement.current.clientHeight) * 2 + 1,
+      0.5
+    )
+
+    pageVec.current.unproject(camera.current)
+    pageVec.current.sub(camera.current.position).normalize()
+
+    // const distance = -camera.current.position.z / pageVec.current.z
+    const distance = (2.5 - camera.current.position.z) / pageVec.current.z
+
+    pagePos.current.copy(camera.current.position).add(pageVec.current.multiplyScalar(distance))
+    console.log(pagePos.current)
+
+    let geometry = new THREE.BoxGeometry( 1, 1, 1 )
+    let material = new THREE.MeshNormalMaterial({
+      flatShading: true,
+    })
+    const mesh = new THREE.Mesh(geometry, material)
+    scene.current.add(mesh)
+     */
+  }
 
   // ANIMATE
   let animationID = useRef()
@@ -282,11 +369,11 @@ const Layout = ({
     // animate stuff
     animationID.current = undefined
     renderer.current.render(scene.current, camera.current)
+    // controls.current.update()
 
     flip.current = flip.current + 1
     if (flip.current >= 3) {
       // do something at a lower framerate here
-      // handleHeroRef()
       flip.current = 0
     }
 
@@ -295,9 +382,9 @@ const Layout = ({
   }
 
   return (
-    <main className={cx('main')}>
+    <main className={cx('main', { borders: showBorders, 'mobile-safari': isiOS() })}>
       <GridHelper />
-      <Target ref={target} />
+      <Target className={cx('target')} ref={target} />
       <Header siteTitle={siteData.site.siteMetadata.title} className={cx('header-container')} />
       {children}
       <footer className={cx('footer')}>© {new Date().getFullYear()}, Footer goes here</footer>
@@ -313,21 +400,27 @@ Layout.propTypes = {
   prevLocation: PropTypes.object,
   setPrevLocation: PropTypes.func,
   param: PropTypes.number.isRequired,
+  param2: PropTypes.number.isRequired,
+  param3: PropTypes.number.isRequired,
   setparam: PropTypes.func.isRequired,
+  setparam2: PropTypes.func.isRequired,
+  setparam3: PropTypes.func.isRequired,
   toggleGrid: PropTypes.func,
   showBorders: PropTypes.bool,
   toggleBorders: PropTypes.func,
   pageTransitioning: PropTypes.bool,
 }
 
-const mapStateToProps = ({ prevLocation, param, showBorders }) => {
-  return { prevLocation, param, showBorders }
+const mapStateToProps = ({ heroRef, prevLocation, param, param2, param3, showBorders }) => {
+  return { heroRef, prevLocation, param, param2, param3, showBorders }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     setPrevLocation: loc => dispatch({ type: `SETPREVLOCATION`, payload: loc }),
     setparam: target => dispatch({ type: `SETPARAM`, payload: target }),
+    setparam2: target => dispatch({ type: `SETPARAM2`, payload: target }),
+    setparam3: target => dispatch({ type: `SETPARAM3`, payload: target }),
     toggleGrid: target => dispatch({ type: `TOGGLESHOWGRID`, payload: target }),
     toggleBorders: target => dispatch({ type: `TOGGLESHOWBORDERS`, payload: target }),
   }
