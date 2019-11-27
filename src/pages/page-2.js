@@ -18,7 +18,7 @@ const cx = classnames.bind({ ...styles, ...layoutStyles })
 const IndexPage = ({ location, showBorders, setHeroRef }) => {
   // componentDidMount
   useEffect(() => {
-    console.log('📟 Page mounted')
+    // console.log('📟 Page mounted')
 
     /** CleanUp **/
     return () => {}

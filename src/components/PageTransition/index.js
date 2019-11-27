@@ -14,6 +14,8 @@ const PageTransition = ({
   setPageTranstionURLTarget,
   setPageTransitioning,
   setPageTransitioningIn,
+  setPageTransitionStart,
+  setPageTransitionEnd,
 }) => {
   const [locationHolder, setLocationHolder] = useState('')
   const [opacity, setOpacity] = useState(0)
@@ -51,10 +53,12 @@ const PageTransition = ({
           x: 0,
         },
         onStart: () => {
+          setPageTransitionStart(Date.now())
           setPageTransitioning(true)
           setPageTranstionURLTarget(false)
         },
         onComplete: () => {
+          setPageTransitionEnd(Date.now())
           setPageTransitioning(false)
           setPageTranstionURLTarget(false)
           navigate(pageTransitionURLTarget)
@@ -71,7 +75,7 @@ const PageTransition = ({
   TransitionNode.displayName = 'TransitionNode'
 
   useEffect(() => {
-    console.log('𝍌𝍌𝍌 PageTransition mounted')
+    // console.log('𝍌𝍌𝍌 PageTransition mounted')
     setPageTransitioningIn(true)
   }, [])
 
@@ -101,8 +105,12 @@ const PageTransition = ({
             opacity: loadingOut ? 1 : 0,
             x: loadingOut ? 0 : 100,
           },
+          onStart: () => {
+            setPageTransitionStart(Date.now())
+          },
           onComplete: () => {
             // console.log('📃 page transition end!!')
+            setPageTransitionEnd(Date.now())
             setPageTransitioningIn(false)
             if (!loadingOut) {
               setLocationHolder(location.pathname)
@@ -126,17 +134,21 @@ PageTransition.propTypes = {
   prevLocation: PropTypes.object,
   pageTransitionURLTarget: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
   setPageTranstionURLTarget: PropTypes.func,
+  setPageTransitionStart: PropTypes.func,
+  setPageTransitionEnd: PropTypes.func,
   setPageTransitioning: PropTypes.func,
   setPageTransitioningIn: PropTypes.func,
 }
 
-const mapStateToProps = ({ prevLocation, pageTransitionURLTarget }) => {
-  return { prevLocation, pageTransitionURLTarget }
+const mapStateToProps = ({ prevLocation, pageTransitionURLTarget, pageTransitionStart, pageTransitionEnd }) => {
+  return { prevLocation, pageTransitionURLTarget, pageTransitionStart, pageTransitionEnd }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     setPageTranstionURLTarget: target => dispatch({ type: `SETPAGETRANSITIONURLTARGET`, payload: target }),
+    setPageTransitionStart: target => dispatch({ type: `SETPAGETRANSITIONSTART`, payload: target }),
+    setPageTransitionEnd: target => dispatch({ type: `SETPAGETRANSITIONEND`, payload: target }),
     setPageTransitioning: target => dispatch({ type: `SETPAGETRANSITIONING`, payload: target }),
     setPageTransitioningIn: target => dispatch({ type: `SETPAGETRANSITIONINGIN`, payload: target }),
   }

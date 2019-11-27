@@ -11,6 +11,16 @@ const reducer = (state, action) => {
       param: action.payload ? action.payload : 0,
     })
   }
+  if (action.type === `SETPARAM2`) {
+    return Object.assign({}, state, {
+      param2: action.payload ? action.payload : 0,
+    })
+  }
+  if (action.type === `SETPARAM3`) {
+    return Object.assign({}, state, {
+      param3: action.payload ? action.payload : 0,
+    })
+  }
   if (action.type === `SETPAGETRANSITIONURLTARGET`) {
     return Object.assign({}, state, {
       pageTransitionURLTarget: action.payload ? action.payload : false,
@@ -24,6 +34,21 @@ const reducer = (state, action) => {
   if (action.type === `SETPAGETRANSITIONINGIN`) {
     return Object.assign({}, state, {
       pageTransitioningIn: action.payload ? action.payload : false,
+    })
+  }
+  if (action.type === `SETPAGETRANSITIONSTART`) {
+    return Object.assign({}, state, {
+      pageTransitionStart: action.payload ? action.payload : 0,
+    })
+  }
+  if (action.type === `SETPAGETRANSITIONEND`) {
+    return Object.assign({}, state, {
+      pageTransitionEnd: action.payload ? action.payload : 0,
+    })
+  }
+  if (action.type === `SETISMOBILESAFARI`) {
+    return Object.assign({}, state, {
+      isMobileSafari: typeof action.payload !== 'undefined' ? action.payload : false,
     })
   }
   if (action.type === `SETHEROREF`) {
@@ -46,9 +71,13 @@ const reducer = (state, action) => {
 
 const initialState = {
   param: 0.5,
+  param2: 0.5,
+  param3: 0.5,
   pageTransitionURLTarget: false,
   pageTransitioning: false,
   pageTransitioningIn: false,
+  pageTransitionStart: 0,
+  pageTransitionEnd: 0,
   showGridHelper: false,
   showBorders: false,
   prevLocation: {},
