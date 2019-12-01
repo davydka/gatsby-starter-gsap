@@ -48,16 +48,12 @@
   padding: 0 $holder-margin-sides;
 }
 
-//.target {
-//  display: none !important;
-//}
+.heroTarget {
+  border-radius: 1000px;
+}
 
 .borders {
   border: 1px solid green;
-
-  //.target {
-  //  display: block !important;
-  //}
 }
 
 .mobile-safari {

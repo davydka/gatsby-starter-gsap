@@ -88,7 +88,7 @@ const Layout = ({
 
   // Canvas
   let canvasElement = useRef(null)
-  let target = useRef(null)
+  let heroTarget = useRef(null)
 
   // THREE
   const [size, setSize] = useState({ width: 960, height: 540 })
@@ -384,7 +384,7 @@ const Layout = ({
   return (
     <main className={cx('main', { borders: showBorders, 'mobile-safari': isiOS() })}>
       <GridHelper />
-      <Target className={cx('target')} ref={target} />
+      <Target className={cx('heroTarget')} ref={heroTarget} target={heroRef} />
       <Header siteTitle={siteData.site.siteMetadata.title} className={cx('header-container')} />
       {children}
       <footer className={cx('footer')}>© {new Date().getFullYear()}, Footer goes here</footer>

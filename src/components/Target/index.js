@@ -7,102 +7,94 @@ import styles from './Target.module.scss'
 
 const cx = classnames.bind(styles)
 
-const Target = forwardRef(
-  ({ className, showBorders, heroRef, pageTransitioningIn, pageTransitionStart, pageTransitionEnd }, ref) => {
-    const holder = useRef(null)
-    const markerX = useRef(null)
-    const markerY = useRef(null)
+const Target = forwardRef(({ className, showBorders, target, pageTransitioningIn, pageTransitionStart }, ref) => {
+  const markerX = useRef(null)
+  const markerY = useRef(null)
 
-    const listenerID = useRef()
-    const listener = useRef()
-    let flip = useRef()
-    listener.current = () => {
-      listenerID.current = undefined
-      flip.current = flip.current + 1
-      if (flip.current >= 30) {
-        // do something at a lower framerate here
-        updateTarget()
-        flip.current = 0
-      }
-      listenerID.current = requestAnimationFrame(listener.current)
-    }
-
-    const startListener = () => {
-      endListener()
+  const listenerID = useRef()
+  const listener = useRef()
+  let flip = useRef()
+  listener.current = () => {
+    listenerID.current = undefined
+    flip.current = flip.current + 1
+    if (flip.current >= 30) {
+      // do something at a lower framerate here
+      updateTarget()
       flip.current = 0
-      listener.current()
     }
-    const endListener = () => {
-      if (listenerID.current) {
-        window.cancelAnimationFrame(listenerID.current)
-        listenerID.current = undefined
-      }
-    }
-
-    const updateTarget = () => {
-      if (!heroRef) {
-        return
-      }
-      const bounds = heroRef.getBoundingClientRect()
-      markerX.current.style.left = `${bounds.width / 2 - 2}px`
-      markerX.current.style.height = `${bounds.height - 2}px`
-
-      markerY.current.style.top = `${bounds.height / 2 - 4}px`
-      markerY.current.style.width = `${bounds.width - 2}px`
-
-      holder.current.style.top = `${window.pageYOffset + bounds.top}px`
-      holder.current.style.left = `${window.pageXOffset + bounds.x}px`
-      holder.current.style.height = `${bounds.height}px`
-      holder.current.style.width = `${bounds.width}px`
-
-      // const targetCenter = [bounds.x + bounds.width/2, bounds.top + bounds.height/2]
-      // console.log('Target Center:', targetCenter)
-    }
-
-    useEffect(() => {
-      if (pageTransitioningIn) {
-        if (showBorders) {
-          holder.current.style.display = 'none'
-        }
-        endListener()
-      }
-      if (!pageTransitioningIn) {
-        if (showBorders) {
-          holder.current.style.display = 'block'
-        }
-        startListener()
-      }
-    }, [pageTransitioningIn])
-
-    useEffect(() => {
-      holder.current.style.display = 'none'
-      endListener()
-    }, [pageTransitionStart])
-
-    useEffect(() => {
-      // holder.current.style.display = 'block'
-    }, [pageTransitionEnd])
-
-    useEffect(() => {
-      if (showBorders) holder.current.style.display = 'block'
-      else holder.current.style.display = 'none'
-    }, [showBorders])
-
-    return (
-      <div ref={holder} className={cx('holder', className)}>
-        <div ref={ref}>
-          <div ref={markerX} className={cx('x')} />
-          <div ref={markerY} className={cx('y')} />
-        </div>
-      </div>
-    )
+    listenerID.current = requestAnimationFrame(listener.current)
   }
-)
+
+  const startListener = () => {
+    endListener()
+    flip.current = 0
+    listener.current()
+  }
+  const endListener = () => {
+    if (listenerID.current) {
+      window.cancelAnimationFrame(listenerID.current)
+      listenerID.current = undefined
+    }
+  }
+
+  const updateTarget = () => {
+    if (!target) {
+      return
+    }
+    const bounds = target.getBoundingClientRect()
+    markerX.current.style.left = `${bounds.width / 2 - 2}px`
+    markerX.current.style.height = `${bounds.height - 2}px`
+
+    markerY.current.style.top = `${bounds.height / 2 - 4}px`
+    markerY.current.style.width = `${bounds.width - 2}px`
+
+    ref.current.style.top = `${window.pageYOffset + bounds.top}px`
+    ref.current.style.left = `${window.pageXOffset + bounds.x}px`
+    ref.current.style.height = `${bounds.height}px`
+    ref.current.style.width = `${bounds.width}px`
+
+    // const targetCenter = [bounds.x + bounds.width/2, bounds.top + bounds.height/2]
+    // console.log('Target Center:', targetCenter)
+  }
+
+  useEffect(() => {
+    if (!ref.current) {
+      return
+    }
+    if (pageTransitioningIn) {
+      if (showBorders) {
+        ref.current.style.display = 'none'
+      }
+      endListener()
+    }
+    if (!pageTransitioningIn) {
+      if (showBorders) {
+        ref.current.style.display = 'block'
+      }
+      startListener()
+    }
+  }, [pageTransitioningIn])
+
+  useEffect(() => {
+    if (!ref.current) {
+      return
+    }
+    ref.current.style.display = 'none'
+    endListener()
+  }, [pageTransitionStart])
+
+  return (
+    <div ref={ref} className={cx('holder', className)} style={showBorders ? { display: 'block' } : { display: 'none' }}>
+      <div ref={markerX} className={cx('x')} />
+      <div ref={markerY} className={cx('y')} />
+    </div>
+  )
+})
 
 Target.displayName = 'Target'
 
 Target.propTypes = {
-  heroRef: PropTypes.object,
+  target: PropTypes.object,
   showBorders: PropTypes.bool,
   bounds: PropTypes.object,
   className: PropTypes.string,
@@ -113,9 +105,8 @@ Target.propTypes = {
   pageTransitionEnd: PropTypes.number,
 }
 
-const mapStateToProps = ({ heroRef, showBorders, pageTransitioningIn, pageTransitionStart, pageTransitionEnd }) => {
+const mapStateToProps = ({ showBorders, pageTransitioningIn, pageTransitionStart, pageTransitionEnd }) => {
   return {
-    heroRef,
     pageTransitioningIn,
     pageTransitionStart,
     pageTransitionEnd,
