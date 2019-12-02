@@ -223,7 +223,18 @@ const Layout = ({
     /** THREE **/
     scene.current = new THREE.Scene()
     scene.current.background = new THREE.Color(0xf1f1f1)
-    camera.current = new THREE.PerspectiveCamera(75, 960 / 540, 0.1, 10000)
+    // camera.current = new THREE.PerspectiveCamera(75, 960 / 540, 0.1, 10000)
+
+    const aspect = canvasElement.current.clientWidth / canvasElement.current.clientHeight
+    camera.current = new THREE.OrthographicCamera(
+      sceneSize / -2,
+      sceneSize / 2,
+      (sceneSize * aspect) / 2,
+      (sceneSize * aspect) / -2,
+      1,
+      1000
+    )
+
     renderer.current = new THREE.WebGLRenderer({
       antialias: true,
       canvas: canvasElement.current,
@@ -237,7 +248,7 @@ const Layout = ({
     raycaster.current = new THREE.Raycaster()
     raycaster2.current = new THREE.Raycaster()
 
-    let geometry = new THREE.SphereGeometry(sceneSize / 4, 8, 8, 0, Math.PI * 2, 0, Math.PI * 2)
+    let geometry = new THREE.SphereGeometry(sceneSize / 2, 8, 8, 0, Math.PI * 2, 0, Math.PI * 2)
     let material = new THREE.MeshNormalMaterial({
       // wireframe: true,
       flatShading: true,
@@ -371,18 +382,29 @@ const Layout = ({
     const needResize = canvasElement.current.width !== width || canvasElement.current.height !== height
     if (needResize) {
       renderer.current.setSize(width, height, false)
-      camera.current.aspect = canvasElement.current.clientWidth / canvasElement.current.clientHeight
+
+      // Perspective Camera
+      // camera.current.aspect = canvasElement.current.clientWidth / canvasElement.current.clientHeight
+      // camera.current.updateProjectionMatrix()
+
+      // Ortho Camera
+      const aspect = canvasElement.current.clientHeight / canvasElement.current.clientWidth
+      camera.current.left = sceneSize / -2
+      camera.current.right = sceneSize / 2
+      camera.current.top = (sceneSize * aspect) / 2
+      camera.current.bottom = (-sceneSize * aspect) / 2
       camera.current.updateProjectionMatrix()
+
       // resizeThreeScene()
     }
     return needResize
   }
 
   const resizeThreeScene = () => {
-    if (mainRef === null) {
+    if (heroRef === null) {
       return
     }
-    const bounds = mainRef.current.getBoundingClientRect()
+    const bounds = heroRef.getBoundingClientRect()
     const left = bounds.left + 1 // magic number for various paddings and margins
     const ndcLeft = (left / canvasElement.current.clientWidth) * 2 - 1
     const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0)
@@ -393,9 +415,10 @@ const Layout = ({
     if (scale > 0) {
       scene.current.scale.set(scale, scale, scale)
       // setting the scale in resizeThreeScene() is a little funky
-      // because once taking into account the aspect ratio changes, sizing gets weirddddd
-      // setting the mesh position seems to help
-      mesh.current.position.setZ(-mesh.current.geometry.parameters.radius * 2 * scale)
+      // because once taking into account the aspect ratio changes, sizing gets distorted by the FOV
+      // example: https://i.imgur.com/LALJydf.gifv
+      // when targeting mainRef, setting the mesh position seems to help
+      // mesh.current.position.setZ(-mesh.current.geometry.parameters.radius * 2 * scale)
     }
   }
 
