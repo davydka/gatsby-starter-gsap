@@ -4,15 +4,17 @@
   overflow: hidden;
 
   .logo-container {
-    margin-top: -#{$header-height + $holder-margin-top};
+    //margin-top: -#{$header-height + $holder-margin-top};
     will-change: height;
     transition: height, 250ms;
     height: 100vh;
+    //height: calc(100vh - #{$header-height + $holder-margin-top});
     height: calc(var(--vh, 1vh) * 100);
 
     .moon,
     .logo {
-      padding: #{$header-height + $holder-margin-top * 2} 0 2rem;
+      //padding: #{$header-height + $holder-margin-top * 2} 0 2rem;
+      padding: 2rem 0;
     }
   }
 }
