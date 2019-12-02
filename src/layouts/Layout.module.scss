@@ -53,6 +53,16 @@
   border-radius: 1000px;
 }
 
+
+
+.hideMain {
+  .canvas {
+    z-index: 0;
+  }
+}
+
+
+
 .borders {
   border: 1px solid green;
 
@@ -74,6 +84,8 @@
     border: 1px solid green;
   }
 }
+
+
 
 .mobile-safari {
   .canvas {

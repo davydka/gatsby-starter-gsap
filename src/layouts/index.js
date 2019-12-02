@@ -53,10 +53,11 @@ const Layout = ({
     param: 0,
     param2: 0,
     param3: 0,
+    showMain: true,
     gridHelper: false,
     showBorders: true,
   })
-  let [inlets, setInlets] = useState()
+  const [inlets, setInlets] = useState(null)
 
   // GUI Inlets Handler
   let handleInletChange = useRef()
@@ -93,6 +94,7 @@ const Layout = ({
   const halfPageHelperRef = useRef(null)
 
   // THREE
+  const sceneSize = 6 // in meters
   const scene = useRef()
   const camera = useRef()
   const renderer = useRef()
@@ -103,6 +105,7 @@ const Layout = ({
   const pagePos = useRef()
   const sceneHelperMesh = useRef()
   const raycaster = useRef()
+  const raycaster2 = useRef()
 
   const initializeOrbits = useRef()
   initializeOrbits.current = () => {
@@ -201,6 +204,11 @@ const Layout = ({
       .onChange(handleInletChange.current)
       .listen()
     gui.current
+      .add(inletsHolder.current, 'showMain')
+      .onChange(handleInletChange.current)
+      .name('main')
+      .listen()
+    gui.current
       .add(inletsHolder.current, 'gridHelper')
       .onChange(handleInletChange.current)
       .name('grid helper')
@@ -215,40 +223,44 @@ const Layout = ({
     /** THREE **/
     scene.current = new THREE.Scene()
     scene.current.background = new THREE.Color(0xf1f1f1)
-    camera.current = new THREE.PerspectiveCamera(75, 960 / 540, 0.1, 1000)
+    camera.current = new THREE.PerspectiveCamera(75, 960 / 540, 0.1, 10000)
     renderer.current = new THREE.WebGLRenderer({
       antialias: true,
       canvas: canvasElement.current,
     })
     renderer.current.setSize(960, 540)
+    renderer.current.setPixelRatio(window.devicePixelRatio)
     controls.current = new OrbitControls(camera.current, renderer.current.domElement)
 
     initializeOrbits.current()
     initializeCamera.current()
     raycaster.current = new THREE.Raycaster()
+    raycaster2.current = new THREE.Raycaster()
 
-    let geometry = new THREE.SphereGeometry(1.75, 8, 8, 0, Math.PI * 2, 0, Math.PI * 2)
+    let geometry = new THREE.SphereGeometry(sceneSize / 4, 8, 8, 0, Math.PI * 2, 0, Math.PI * 2)
     let material = new THREE.MeshNormalMaterial({
       // wireframe: true,
       flatShading: true,
     })
     mesh.current = new THREE.Mesh(geometry, material)
     // mesh.current.visible = false
+    mesh.current.position.setZ(-mesh.current.geometry.parameters.radius * 2)
     scene.current.add(mesh.current)
 
-    let geometrytest = new THREE.PlaneGeometry(6, 6, 8, 8)
-    let materialtest = new THREE.MeshNormalMaterial({
+    let g = new THREE.PlaneGeometry(sceneSize, sceneSize, 12, 12)
+    let m = new THREE.MeshBasicMaterial({
       wireframe: true,
+      color: 0xff6666,
       flatShading: true,
     })
-    sceneHelperMesh.current = new THREE.Mesh(geometrytest, materialtest)
+    sceneHelperMesh.current = new THREE.Mesh(g, m)
     sceneHelperMesh.current.visible = false
     scene.current.add(sceneHelperMesh.current)
 
     const light = new THREE.AmbientLight(0x404040) // soft white light
     scene.current.add(light)
 
-    axisHelper.current = new THREE.AxesHelper(5)
+    axisHelper.current = new THREE.AxesHelper(sceneSize)
     scene.current.add(axisHelper.current)
 
     pageVec.current = new THREE.Vector3()
@@ -341,6 +353,7 @@ const Layout = ({
     resizeThreeScene()
 
     renderer.current.render(scene.current, camera.current)
+    controls.current.update()
 
     flip.current = flip.current + 1
     if (flip.current >= 3) {
@@ -353,9 +366,6 @@ const Layout = ({
   }
 
   const resizeRendererToDisplaySize = () => {
-    // const pixelRatio = window.devicePixelRatio
-    // const width  = canvasElement.current.clientWidth  * pixelRatio | 0
-    // const height = canvasElement.current.clientHeight * pixelRatio | 0
     const width = canvasElement.current.clientWidth | 0
     const height = canvasElement.current.clientHeight | 0
     const needResize = canvasElement.current.width !== width || canvasElement.current.height !== height
@@ -379,38 +389,20 @@ const Layout = ({
     const ptIntrsct = new THREE.Vector3()
     raycaster.current.setFromCamera(new THREE.Vector2(ndcLeft, 0), camera.current)
     raycaster.current.ray.intersectPlane(plane, ptIntrsct)
-    const scale = Math.abs(ptIntrsct.x / 3)
+    const scale = Math.abs(ptIntrsct.x / (sceneSize / 2))
     if (scale > 0) {
       scene.current.scale.set(scale, scale, scale)
+      // setting the scale in resizeThreeScene() is a little funky
+      // because once taking into account the aspect ratio changes, sizing gets weirddddd
+      // setting the mesh position seems to help
+      mesh.current.position.setZ(-mesh.current.geometry.parameters.radius * 2 * scale)
     }
   }
-
-  // setting the scale in resizeThreeScene() is a little funky
-  // because once taking into account the aspect ratio changes, sizing gets weirddddd
-  // below is a WIP using scene.position
-  /*
-  const resizeThreeScene2 = () => {
-    if(mainRef === null){
-      return
-    }
-    const bounds = mainRef.current.getBoundingClientRect()
-    const left = bounds.left + 1 // magic number for various paddings and margins
-    const ndcLeft = (left / canvasElement.current.clientWidth) * 2 - 1
-    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -.95)
-    const ptIntrsct = new THREE.Vector3()
-    raycaster.current.setFromCamera(new THREE.Vector2(ndcLeft, 0), camera.current)
-    raycaster.current.ray.intersectPlane(plane, ptIntrsct)
-    const scale = Math.abs(ptIntrsct.x/3)
-    // console.log(scale)
-    if(scale > 0){
-      // scene.current.scale.set(scale, scale, scale)
-      scene.current.position.setZ(-scale)
-    }
-  }
-  */
 
   return (
-    <main className={cx('main', { borders: showBorders, 'mobile-safari': isiOS() })}>
+    <main
+      className={cx('main', { borders: showBorders, 'mobile-safari': isiOS(), hideMain: inlets && !inlets.showMain })}
+    >
       {/*dummy section container for imperative width measurements*/}
       <div className="section-container">
         <div className="section">
