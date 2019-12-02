@@ -50,11 +50,11 @@ const Layout = ({
   // GUI Inlets
   let inletsHolder = useRef({
     speed: 1.0,
-    param: 6.5,
+    param: 0,
     param2: 0,
     param3: 0,
     gridHelper: false,
-    showBorders: false,
+    showBorders: true,
   })
   let [inlets, setInlets] = useState()
 
@@ -86,25 +86,25 @@ const Layout = ({
   // GSAP
   let gs = useRef()
 
-  // Canvas
-  let canvasElement = useRef(null)
-  let target = useRef(null)
+  // Ref Elements
+  const mainRef = useRef(null)
+  const canvasElement = useRef(null)
+  const heroTarget = useRef(null)
+  const halfPageHelperRef = useRef(null)
 
   // THREE
-  const [size, setSize] = useState({ width: 960, height: 540 })
-  // const [tanFOV, setTanFOV] = useState(0)
-  // const [heightHolder, setHeightHolder] = useState(0)
-  let scene = useRef()
-  let camera = useRef()
-  let renderer = useRef()
-  let controls = useRef()
-  let mesh = useRef()
-  let axisHelper = useRef()
-  let pageVec = useRef()
-  let pagePos = useRef()
+  const scene = useRef()
+  const camera = useRef()
+  const renderer = useRef()
+  const controls = useRef()
+  const mesh = useRef()
+  const axisHelper = useRef()
+  const pageVec = useRef()
+  const pagePos = useRef()
+  const sceneHelperMesh = useRef()
+  const raycaster = useRef()
 
-  // todo: does this need to be a ref?
-  let initializeOrbits = useRef()
+  const initializeOrbits = useRef()
   initializeOrbits.current = () => {
     if (!controls) {
       return
@@ -114,8 +114,7 @@ const Layout = ({
     controls.current.panSpeed = 0.8
   }
 
-  // todo: does this need to be a ref?
-  let initializeCamera = useRef()
+  const initializeCamera = useRef()
   initializeCamera.current = () => {
     if (!camera) {
       return
@@ -141,26 +140,18 @@ const Layout = ({
     // for Chome on Android, it's not too bad * Tested Pixel 3, Android 9
     let vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)
+    handleScroll()
   }
 
-  const handleResize = () => {
-    // https://webglfundamentals.org/webgl/lessons/webgl-anti-patterns.html
-    // tldr; set canvas to 100vw, 100vh, and use canvas.clientWidth and canvas.clientHeight for renderer calculations
-    const target = {
-      width: canvasElement.current.clientWidth,
-      height: canvasElement.current.clientHeight,
+  const handleScroll = () => {
+    // halfPageHelperRef can't use position sticky because Firefox's
+    // webgl performance drops when too many position: fixed elements
+    // are on top of the webgl element
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop
+    if (showBordersRef.current === true && halfPageHelperRef.current) {
+      halfPageHelperRef.current.style.top = `${currentScroll + window.innerHeight / 2}px`
     }
-    setSize(target)
   }
-
-  useEffect(() => {
-    if (renderer && renderer.current) {
-      renderer.current.setSize(size.width, size.height)
-      camera.current.aspect = size.width / size.height
-      // camera.current.fov = (360 / Math.PI) * Math.atan(tanFOV * (size.height / heightHolder))
-      camera.current.updateProjectionMatrix()
-    }
-  }, [size])
 
   // componentDidMount
   useEffect(() => {
@@ -179,11 +170,7 @@ const Layout = ({
     }
     handleOrientationChange()
 
-    window.addEventListener('resize', debounce(handleResize, debounceAmount))
-    handleResize()
-    // setHeightHolder(size.height)
-
-    window.addEventListener('click', handleClick)
+    window.addEventListener('scroll', handleScroll)
 
     /** Stats **/
     stats.current = new window.Stats()
@@ -202,7 +189,7 @@ const Layout = ({
       .onChange(handleInletChange.current)
       .listen()
     gui.current
-      .add(inletsHolder.current, 'param', 0.01, 15)
+      .add(inletsHolder.current, 'param', -7.5, 7.5)
       .onChange(handleInletChange.current)
       .listen()
     gui.current
@@ -226,37 +213,37 @@ const Layout = ({
     handleInletChange.current()
 
     /** THREE **/
-    if (heroRef) {
-      const bounds = heroRef.getBoundingClientRect()
-      const targetCenter = [
-        window.pageYOffset + bounds.x + bounds.width / 2,
-        window.pageXOffset + bounds.top + bounds.height / 2,
-      ]
-      console.log('Target Center:', targetCenter)
-      console.log(window.innerHeight / 2)
-    }
-
     scene.current = new THREE.Scene()
-    // scene.current.background = new THREE.Color( 0xff0000 )
-    camera.current = new THREE.PerspectiveCamera(75, size.width / size.height, 0.1, 10000)
+    scene.current.background = new THREE.Color(0xf1f1f1)
+    camera.current = new THREE.PerspectiveCamera(75, 960 / 540, 0.1, 1000)
     renderer.current = new THREE.WebGLRenderer({
       antialias: true,
       canvas: canvasElement.current,
     })
-    renderer.current.setSize(size.width, size.height)
+    renderer.current.setSize(960, 540)
     controls.current = new OrbitControls(camera.current, renderer.current.domElement)
 
     initializeOrbits.current()
     initializeCamera.current()
-    // setTanFOV(Math.tan(((Math.PI / 180) * camera.current.fov) / 2))
+    raycaster.current = new THREE.Raycaster()
 
-    let geometry = new THREE.SphereGeometry(3, 8, 8, 0, Math.PI * 2, 0, Math.PI * 2)
+    let geometry = new THREE.SphereGeometry(1.75, 8, 8, 0, Math.PI * 2, 0, Math.PI * 2)
     let material = new THREE.MeshNormalMaterial({
       // wireframe: true,
       flatShading: true,
     })
     mesh.current = new THREE.Mesh(geometry, material)
+    // mesh.current.visible = false
     scene.current.add(mesh.current)
+
+    let geometrytest = new THREE.PlaneGeometry(6, 6, 8, 8)
+    let materialtest = new THREE.MeshNormalMaterial({
+      wireframe: true,
+      flatShading: true,
+    })
+    sceneHelperMesh.current = new THREE.Mesh(geometrytest, materialtest)
+    sceneHelperMesh.current.visible = false
+    scene.current.add(sceneHelperMesh.current)
 
     const light = new THREE.AmbientLight(0x404040) // soft white light
     scene.current.add(light)
@@ -285,8 +272,10 @@ const Layout = ({
     // )
 
     /** Animate Kickoff **/
+    resizeRendererToDisplaySize()
     flip.current = 0
     animate.current()
+    resizeThreeScene()
 
     /** CleanUp **/
     return () => {
@@ -300,64 +289,43 @@ const Layout = ({
       }
       window.removeEventListener('orientationchange', debounce(handleOrientationChange, debounceAmount))
       window.removeEventListener('resize', debounce(handleOrientationChange, debounceAmount))
-      window.removeEventListener('resize', debounce(handleResize, debounceAmount))
+      window.removeEventListener('scroll', handleScroll)
     }
   }, [])
 
+  const showBordersRef = useRef(showBorders)
   useEffect(() => {
-    axisHelper.current.visible = showBorders
+    showBordersRef.current = showBorders // ref here for eventlistener not updating with Redux Store state
+    handleScroll()
+
+    if (axisHelper.current) {
+      axisHelper.current.visible = showBorders
+    }
+    if (sceneHelperMesh.current) {
+      sceneHelperMesh.current.visible = showBorders
+    }
   }, [showBorders])
 
   useEffect(() => {
-    gsap.to(camera.current.position, 1, {
-      // gsap.to(controls.current.object.position, 1, {
+    gsap.to(scene.current.position, 1, {
       z: param,
       ease: Linear.ease,
     })
   }, [param, inlets])
 
   useEffect(() => {
-    gsap.to(camera.current.position, 1, {
+    gsap.to(scene.current.position, 1, {
       x: param2,
       ease: Linear.ease,
     })
   }, [param2, inlets])
 
   useEffect(() => {
-    gsap.to(camera.current.position, 1, {
+    gsap.to(scene.current.position, 1, {
       y: param3,
       ease: Linear.ease,
     })
   }, [param3, inlets])
-
-  const handleClick = () => {
-    /*
-    console.log('click')
-    console.log(e.pageX)
-    console.log(e.pageY)
-    pageVec.current.set(
-      (e.pageX / canvasElement.current.clientWidth) * 2 - 1,
-      -(e.pageY / canvasElement.current.clientHeight) * 2 + 1,
-      0.5
-    )
-
-    pageVec.current.unproject(camera.current)
-    pageVec.current.sub(camera.current.position).normalize()
-
-    // const distance = -camera.current.position.z / pageVec.current.z
-    const distance = (2.5 - camera.current.position.z) / pageVec.current.z
-
-    pagePos.current.copy(camera.current.position).add(pageVec.current.multiplyScalar(distance))
-    console.log(pagePos.current)
-
-    let geometry = new THREE.BoxGeometry( 1, 1, 1 )
-    let material = new THREE.MeshNormalMaterial({
-      flatShading: true,
-    })
-    const mesh = new THREE.Mesh(geometry, material)
-    scene.current.add(mesh)
-     */
-  }
 
   // ANIMATE
   let animationID = useRef()
@@ -368,8 +336,11 @@ const Layout = ({
 
     // animate stuff
     animationID.current = undefined
+
+    resizeRendererToDisplaySize()
+    resizeThreeScene()
+
     renderer.current.render(scene.current, camera.current)
-    // controls.current.update()
 
     flip.current = flip.current + 1
     if (flip.current >= 3) {
@@ -381,10 +352,79 @@ const Layout = ({
     stats.current.end()
   }
 
+  const resizeRendererToDisplaySize = () => {
+    // const pixelRatio = window.devicePixelRatio
+    // const width  = canvasElement.current.clientWidth  * pixelRatio | 0
+    // const height = canvasElement.current.clientHeight * pixelRatio | 0
+    const width = canvasElement.current.clientWidth | 0
+    const height = canvasElement.current.clientHeight | 0
+    const needResize = canvasElement.current.width !== width || canvasElement.current.height !== height
+    if (needResize) {
+      renderer.current.setSize(width, height, false)
+      camera.current.aspect = canvasElement.current.clientWidth / canvasElement.current.clientHeight
+      camera.current.updateProjectionMatrix()
+      // resizeThreeScene()
+    }
+    return needResize
+  }
+
+  const resizeThreeScene = () => {
+    if (mainRef === null) {
+      return
+    }
+    const bounds = mainRef.current.getBoundingClientRect()
+    const left = bounds.left + 1 // magic number for various paddings and margins
+    const ndcLeft = (left / canvasElement.current.clientWidth) * 2 - 1
+    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0)
+    const ptIntrsct = new THREE.Vector3()
+    raycaster.current.setFromCamera(new THREE.Vector2(ndcLeft, 0), camera.current)
+    raycaster.current.ray.intersectPlane(plane, ptIntrsct)
+    const scale = Math.abs(ptIntrsct.x / 3)
+    if (scale > 0) {
+      scene.current.scale.set(scale, scale, scale)
+    }
+  }
+
+  // setting the scale in resizeThreeScene() is a little funky
+  // because once taking into account the aspect ratio changes, sizing gets weirddddd
+  // below is a WIP using scene.position
+  /*
+  const resizeThreeScene2 = () => {
+    if(mainRef === null){
+      return
+    }
+    const bounds = mainRef.current.getBoundingClientRect()
+    const left = bounds.left + 1 // magic number for various paddings and margins
+    const ndcLeft = (left / canvasElement.current.clientWidth) * 2 - 1
+    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -.95)
+    const ptIntrsct = new THREE.Vector3()
+    raycaster.current.setFromCamera(new THREE.Vector2(ndcLeft, 0), camera.current)
+    raycaster.current.ray.intersectPlane(plane, ptIntrsct)
+    const scale = Math.abs(ptIntrsct.x/3)
+    // console.log(scale)
+    if(scale > 0){
+      // scene.current.scale.set(scale, scale, scale)
+      scene.current.position.setZ(-scale)
+    }
+  }
+  */
+
   return (
     <main className={cx('main', { borders: showBorders, 'mobile-safari': isiOS() })}>
+      {/*dummy section container for imperative width measurements*/}
+      <div className="section-container">
+        <div className="section">
+          <div className={cx('row')}>
+            <div className={cx('col')}>
+              <div ref={mainRef} style={{ visibility: 'none' }} />
+            </div>
+          </div>
+        </div>
+      </div>
+
       <GridHelper />
-      <Target className={cx('target')} ref={target} />
+      <Target className={cx('heroTarget')} ref={heroTarget} target={heroRef} />
+      {showBorders && <div ref={halfPageHelperRef} className={cx('halfPageHelper')} />}
       <Header siteTitle={siteData.site.siteMetadata.title} className={cx('header-container')} />
       {children}
       <footer className={cx('footer')}>© {new Date().getFullYear()}, Footer goes here</footer>

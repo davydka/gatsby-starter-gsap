@@ -70,9 +70,9 @@ const reducer = (state, action) => {
 }
 
 const initialState = {
-  param: 0.5,
-  param2: 0.5,
-  param3: 0.5,
+  param: 0.0,
+  param2: 0.0,
+  param3: 0.0,
   pageTransitionURLTarget: false,
   pageTransitioning: false,
   pageTransitioningIn: false,
