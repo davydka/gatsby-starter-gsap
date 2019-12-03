@@ -27,7 +27,7 @@ import {
   useParam2,
   useParam3,
 } from './utils'
-import Header from '@components/Header'
+import Menu from '@components/Menu'
 import Target from '@components/Target'
 import debounce from '@utils/debounce'
 import isiOS from '@utils/isiOS'
@@ -51,6 +51,7 @@ const Layout = ({
 }) => {
   // Gatsby
   const siteData = useSiteMetadata()
+  usePrevLocation(location, setPrevLocation)
 
   //GUIパラメータの準備
   let gui = useRef()
@@ -93,6 +94,7 @@ const Layout = ({
   const canvasElement = useRef(null)
   const heroTarget = useRef(null)
   const halfPageHelperRef = useRef(null)
+  const menuRef = useRef(null)
 
   // THREE
   const sceneSize = 6 // in meters
@@ -111,6 +113,12 @@ const Layout = ({
   const initializeCamera = useRef()
   initializeCamera.current = initCameraThunk(camera)
 
+  // ANIMATE and SCROLL Handling/Logic
+  let animationID = useRef()
+  let animate = useRef()
+  let tick = useRef()
+  let [lastScroll, setLastScroll] = useState(0)
+
   // componentDidMount
   useEffect(() => {
     console.log('🌈 layout mounted')
@@ -124,15 +132,21 @@ const Layout = ({
     if (isiOS()) {
       window.addEventListener(
         'orientationchange',
-        debounce(handleOrientationChange(showBordersRef, halfPageHelperRef), debounceAmount)
+        debounce(
+          handleOrientationChange(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef),
+          debounceAmount
+        )
       )
     } else {
       window.addEventListener(
         'resize',
-        debounce(handleOrientationChange(showBordersRef, halfPageHelperRef), debounceAmount)
+        debounce(
+          handleOrientationChange(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef),
+          debounceAmount
+        )
       )
     }
-    handleOrientationChange(showBordersRef, halfPageHelperRef)()
+    handleOrientationChange(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef)()
 
     document.documentElement.style.setProperty(
       '--vhThreshold',
@@ -184,7 +198,7 @@ const Layout = ({
 
     /** Animate Kickoff **/
     resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize)
-    flip.current = 0
+    tick.current = 0
     animate.current()
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
 
@@ -199,26 +213,40 @@ const Layout = ({
       }
       window.removeEventListener(
         'orientationchange',
-        debounce(handleOrientationChange(showBordersRef, halfPageHelperRef), debounceAmount)
+        debounce(
+          handleOrientationChange(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, heightRef),
+          debounceAmount
+        )
       )
       window.removeEventListener(
         'resize',
-        debounce(handleOrientationChange(showBordersRef, halfPageHelperRef), debounceAmount)
+        debounce(
+          handleOrientationChange(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, heightRef),
+          debounceAmount
+        )
       )
     }
   }, [])
 
+  // HELPERS
   const showBordersRef = useRef(showBorders)
-  useShowBorders(showBorders, showBordersRef, handleScroll, axisHelper, sceneHelperMesh, halfPageHelperRef)
-  usePrevLocation(location, setPrevLocation)
+  useShowBorders(
+    showBorders,
+    showBordersRef,
+    handleScroll,
+    axisHelper,
+    sceneHelperMesh,
+    halfPageHelperRef,
+    lastScroll,
+    setLastScroll,
+    menuRef,
+    heightRef
+  )
   useParam1(param1, scene, inlets)
   useParam2(param2, scene, inlets)
   useParam3(param3, scene, inlets)
 
-  // ANIMATE
-  let animationID = useRef()
-  let animate = useRef()
-  let flip = useRef()
+  // ANIMATE Method
   animate.current = () => {
     stats && stats.current && stats.current.begin()
 
@@ -227,15 +255,15 @@ const Layout = ({
 
     resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize)
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
-    handleScroll(showBordersRef, halfPageHelperRef)
+    handleScroll(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef)
 
     renderer.current.render(scene.current, camera.current)
     controls.current.update()
 
-    flip.current = flip.current + 1
-    if (flip.current >= 3) {
+    tick.current = tick.current + 1
+    if (tick.current >= 3) {
       // do something at a lower framerate here
-      flip.current = 0
+      tick.current = 0
     }
 
     animationID.current = requestAnimationFrame(animate.current)
@@ -264,7 +292,7 @@ const Layout = ({
       <GridHelper />
       <Target className={cx('heroTarget')} ref={heroTarget} target={heroRef} />
       {showBorders && <div ref={halfPageHelperRef} className={cx('halfPageHelper')} />}
-      <Header siteTitle={siteData.site.siteMetadata.title} className={cx('header-container')} />
+      <Menu menuRef={menuRef} siteTitle={siteData.site.siteMetadata.title} className={cx('menu-container')} />
       {children}
       <footer className={cx('footer')}>© {new Date().getFullYear()}, Footer goes here</footer>
       <canvas className={cx('canvas')} ref={canvasElement} />

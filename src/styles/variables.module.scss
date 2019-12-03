@@ -43,13 +43,13 @@ $z-index-5: 50;
 $z-index-6: 60;
 
 /* UI */
-$holder-margin-top: 3.5rem;
+$holder-margin-top: 2rem;
 //$holder-margin-top: 0.01rem; // 0 margin-top breaks iOS canvas at the moment
 $holder-margin-sides: 4rem;
-$holder-margin-bottom: 5rem;
+$holder-margin-bottom: 4rem;
 
-$header-height: 2.33rem;
-$footer-height: 5.8rem;
+$menu-height: 4rem;
+$footer-height: 6rem;
 
 /* stylelint-disable */
 :export {
@@ -64,5 +64,9 @@ $footer-height: 5.8rem;
   colsXs: $grid-columns-xs;
 
   siteMaxWidth: $site-max-width;
+
+  /* UI */
+  holderMarginTop: $holder-margin-top;
+  menuHeight: $menu-height;
 }
 /* stylelint-enable */

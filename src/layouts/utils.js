@@ -3,6 +3,11 @@ import { useStaticQuery, graphql } from 'gatsby'
 import gsap, { Linear } from 'gsap'
 import * as THREE from 'three'
 
+import { holderMarginTop, menuHeight } from '@styles/variables.module.scss'
+import remStringToFloat from '@src/utils/remStringToFloat'
+
+const menuSize = remStringToFloat(holderMarginTop) + remStringToFloat(menuHeight)
+
 /************/
 /** GATSBY **/
 export const useSiteMetadata = () => {
@@ -36,8 +41,8 @@ export const initStats = stats => {
 /* GUI */
 export const initGUI = (gui, inletsHolder, handleInletChange) => {
   gui.current = new window.dat.GUI()
-  gui.current.useLocalStorage = true
-  gui.current.remember(inletsHolder.current)
+  // gui.current.useLocalStorage = true
+  // gui.current.remember(inletsHolder.current)
   gui.current
     .add(inletsHolder.current, 'speed', 0.0, 2.0)
     .onChange(handleInletChange.current)
@@ -141,17 +146,54 @@ export const addSceneHelperMesh = (sceneSize, sceneHelperMesh, axisHelper, scene
 
 /************/
 /** SCROLL **/
-export const handleScroll = (showBordersRef, halfPageHelperRef) => {
-  // halfPageHelperRef can't use position fixed because Firefox's
-  // webgl performance drops when too many position: fixed elements
-  // are on top of the webgl element
+export const handleScroll = (showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef) => {
   const currentScroll = window.pageYOffset || document.documentElement.scrollTop
-  if (showBordersRef && showBordersRef.current === true && showBordersRef && halfPageHelperRef.current) {
-    halfPageHelperRef.current.style.top = `${currentScroll + window.innerHeight / 2}px`
+  const topThreshold = heightRef.current.offsetHeight - window.innerHeight
+
+  const end = () => {
+    if (currentScroll !== lastScroll) {
+      setLastScroll(currentScroll)
+    }
+    // halfPageHelperRef can't use position fixed because Firefox's
+    // webgl performance drops when too many position: fixed elements
+    // are on top of the webgl element
+    if (showBordersRef && showBordersRef.current === true && showBordersRef && halfPageHelperRef.current) {
+      halfPageHelperRef.current.style.top = `${currentScroll + window.innerHeight / 2}px`
+    }
+    return true
+  }
+
+  if (currentScroll > document.body.offsetHeight - window.innerHeight - 2) {
+    menuRef.current.style.top = `-${menuSize}px`
+    return end()
+  }
+
+  // show menu when mobile browser chrome is showing
+  if (topThreshold > 0) {
+    menuRef.current.style.top = '0'
+    return end()
+  }
+  // down
+  if (currentScroll > lastScroll && currentScroll > 0) {
+    menuRef.current.style.top = `-${menuSize}px`
+    return end()
+  }
+
+  // up
+  if (currentScroll < lastScroll || currentScroll < 0) {
+    menuRef.current.style.top = '0'
+    return end()
   }
 }
 
-export const handleOrientationChange = (showBordersRef, halfPageHelperRef) => {
+export const handleOrientationChange = (
+  showBordersRef,
+  halfPageHelperRef,
+  lastScroll,
+  setLastScroll,
+  menuRef,
+  heightRef
+) => {
   // note - for mobileSafari, we're not updating 100vh (cover) params onresize,
   //                                                only on orientation change
   // reasoning is that these items are generally for "above the fold" features
@@ -162,7 +204,7 @@ export const handleOrientationChange = (showBordersRef, halfPageHelperRef) => {
   return () => {
     let vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)
-    handleScroll(showBordersRef, halfPageHelperRef)
+    handleScroll(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef)
   }
 }
 
@@ -228,11 +270,15 @@ export const useShowBorders = (
   handleScroll,
   axisHelper,
   sceneHelperMesh,
-  halfPageHelperRef
+  halfPageHelperRef,
+  lastScroll,
+  setLastScroll,
+  menuRef,
+  heightRef
 ) => {
   useEffect(() => {
     showBordersRef.current = showBorders // ref here for eventlistener not updating with Redux Store state
-    handleScroll(handleScroll(showBordersRef, halfPageHelperRef))
+    handleScroll(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef)
 
     if (axisHelper.current) {
       axisHelper.current.visible = showBorders

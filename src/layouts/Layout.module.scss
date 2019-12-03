@@ -22,11 +22,12 @@
   }
 }
 
-.header-container {
+.menu-container {
   position: fixed;
   z-index: $z-index-1;
-  height: $header-height;
-  background-color: inherit;
+  top: 0;
+  left: 0;
+  transition: top 200ms;
 }
 
 .canvas {

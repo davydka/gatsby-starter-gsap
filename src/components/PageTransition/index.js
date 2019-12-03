@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { navigate } from 'gatsby'
@@ -66,13 +66,6 @@ const PageTransition = ({
       })
     }
   }, [pageTransitionURLTarget, location, pagePath])
-
-  const TransitionNode = forwardRef(({ children }, ref) => {
-    const thisRef = useRef(null)
-    useImperativeHandle(ref, () => thisRef.current)
-    return <div ref={thisRef}>{children}</div>
-  })
-  TransitionNode.displayName = 'TransitionNode'
 
   useEffect(() => {
     // console.log('𝍌𝍌𝍌 PageTransition mounted')
