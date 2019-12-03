@@ -38,8 +38,8 @@
   z-index: -1;
   width: 100% !important;
   height: 100vh !important;
-  height: calc(100vh + var(--vhThreshold)) !important;
-  margin-top: calc(-1 * var(--vhThreshold));
+  height: calc(100vh + var(--vhThreshold) + #{$menu-height + $holder-margin-top}) !important;
+  margin-top: calc(-1 * (var(--vhThreshold)));
 }
 
 .footer {
