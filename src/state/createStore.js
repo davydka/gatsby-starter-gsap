@@ -6,9 +6,9 @@ const reducer = (state, action) => {
       prevLocation: typeof action.payload !== 'undefined' ? action.payload : initialState.prevLocation,
     })
   }
-  if (action.type === `SETPARAM`) {
+  if (action.type === `SETPARAM1`) {
     return Object.assign({}, state, {
-      param: action.payload ? action.payload : 0,
+      param1: action.payload ? action.payload : 0,
     })
   }
   if (action.type === `SETPARAM2`) {
@@ -70,7 +70,7 @@ const reducer = (state, action) => {
 }
 
 const initialState = {
-  param: 0.0,
+  param1: 0.0,
   param2: 0.0,
   param3: 0.0,
   pageTransitionURLTarget: false,
