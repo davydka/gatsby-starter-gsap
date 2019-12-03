@@ -36,6 +36,8 @@ export const initStats = stats => {
 /* GUI */
 export const initGUI = (gui, inletsHolder, handleInletChange) => {
   gui.current = new window.dat.GUI()
+  gui.current.useLocalStorage = true
+  gui.current.remember(inletsHolder.current)
   gui.current
     .add(inletsHolder.current, 'speed', 0.0, 2.0)
     .onChange(handleInletChange.current)
