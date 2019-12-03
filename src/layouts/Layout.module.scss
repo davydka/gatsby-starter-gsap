@@ -36,10 +36,9 @@
   display: block;
   z-index: -1;
   width: 100% !important;
-  height: 100% !important;
-  // if hero content is shifted down by margin-top, and you want to align canvas center with it
-  // shift canvas down by setting height taller than page
-  //height: calc(100vh + #{$holder-margin-top*2}) !important;
+  height: 100vh !important;
+  height: calc(100vh + var(--vhThreshold)) !important;
+  margin-top: calc(-1 * var(--vhThreshold));
 }
 
 .footer {
@@ -77,6 +76,10 @@
     background-color: orangered;
   }
 
+  .canvas {
+    border: 1px solid purple;
+  }
+
   .header-container{
     border: 1px solid green;
   }
@@ -85,14 +88,3 @@
   }
 }
 
-
-
-.mobile-safari {
-  .canvas {
-    // if hero content is shifted down by margin-top, and you want to align canvas center with it
-    // shift canvas down by setting height taller than page
-    // here, canvas is aiming for 100vh, while the hero content is 100vh minus safari viewport shenanigans
-    // height: calc(var(--vh, 1vh) * 100 + #{$holder-margin-top*6}) !important;
-    // margin-top: -$holder-margin-top*2;
-  }
-}

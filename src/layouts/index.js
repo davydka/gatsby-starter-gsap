@@ -89,6 +89,7 @@ const Layout = ({
 
   // Ref Elements
   const mainRef = useRef(null)
+  const heightRef = useRef(null)
   const canvasElement = useRef(null)
   const heroTarget = useRef(null)
   const halfPageHelperRef = useRef(null)
@@ -173,7 +174,10 @@ const Layout = ({
     }
     handleOrientationChange()
 
-    window.addEventListener('scroll', handleScroll)
+    document.documentElement.style.setProperty(
+      '--vhThreshold',
+      `${heightRef.current.offsetHeight - window.innerHeight}px`
+    )
 
     /** Stats **/
     stats.current = new window.Stats()
@@ -262,6 +266,8 @@ const Layout = ({
     let m = new THREE.MeshBasicMaterial({
       wireframe: true,
       color: 0xff6666,
+      opacity: 0.25,
+      transparent: true,
       flatShading: true,
     })
     sceneHelperMesh.current = new THREE.Mesh(g, m)
@@ -362,6 +368,7 @@ const Layout = ({
 
     resizeRendererToDisplaySize()
     resizeThreeScene()
+    handleScroll()
 
     renderer.current.render(scene.current, camera.current)
     controls.current.update()
@@ -424,7 +431,10 @@ const Layout = ({
 
   return (
     <main
-      className={cx('main', { borders: showBorders, 'mobile-safari': isiOS(), hideMain: inlets && !inlets.showMain })}
+      className={cx('main', {
+        borders: showBorders,
+        hideMain: inlets && !inlets.showMain,
+      })}
     >
       {/*dummy section container for imperative width measurements*/}
       <div className="section-container">
@@ -436,6 +446,7 @@ const Layout = ({
           </div>
         </div>
       </div>
+      <div ref={heightRef} style={{ position: 'absolute', top: 0, left: 0, height: '100vh' }} />
 
       <GridHelper />
       <Target className={cx('heroTarget')} ref={heroTarget} target={heroRef} />
