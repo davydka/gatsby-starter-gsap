@@ -4,12 +4,11 @@
   overflow: hidden;
 
   .logo-container {
-    //margin-top: -#{$header-height + $holder-margin-top};
+    margin-top: #{$menu-height + $holder-margin-top};
     will-change: height;
     transition: height, 250ms;
     height: 100vh;
-    //height: calc(100vh - #{$header-height + $holder-margin-top});
-    height: calc(var(--vh, 1vh) * 100);
+    height: calc(var(--vh, 1vh) * 100 - #{$menu-height + $holder-margin-top});
 
     .moon,
     .logo {

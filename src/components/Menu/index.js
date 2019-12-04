@@ -3,16 +3,16 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
 
-import styles from './Header.module.scss'
+import styles from './Menu.module.scss'
 import Link from '@components/Link'
 import Text from '@components/Text'
 
 const cx = classnames.bind(styles)
 
-const Header = ({ className, showBorders }) => {
+const Menu = ({ className, showBorders, menuRef }) => {
   const type = 'h6'
   return (
-    <header className={cx('section-container', 'header', className, { borders: showBorders })}>
+    <div ref={menuRef} className={cx('section-container', 'menu-container', className, { borders: showBorders })}>
       <div className={cx('section')}>
         <div className={cx('row')}>
           <div
@@ -26,7 +26,8 @@ const Header = ({ className, showBorders }) => {
               'col-sm-4',
               'offset-sm-2',
               'col-xs-8',
-              'offset-xs-1'
+              'offset-xs-1',
+              'menu'
             )}
           >
             <ul>
@@ -44,11 +45,12 @@ const Header = ({ className, showBorders }) => {
           </div>
         </div>
       </div>
-    </header>
+    </div>
   )
 }
 
-Header.propTypes = {
+Menu.propTypes = {
+  menuRef: PropTypes.object,
   className: PropTypes.string,
   showBorders: PropTypes.bool,
   setPageNavigate: PropTypes.func,
@@ -58,4 +60,4 @@ const mapStateToProps = ({ showBorders }) => {
   return { showBorders }
 }
 
-export default connect(mapStateToProps)(Header)
+export default connect(mapStateToProps)(Menu)
