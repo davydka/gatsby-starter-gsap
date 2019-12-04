@@ -7,7 +7,6 @@
   font-family: $font-serif;
   font-size: 1.8rem;
   line-height: 1.444;
-  //padding: $holder-margin-top 0 $holder-margin-bottom;
   min-height: 100vh;
   max-width: 100vw;
   overflow-x: hidden;
@@ -22,11 +21,12 @@
   }
 }
 
-.header-container {
+.menu-container {
   position: fixed;
   z-index: $z-index-1;
-  height: $header-height;
-  background-color: inherit;
+  top: 0;
+  left: 0;
+  transition: transform 200ms;
 }
 
 .canvas {
@@ -36,10 +36,9 @@
   display: block;
   z-index: -1;
   width: 100% !important;
-  height: 100% !important;
-  // if hero content is shifted down by margin-top, and you want to align canvas center with it
-  // shift canvas down by setting height taller than page
-  //height: calc(100vh + #{$holder-margin-top*2}) !important;
+  height: 100vh !important; // fallback fro IE 11
+  height: calc(100vh + var(--vhThreshold) + #{$menu-height + $holder-margin-top}) !important;
+  margin-top: calc(-1 * (var(--vhThreshold)));
 }
 
 .footer {
@@ -53,11 +52,21 @@
   border-radius: 1000px;
 }
 
+
+
+.hideMain {
+  .canvas {
+    z-index: 0;
+  }
+}
+
+
+
 .borders {
   border: 1px solid green;
 
   .halfPageHelper {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 0;
     width: 100%;
@@ -65,6 +74,10 @@
     height: 1px;
     content: '';
     background-color: orangered;
+  }
+
+  .canvas {
+    border: 1px solid purple;
   }
 
   .header-container{
@@ -75,12 +88,3 @@
   }
 }
 
-.mobile-safari {
-  .canvas {
-    // if hero content is shifted down by margin-top, and you want to align canvas center with it
-    // shift canvas down by setting height taller than page
-    // here, canvas is aiming for 100vh, while the hero content is 100vh minus safari viewport shenanigans
-    // height: calc(var(--vh, 1vh) * 100 + #{$holder-margin-top*6}) !important;
-    // margin-top: -$holder-margin-top*2;
-  }
-}

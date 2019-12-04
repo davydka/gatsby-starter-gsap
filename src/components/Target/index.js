@@ -13,21 +13,21 @@ const Target = forwardRef(({ className, showBorders, target, pageTransitioningIn
 
   const listenerID = useRef()
   const listener = useRef()
-  let flip = useRef()
+  let tick = useRef()
   listener.current = () => {
     listenerID.current = undefined
-    flip.current = flip.current + 1
-    if (flip.current >= 30) {
+    tick.current = tick.current + 1
+    if (tick.current >= 30) {
       // do something at a lower framerate here
       updateTarget()
-      flip.current = 0
+      tick.current = 0
     }
     listenerID.current = requestAnimationFrame(listener.current)
   }
 
   const startListener = () => {
     endListener()
-    flip.current = 0
+    tick.current = 0
     listener.current()
   }
   const endListener = () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { navigate } from 'gatsby'
@@ -29,8 +29,8 @@ const PageTransition = ({
   useEffect(() => {
     if (pageTransitionURLTarget !== false) {
       // console.log('🛵 Page navigate')
-      // console.log('going to:', pageNavigate.replace('/', ''))
-      // console.log('coming from:', location.pathname.replace('/', ''))
+      // console.log('going to:', pageTransitionURLTarget.replace(/\//g, ''))
+      // console.log('coming from:', location.pathname.replace(/\//g, ''))
       // console.log('is animating:', gsap.isTweening(refContainer.current))
       if (gsap.isTweening(refContainer.current)) {
         setPageTransitioning(true)
@@ -42,7 +42,7 @@ const PageTransition = ({
     }
     if (
       pageTransitionURLTarget !== false &&
-      pageTransitionURLTarget.replace('/', '') !== location.pathname.replace('/', '') &&
+      pageTransitionURLTarget.replace(/\//g, '') !== location.pathname.replace(/\//g, '') &&
       !gsap.isTweening(refContainer.current)
     ) {
       gsap.to(refContainer.current, 0.5, {
@@ -66,13 +66,6 @@ const PageTransition = ({
       })
     }
   }, [pageTransitionURLTarget, location, pagePath])
-
-  const TransitionNode = forwardRef(({ children }, ref) => {
-    const thisRef = useRef(null)
-    useImperativeHandle(ref, () => thisRef.current)
-    return <div ref={thisRef}>{children}</div>
-  })
-  TransitionNode.displayName = 'TransitionNode'
 
   useEffect(() => {
     // console.log('𝍌𝍌𝍌 PageTransition mounted')

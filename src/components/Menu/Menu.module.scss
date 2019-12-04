@@ -1,0 +1,26 @@
+@import 'styles/includes';
+
+.menu-container {
+  width: 100%;
+  //background-color: inherit;
+  background-color: $grey-background;
+  border-bottom: 1px solid $black;
+}
+
+.menu {
+  width: 100%;
+  height: $menu-height + $holder-margin-top;
+
+  ul {
+    display: flex;
+    height: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.borders {
+  ul {
+    border: 1px solid orange;
+  }
+}
