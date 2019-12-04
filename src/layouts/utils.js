@@ -231,6 +231,9 @@ export const resizeThreeScene = (heroRef, canvasElement, raycaster, scene, camer
     return
   }
   const bounds = heroRef.getBoundingClientRect()
+  if (!bounds.left) {
+    return
+  }
   const left = bounds.left + 1 // magic number for various paddings and margins
   const ndcLeft = (left / canvasElement.current.clientWidth) * 2 - 1
   const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0)

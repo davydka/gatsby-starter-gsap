@@ -62,7 +62,7 @@ const Layout = ({
     param3: 0,
     showMain: true,
     gridHelper: false,
-    showBorders: true,
+    showBorders: false,
   })
   const [inlets, setInlets] = useState(null)
 
@@ -143,6 +143,7 @@ const Layout = ({
     /** THREE **/
     scene.current = new THREE.Scene()
     scene.current.background = new THREE.Color(0xf1f1f1)
+    scene.current.scale.set(0.25)
     // camera.current = new THREE.PerspectiveCamera(75, 960 / 540, 0.1, 10000)
 
     const aspect = canvasElement.current.clientWidth / canvasElement.current.clientHeight

@@ -29,8 +29,8 @@ const PageTransition = ({
   useEffect(() => {
     if (pageTransitionURLTarget !== false) {
       // console.log('🛵 Page navigate')
-      // console.log('going to:', pageNavigate.replace('/', ''))
-      // console.log('coming from:', location.pathname.replace('/', ''))
+      // console.log('going to:', pageTransitionURLTarget.replace(/\//g, ''))
+      // console.log('coming from:', location.pathname.replace(/\//g, ''))
       // console.log('is animating:', gsap.isTweening(refContainer.current))
       if (gsap.isTweening(refContainer.current)) {
         setPageTransitioning(true)
@@ -42,7 +42,7 @@ const PageTransition = ({
     }
     if (
       pageTransitionURLTarget !== false &&
-      pageTransitionURLTarget.replace('/', '') !== location.pathname.replace('/', '') &&
+      pageTransitionURLTarget.replace(/\//g, '') !== location.pathname.replace(/\//g, '') &&
       !gsap.isTweening(refContainer.current)
     ) {
       gsap.to(refContainer.current, 0.5, {
