@@ -7,7 +7,6 @@
   font-family: $font-serif;
   font-size: 1.8rem;
   line-height: 1.444;
-  //padding: $holder-margin-top 0 $holder-margin-bottom;
   min-height: 100vh;
   max-width: 100vw;
   overflow-x: hidden;
@@ -27,7 +26,7 @@
   z-index: $z-index-1;
   top: 0;
   left: 0;
-  transition: top 200ms;
+  transition: transform 200ms;
 }
 
 .canvas {
@@ -37,7 +36,7 @@
   display: block;
   z-index: -1;
   width: 100% !important;
-  height: 100vh !important;
+  height: 100vh !important; // fallback fro IE 11
   height: calc(100vh + var(--vhThreshold) + #{$menu-height + $holder-margin-top}) !important;
   margin-top: calc(-1 * (var(--vhThreshold)));
 }
@@ -67,7 +66,7 @@
   border: 1px solid green;
 
   .halfPageHelper {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 0;
     width: 100%;

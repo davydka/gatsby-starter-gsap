@@ -18,7 +18,6 @@ import {
   addMesh,
   addSceneHelperMesh,
   handleScroll,
-  handleOrientationChange,
   resizeRendererToDisplaySize,
   resizeThreeScene,
   usePrevLocation,
@@ -29,13 +28,12 @@ import {
 } from './utils'
 import Menu from '@components/Menu'
 import Target from '@components/Target'
-import debounce from '@utils/debounce'
-import isiOS from '@utils/isiOS'
 
 const cx = classnames.bind(styles)
 
 const Layout = ({
   setPrevLocation,
+  setCurrentScroll,
   location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
   heroRef,
   showBorders,
@@ -54,10 +52,10 @@ const Layout = ({
   usePrevLocation(location, setPrevLocation)
 
   //GUIパラメータの準備
-  let gui = useRef()
+  const gui = useRef()
 
   // GUI Inlets
-  let inletsHolder = useRef({
+  const inletsHolder = useRef({
     speed: 1.0,
     param1: 0,
     param2: 0,
@@ -69,7 +67,8 @@ const Layout = ({
   const [inlets, setInlets] = useState(null)
 
   // GUI Inlets Handler
-  let handleInletChange = useRef()
+  const showBordersRef = useRef(showBorders)
+  const handleInletChange = useRef()
   handleInletChange.current = () => {
     setInlets(Object.assign({}, inletsHolder.current))
     setparam1(inletsHolder.current.param1)
@@ -83,10 +82,10 @@ const Layout = ({
   }
 
   // Stats
-  let stats = useRef()
+  const stats = useRef()
 
   // GSAP
-  let gs = useRef()
+  const gs = useRef()
 
   // Ref Elements
   const mainRef = useRef(null)
@@ -114,10 +113,10 @@ const Layout = ({
   initializeCamera.current = initCameraThunk(camera)
 
   // ANIMATE and SCROLL Handling/Logic
-  let animationID = useRef()
-  let animate = useRef()
-  let tick = useRef()
-  let [lastScroll, setLastScroll] = useState(0)
+  const animationID = useRef()
+  const animate = useRef()
+  const tick = useRef()
+  const [lastScrollQ, setLastScrollQ] = useState(0)
 
   // componentDidMount
   useEffect(() => {
@@ -127,31 +126,13 @@ const Layout = ({
       'background-color: fuchsia; color: white; font-weight: bold;'
     )
 
-    const debounceAmount = 50
-
-    if (isiOS()) {
-      window.addEventListener(
-        'orientationchange',
-        debounce(
-          handleOrientationChange(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef),
-          debounceAmount
-        )
-      )
-    } else {
-      window.addEventListener(
-        'resize',
-        debounce(
-          handleOrientationChange(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef),
-          debounceAmount
-        )
-      )
-    }
-    handleOrientationChange(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef)()
-
+    // On first load, mobile browsers have different initial viewport heights that change after scrolling
+    // capture that difference here as a CSS variable
     document.documentElement.style.setProperty(
       '--vhThreshold',
       `${heightRef.current.offsetHeight - window.innerHeight}px`
     )
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`)
 
     /** Stats **/
     initStats(stats)
@@ -197,7 +178,7 @@ const Layout = ({
     initGSAP(gs)
 
     /** Animate Kickoff **/
-    resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize)
+    resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef)
     tick.current = 0
     animate.current()
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
@@ -211,25 +192,10 @@ const Layout = ({
         window.cancelAnimationFrame(animationID.current)
         animationID.current = undefined
       }
-      window.removeEventListener(
-        'orientationchange',
-        debounce(
-          handleOrientationChange(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, heightRef),
-          debounceAmount
-        )
-      )
-      window.removeEventListener(
-        'resize',
-        debounce(
-          handleOrientationChange(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, heightRef),
-          debounceAmount
-        )
-      )
     }
   }, [])
 
   // HELPERS
-  const showBordersRef = useRef(showBorders)
   useShowBorders(
     showBorders,
     showBordersRef,
@@ -237,8 +203,8 @@ const Layout = ({
     axisHelper,
     sceneHelperMesh,
     halfPageHelperRef,
-    lastScroll,
-    setLastScroll,
+    lastScrollQ,
+    setLastScrollQ,
     menuRef,
     heightRef
   )
@@ -253,9 +219,11 @@ const Layout = ({
     // animate stuff
     animationID.current = undefined
 
-    resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize)
+    setCurrentScroll(window.pageYOffset | document.documentElement.scrollTop)
+
+    resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef)
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
-    handleScroll(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef)
+    handleScroll(showBordersRef, halfPageHelperRef, lastScrollQ, setLastScrollQ, menuRef, heightRef)
 
     renderer.current.render(scene.current, camera.current)
     controls.current.update()
@@ -304,7 +272,6 @@ Layout.propTypes = {
   children: PropTypes.node.isRequired,
   heroRef: PropTypes.object,
   location: PropTypes.object,
-  setPrevLocation: PropTypes.func,
   param1: PropTypes.number.isRequired,
   param2: PropTypes.number.isRequired,
   param3: PropTypes.number.isRequired,
@@ -314,7 +281,9 @@ Layout.propTypes = {
   toggleGrid: PropTypes.func,
   showBorders: PropTypes.bool,
   toggleBorders: PropTypes.func,
+  setPrevLocation: PropTypes.func,
   pageTransitioning: PropTypes.bool,
+  setCurrentScroll: PropTypes.func,
 }
 
 const mapStateToProps = ({ heroRef, param1, param2, param3, showBorders }) => {
@@ -323,12 +292,13 @@ const mapStateToProps = ({ heroRef, param1, param2, param3, showBorders }) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setPrevLocation: loc => dispatch({ type: `SETPREVLOCATION`, payload: loc }),
     setparam1: target => dispatch({ type: `SETPARAM1`, payload: target }),
     setparam2: target => dispatch({ type: `SETPARAM2`, payload: target }),
     setparam3: target => dispatch({ type: `SETPARAM3`, payload: target }),
     toggleGrid: target => dispatch({ type: `TOGGLESHOWGRID`, payload: target }),
     toggleBorders: target => dispatch({ type: `TOGGLESHOWBORDERS`, payload: target }),
+    setPrevLocation: loc => dispatch({ type: `SETPREVLOCATION`, payload: loc }),
+    setCurrentScroll: target => dispatch({ type: `SETCURRENTSCROLL`, payload: target }),
   }
 }
 

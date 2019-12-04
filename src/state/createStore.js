@@ -1,6 +1,16 @@
 import { createStore as reduxCreateStore } from 'redux'
 
 const reducer = (state, action) => {
+  if (action.type === `SETCURRENTSCROLL`) {
+    return Object.assign({}, state, {
+      currentScroll: typeof action.payload !== 'undefined' ? action.payload : initialState.currentScroll,
+    })
+  }
+  if (action.type === `SETLASTSCROLL`) {
+    return Object.assign({}, state, {
+      lastScroll: typeof action.payload !== 'undefined' ? action.payload : initialState.lastScroll,
+    })
+  }
   if (action.type === `SETPREVLOCATION`) {
     return Object.assign({}, state, {
       prevLocation: typeof action.payload !== 'undefined' ? action.payload : initialState.prevLocation,
@@ -8,17 +18,17 @@ const reducer = (state, action) => {
   }
   if (action.type === `SETPARAM1`) {
     return Object.assign({}, state, {
-      param1: action.payload ? action.payload : 0,
+      param1: action.payload ? action.payload : initialState.param1,
     })
   }
   if (action.type === `SETPARAM2`) {
     return Object.assign({}, state, {
-      param2: action.payload ? action.payload : 0,
+      param2: action.payload ? action.payload : initialState.param2,
     })
   }
   if (action.type === `SETPARAM3`) {
     return Object.assign({}, state, {
-      param3: action.payload ? action.payload : 0,
+      param3: action.payload ? action.payload : initialState.param3,
     })
   }
   if (action.type === `SETPAGETRANSITIONURLTARGET`) {
@@ -46,11 +56,6 @@ const reducer = (state, action) => {
       pageTransitionEnd: action.payload ? action.payload : 0,
     })
   }
-  if (action.type === `SETISMOBILESAFARI`) {
-    return Object.assign({}, state, {
-      isMobileSafari: typeof action.payload !== 'undefined' ? action.payload : false,
-    })
-  }
   if (action.type === `SETHEROREF`) {
     return Object.assign({}, state, {
       heroRef: typeof action.payload !== 'undefined' ? action.payload : null,
@@ -70,6 +75,8 @@ const reducer = (state, action) => {
 }
 
 const initialState = {
+  currentScroll: 0,
+  lastScroll: 0,
   param1: 0.0,
   param2: 0.0,
   param3: 0.0,

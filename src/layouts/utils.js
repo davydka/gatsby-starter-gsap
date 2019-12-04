@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useStaticQuery, graphql } from 'gatsby'
 import gsap, { Linear } from 'gsap'
 import * as THREE from 'three'
+import debounce from 'lodash.debounce'
 
 import { holderMarginTop, menuHeight } from '@styles/variables.module.scss'
 import remStringToFloat from '@src/utils/remStringToFloat'
@@ -154,65 +155,58 @@ export const handleScroll = (showBordersRef, halfPageHelperRef, lastScroll, setL
     if (currentScroll !== lastScroll) {
       setLastScroll(currentScroll)
     }
-    // halfPageHelperRef can't use position fixed because Firefox's
-    // webgl performance drops when too many position: fixed elements
-    // are on top of the webgl element
-    if (showBordersRef && showBordersRef.current === true && showBordersRef && halfPageHelperRef.current) {
-      halfPageHelperRef.current.style.top = `${currentScroll + window.innerHeight / 2}px`
-    }
     return true
   }
 
-  if (currentScroll > document.body.offsetHeight - window.innerHeight - 2) {
-    menuRef.current.style.top = `-${menuSize}px`
-    return end()
+  const debounceMs = 10
+  const debounceOpts = { leading: true, trailing: false }
+  const hideMenu = () => {
+    menuRef.current.style.transform = `translate3d(0px, -${menuSize + 1}px, 0)`
+  }
+  const showMenu = () => {
+    menuRef.current.style.transform = 'translate3d(0px, 0, 0)'
   }
 
+  // scroll down when near the top, hide menu until past the "resize zone" on mobile
+  if (currentScroll > document.body.offsetHeight - window.innerHeight - 2) {
+    debounce(hideMenu, debounceMs, debounceOpts)()
+    return end()
+  }
   // show menu when mobile browser chrome is showing
   if (topThreshold > 0) {
-    menuRef.current.style.top = '0'
+    debounce(showMenu, debounceMs, debounceOpts)()
     return end()
   }
   // down
   if (currentScroll > lastScroll && currentScroll > 0) {
-    menuRef.current.style.top = `-${menuSize}px`
+    debounce(hideMenu, debounceMs, debounceOpts)()
     return end()
   }
-
   // up
   if (currentScroll < lastScroll || currentScroll < 0) {
-    menuRef.current.style.top = '0'
+    debounce(showMenu, debounceMs, debounceOpts)()
     return end()
   }
 }
 
-export const handleOrientationChange = (
-  showBordersRef,
-  halfPageHelperRef,
-  lastScroll,
-  setLastScroll,
-  menuRef,
-  heightRef
-) => {
-  // note - for mobileSafari, we're not updating 100vh (cover) params onresize,
-  //                                                only on orientation change
-  // reasoning is that these items are generally for "above the fold" features
-  // and we don't want too much resize thrashing (at this point)
-  // also calling this change onScroll causes visible jumps on Mobile Safari
-  // iOS 100vh - https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
-  // for Chome on Android, it's not too bad * Tested Pixel 3, Android 9
-  return () => {
-    let vh = window.innerHeight * 0.01
-    document.documentElement.style.setProperty('--vh', `${vh}px`)
-    handleScroll(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef)
-  }
-}
-
-export const resizeRendererToDisplaySize = (canvasElement, renderer, camera, sceneSize) => {
+export const resizeRendererToDisplaySize = (canvasElement, renderer, camera, sceneSize, heightRef) => {
+  // css sets actual height and width
   const width = canvasElement.current.clientWidth | 0
   const height = canvasElement.current.clientHeight | 0
-  const needResize = canvasElement.current.width !== width || canvasElement.current.height !== height
+
+  // check height and width attribute values and compare to clientWidth and clientHeight
+  const pxRatio = window.devicePixelRatio
+  const needResize =
+    canvasElement.current.width / pxRatio !== width || canvasElement.current.height / pxRatio !== height
+
   if (needResize) {
+    document.documentElement.style.setProperty(
+      '--vhThreshold',
+      `${heightRef.current.offsetHeight - window.innerHeight}px`
+    )
+    let vh = window.innerHeight * 0.01
+    document.documentElement.style.setProperty('--vh', `${vh}px`)
+
     renderer.current.setSize(width, height, false)
 
     // Perspective Camera
