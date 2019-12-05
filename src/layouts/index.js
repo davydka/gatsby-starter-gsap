@@ -62,7 +62,7 @@ const Layout = ({
     param3: 0,
     showMain: true,
     gridHelper: false,
-    showBorders: false,
+    showBorders: true,
   })
   const [inlets, setInlets] = useState(null)
 
@@ -247,8 +247,8 @@ const Layout = ({
       })}
     >
       {/*dummy section container for imperative width measurements*/}
-      <div className="section-container">
-        <div className="section">
+      <div className={cx('section-container')}>
+        <div className={cx('section')}>
           <div className={cx('row')}>
             <div className={cx('col')}>
               <div ref={mainRef} style={{ visibility: 'none' }} />
