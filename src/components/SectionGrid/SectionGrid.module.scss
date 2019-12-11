@@ -1,5 +1,40 @@
+.section-grid {
+  margin-top: 4rem;
+
+  .section-title {
+    text-align: center;
+  }
+
+  .lattice {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    &-item-holder {
+      margin-bottom: 2rem;
+    }
+
+    &-item {
+      border: 1px solid #b8a5da;
+
+      img {
+        display: block;
+        width: 100%;
+      }
+    }
+  }
+}
+
 .borders {
-  .content-container {
+  .section-borders {
+    border: 1px solid #edadad;
+  }
+
+  .section-title {
+    border: 1px solid #edadad;
+  }
+
+  .lattice-holder {
     border: 1px solid #edadad;
   }
 }

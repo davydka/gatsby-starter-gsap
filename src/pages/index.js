@@ -35,10 +35,10 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
       <div className={cx('index-page', { 'page-borders': showBorders, 'mobile-safari': isiOS() })}>
         <SEO title="GSAP - Starter" />
 
-        <div className="section-container">
-          <div className="section">
-            <div className={cx('row')}>
-              <div className={cx('col')}>
+        <div className={`section-container`}>
+          <div className={`section`}>
+            <div className={`row`}>
+              <div className={`col`}>
                 <div className={cx('logo-container')}>
                   <Logo ref={localHeroRef} className={cx('logo')} />
                 </div>
@@ -48,7 +48,6 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
         </div>
 
         <SectionLorem />
-
         <SectionGrid />
       </div>
     </PageTransition>

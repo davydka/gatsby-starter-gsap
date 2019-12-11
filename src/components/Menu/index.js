@@ -12,23 +12,23 @@ const cx = classnames.bind(styles)
 const Menu = ({ className, showBorders, menuRef }) => {
   const type = 'h6'
   return (
-    <div ref={menuRef} className={cx('section-container', 'menu-container', className, { borders: showBorders })}>
-      <div className={cx('section')}>
-        <div className={cx('row')}>
+    <div ref={menuRef} className={`section-container ${cx('menu-container', className, { borders: showBorders })}`}>
+      <div className={`section`}>
+        <div className={`row`}>
           <div
-            className={cx(
-              'col-xl-4',
-              'offset-xl-4',
-              'col-lg-4',
-              'offset-lg-4',
-              'col-md-4',
-              'offset-md-2',
-              'col-sm-4',
-              'offset-sm-2',
-              'col-xs-8',
-              'offset-xs-1',
-              'menu'
-            )}
+            className={`
+              col-xl-4
+              offset-xl-4
+              col-lg-4
+              offset-lg-4
+              col-md-4
+              offset-md-2
+              col-sm-4
+              offset-sm-2
+              col-xs-8
+              offset-xs-1
+              ${cx('menu')}
+            `}
           >
             <ul>
               <li>

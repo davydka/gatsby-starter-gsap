@@ -61,7 +61,7 @@ const Layout = ({
     param2: 0,
     param3: 0,
     showMain: true,
-    gridHelper: false,
+    gridHelper: true,
     showBorders: true,
   })
   const [inlets, setInlets] = useState(null)
@@ -88,7 +88,7 @@ const Layout = ({
   const gs = useRef()
 
   // Ref Elements
-  const mainRef = useRef(null)
+  const widthRef = useRef(null)
   const heightRef = useRef(null)
   const canvasElement = useRef(null)
   const heroTarget = useRef(null)
@@ -246,12 +246,12 @@ const Layout = ({
         hideMain: inlets && !inlets.showMain,
       })}
     >
-      {/*dummy section container for imperative width measurements*/}
-      <div className={cx('section-container')}>
-        <div className={cx('section')}>
-          <div className={cx('row')}>
-            <div className={cx('col')}>
-              <div ref={mainRef} style={{ visibility: 'none' }} />
+      {/*dummy section containers for imperative width/height measurements*/}
+      <div className={`section-container`}>
+        <div className={`section`}>
+          <div className={`row`}>
+            <div className={`col`}>
+              <div ref={widthRef} style={{ visibility: 'none' }} />
             </div>
           </div>
         </div>
