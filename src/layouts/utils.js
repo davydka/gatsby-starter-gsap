@@ -246,7 +246,7 @@ export const resizeThreeScene = (heroRef, canvasElement, raycaster, scene, camer
     // setting the scale in resizeThreeScene() is a little funky
     // because once taking into account the aspect ratio changes, sizing gets distorted by the FOV
     // example: https://i.imgur.com/LALJydf.gifv
-    // when targeting mainRef, setting the mesh position seems to help
+    // when targeting heroRef, setting the mesh position seems to help
     // mesh.current.position.setZ(-mesh.current.geometry.parameters.radius * 2 * scale)
   }
 }

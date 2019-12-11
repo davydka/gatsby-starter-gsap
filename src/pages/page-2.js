@@ -35,8 +35,8 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
       <div className={cx('index-page', { 'page-borders': showBorders, 'mobile-safari': isiOS() })}>
         <SEO title="GSAP - Starter" />
 
-        <div className="section-container">
-          <div className="section">
+        <div className={cx('section-container')}>
+          <div className={cx('section')}>
             <div className={cx('row')}>
               <div className={cx('col')}>
                 <div className={cx('logo-container')}>
