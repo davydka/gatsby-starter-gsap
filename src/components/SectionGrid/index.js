@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
-import faker from 'faker'
 
 import styles from './SectionGrid.module.scss'
 import Text from '@components/Text'
@@ -16,7 +15,7 @@ const SectionGrid = ({ className, showBorders }) => {
     <div key={index} className={latticeItemStyle}>
       <div className={cx('lattice-item')}>
         <Text tag={`span`} type={`bold`}>
-          <img src={faker.image.imageUrl(200, 200, 'abstract')} alt={`fake image ${index + 1}`} />
+          <img src={`images/300x300/0${(index % 5) + 1}.jpg`} alt={`fake image ${index + 1}`} />
           {`item ${index + 1}`}
         </Text>
       </div>
