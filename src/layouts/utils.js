@@ -312,3 +312,14 @@ export const useParam3 = (param3, ref, inlets) => {
     })
   }, [param3, inlets])
 }
+
+export const useScrollRotateMesh = (currentScroll, ref) => {
+  useEffect(() => {
+    // scale scroll position from 0 to 1
+    const targetHeight = currentScroll / (document.body.clientHeight - window.innerHeight)
+    gsap.to(ref.current.rotation, 1, {
+      y: targetHeight * (Math.PI / 2),
+      ease: Linear.ease,
+    })
+  }, [currentScroll])
+}
