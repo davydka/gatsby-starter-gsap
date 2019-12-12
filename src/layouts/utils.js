@@ -318,7 +318,7 @@ export const useScrollRotateMesh = (currentScroll, ref) => {
     // scale scroll position from 0 to 1
     const targetHeight = currentScroll / (document.body.clientHeight - window.innerHeight)
     gsap.to(ref.current.rotation, 1, {
-      y: targetHeight * (Math.PI / 2),
+      y: targetHeight * (Math.PI / 2) * 2,
       ease: Linear.ease,
     })
   }, [currentScroll])
