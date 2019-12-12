@@ -25,6 +25,7 @@ import {
   useParam1,
   useParam2,
   useParam3,
+  useScrollRotateMesh,
 } from './utils'
 import Menu from '@components/Menu'
 import Target from '@components/Target'
@@ -43,6 +44,7 @@ const Layout = ({
   setparam1,
   setparam2,
   setparam3,
+  currentScroll,
   toggleGrid,
   toggleBorders,
   children,
@@ -212,6 +214,7 @@ const Layout = ({
   useParam1(param1, scene, inlets)
   useParam2(param2, scene, inlets)
   useParam3(param3, scene, inlets)
+  useScrollRotateMesh(currentScroll, mesh)
 
   // ANIMATE Method
   animate.current = () => {
@@ -285,10 +288,11 @@ Layout.propTypes = {
   setPrevLocation: PropTypes.func,
   pageTransitioning: PropTypes.bool,
   setCurrentScroll: PropTypes.func,
+  currentScroll: PropTypes.number,
 }
 
-const mapStateToProps = ({ heroRef, param1, param2, param3, showBorders }) => {
-  return { heroRef, param1, param2, param3, showBorders }
+const mapStateToProps = ({ heroRef, param1, param2, param3, showBorders, currentScroll }) => {
+  return { heroRef, param1, param2, param3, showBorders, currentScroll }
 }
 
 const mapDispatchToProps = dispatch => {
