@@ -11,6 +11,7 @@ import SEO from '@components/seo'
 import Logo from '@components/Logo'
 import SectionLorem from '@components/SectionLorem'
 import SectionGrid from '@components/SectionGrid'
+import SectionVideo from '@components/SectionVideo'
 import isiOS from '@utils/isiOS'
 
 const cx = classnames.bind({ ...styles, ...layoutStyles })
@@ -49,6 +50,8 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
 
         <SectionLorem />
         <SectionGrid />
+        <SectionVideo />
+        <SectionLorem />
       </div>
     </PageTransition>
   )
