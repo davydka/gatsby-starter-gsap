@@ -11,6 +11,7 @@ import PageTransition from '@components/PageTransition'
 import SEO from '@components/seo'
 // import Text from '@components/Text'
 import Moon from '@components/Logo/Moon'
+import SectionLorem from '@components/SectionLorem'
 import isiOS from '@utils/isiOS'
 
 const cx = classnames.bind({ ...styles, ...layoutStyles })
@@ -46,6 +47,8 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
             </div>
           </div>
         </div>
+
+        <SectionLorem />
       </div>
     </PageTransition>
   )
