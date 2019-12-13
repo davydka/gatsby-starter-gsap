@@ -86,16 +86,6 @@ export const initGSAP = gs => {
     timeScale: 1.0,
     // paused: true,
   })
-  // gs.current.fromTo(
-  //   mesh.current.rotation,
-  //   { y: 0 },
-  //   {
-  //     duration: 4,
-  //     y: (Math.PI / 2),
-  //     ease: Linear.easeNone,
-  //   },
-  //   0
-  // )
 }
 
 /***********/
@@ -241,7 +231,7 @@ export const resizeThreeScene = (heroRef, canvasElement, raycaster, scene, camer
   raycaster.current.setFromCamera(new THREE.Vector2(ndcLeft, 0), camera.current)
   raycaster.current.ray.intersectPlane(plane, ptIntrsct)
   const scale = Math.abs(ptIntrsct.x / (sceneSize / 2))
-  if (scale > 0) {
+  if (scale > 0 && !gsap.globalTimeline.paused()) {
     scene.current.scale.set(scale, scale, scale)
     // setting the scale in resizeThreeScene() is a little funky
     // because once taking into account the aspect ratio changes, sizing gets distorted by the FOV

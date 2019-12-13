@@ -72,6 +72,12 @@
   }
 }
 
+@mixin siteMaxOnly() {
+  @media only screen and (min-width: $site-max-width) {
+    @content;
+  }
+}
+
 // Breakpoint viewport sizes and media queries.
 //
 // Breakpoints are defined as a map of (name: minimum width), order from small to large:
