@@ -18,9 +18,6 @@ const SectionLorem = ({ className, showBorders }) => {
               <p>{faker.lorem.paragraph(12)}</p>
               <p>{faker.lorem.paragraph(12)}</p>
               <p>{faker.lorem.paragraph(12)}</p>
-              <p>{faker.lorem.paragraph(12)}</p>
-              <p>{faker.lorem.paragraph(12)}</p>
-              <p>{faker.lorem.paragraph(12)}</p>
             </div>
           </div>
         </div>
