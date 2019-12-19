@@ -137,9 +137,22 @@ export const addSceneHelperMesh = (sceneSize, sceneHelperMesh, axisHelper, scene
 
 /************/
 /** SCROLL **/
-export const handleScroll = (showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef) => {
+export const handleScroll = (
+  showBordersRef,
+  halfPageHelperRef,
+  lastScroll,
+  setLastScroll,
+  menuRef,
+  heightRef,
+  canvasElement
+) => {
   const currentScroll = window.pageYOffset || document.documentElement.scrollTop
   const topThreshold = heightRef.current.offsetHeight - window.innerHeight
+  const initialThreshold = parseFloat(
+    getComputedStyle(document.documentElement)
+      .getPropertyValue('--vhThreshold')
+      .replace('px', '')
+  )
 
   const end = () => {
     if (currentScroll !== lastScroll) {
@@ -157,24 +170,46 @@ export const handleScroll = (showBordersRef, halfPageHelperRef, lastScroll, setL
     menuRef.current.style.transform = 'translate3d(0px, 0, 0)'
   }
 
-  // scroll down when near the top, hide menu until past the "resize zone" on mobile
+  const initialCanvas = () => {
+    canvasElement.current.style.transform = `translate3d(0px, -${initialThreshold - menuSize / 2}px, 0)`
+  }
+  const smallCanvas = () => {
+    // if near the top, before the 'resize zone' on mobile
+    if (currentScroll <= initialThreshold) {
+      initialCanvas()
+    } else {
+      canvasElement.current.style.transform = `translate3d(0px, -${initialThreshold}px, 0)`
+    }
+  }
+  const fullCanvas = () => {
+    canvasElement.current.style.transform = `translate3d(0px, -${initialThreshold / 2}px, 0)`
+  }
+
+  // bottom 'bounce zone' (inertial scrolling) on mobile
   if (currentScroll > document.body.offsetHeight - window.innerHeight - 2) {
     debounce(hideMenu, debounceMs, debounceOpts)()
+    debounce(fullCanvas, debounceMs, debounceOpts)()
     return end()
   }
   // show menu when mobile browser chrome is showing
   if (topThreshold > 0) {
     debounce(showMenu, debounceMs, debounceOpts)()
+    debounce(smallCanvas, debounceMs, debounceOpts)()
     return end()
   }
   // down
   if (currentScroll > lastScroll && currentScroll > 0) {
     debounce(hideMenu, debounceMs, debounceOpts)()
+    debounce(fullCanvas, debounceMs, debounceOpts)()
     return end()
   }
   // up
   if (currentScroll < lastScroll || currentScroll < 0) {
     debounce(showMenu, debounceMs, debounceOpts)()
+
+    // do not fire 'smallCanvas' here
+    // in this case, we'll let `browser chrome showing` logic handle the canvas size
+    // debounce(smallCanvas, debounceMs, debounceOpts)()
     return end()
   }
 }
@@ -261,11 +296,12 @@ export const useShowBorders = (
   lastScroll,
   setLastScroll,
   menuRef,
-  heightRef
+  heightRef,
+  canvasElement
 ) => {
   useEffect(() => {
     showBordersRef.current = showBorders // ref here for eventlistener not updating with Redux Store state
-    handleScroll(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef)
+    handleScroll(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef, canvasElement)
 
     if (axisHelper.current) {
       axisHelper.current.visible = showBorders
