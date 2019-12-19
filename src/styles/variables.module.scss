@@ -45,11 +45,13 @@ $z-index-6: 60;
 /* UI */
 $holder-margin-top: 2rem;
 //$holder-margin-top: 0.01rem; // 0 margin-top breaks iOS canvas at the moment
-$holder-margin-sides: 4rem;
+$holder-margin-sides: 40px;
 $holder-margin-bottom: 4rem;
 
 $menu-height: 4rem;
 $footer-height: 6rem;
+
+$site-max-margin-sides-calc: calc((100vw - #{$site-max-width}) / 2);
 
 /* stylelint-disable */
 :export {
