@@ -1,41 +1,36 @@
 /* Example Fonts Setup */
 
-/*
 @font-face {
-  font-family: 'simple font with no bold or italics';
-  src: url('./fonts/simple-regular.otf') format('opentype');
+  font-family: 'Coconat-Regular';
+  src: url('./fonts/Coconat-Regular.otf') format('opentype');
 }
-*/
 
-/* For complex (fully featured) fonts, declare 1 font-family and do this setup for the bold and italics. */
-/*
 @font-face {
-  font-family: 'complex font';
+  font-family: 'LydianBT';
   font-style: normal;
   font-weight: normal;
-  src: url('./fonts/complex-font.ttf') format('truetype');
+  src: url('./fonts/LydianBT.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'complex font';
+  font-family: 'LydianBT';
   font-style: normal;
   font-weight: bold;
-  src: url('./fonts/complex-font.ttf') format('truetype'), // mix and match availability of otf and ttf
-  url('./fonts/complex-font.otf') format('opentype');
+  src: url('./fonts/LydianBT-Bold.ttf') format('truetype'),
+  url('./fonts/LydianBT-Bold.otf') format('opentype');
 }
 
 @font-face {
-  font-family: 'complex font';
+  font-family: 'LydianBT';
   font-style: italic;
   font-weight: normal;
-  src: url('./fonts/complex-font.ttf') format('truetype');
+  src: url('./fonts/LydianBT-Italic.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'complex font';
+  font-family: 'LydianBT';
   font-style: italic;
   font-weight: bold;
-  src: url('./fonts/complex-font.ttf') format('truetype'),
-  url('./fonts/complex-font.otf') format('opentype');
+  src: url('./fonts/LydianBT-BoldItalic.ttf') format('truetype'),
+  url('./fonts/LydianBT-BoldItalic.otf') format('opentype');
 }
-*/

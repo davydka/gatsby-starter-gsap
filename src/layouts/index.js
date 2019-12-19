@@ -63,8 +63,8 @@ const Layout = ({
     param2: 0,
     param3: 0,
     showMain: true,
-    gridHelper: true,
-    showBorders: true,
+    gridHelper: false,
+    showBorders: false,
   })
   const [inlets, setInlets] = useState(null)
 
