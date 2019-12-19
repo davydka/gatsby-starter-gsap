@@ -29,18 +29,19 @@ const SectionReel = ({ className, showBorders }) => {
 
   const handleMouseUp = () => {
     setMouseDown(false)
-
     const children = reelRef.current.children
     const margin = parseInt(window.getComputedStyle(children[0]).marginLeft)
-    const atEnd = reelRef.current.scrollLeft + window.innerWidth >= reelRef.current.scrollWidth - margin
+    const atEnd = reelRef.current.scrollLeft + window.innerWidth >= reelRef.current.scrollWidth - margin // scrolled to the end?
+
     const positions = []
     for (let i = 0; i < children.length; i++) {
       positions.push(children[i].offsetLeft - margin)
     }
+
     const closest = positions.reduce(function(prev, curr) {
       return Math.abs(curr - reelRef.current.scrollLeft) < Math.abs(prev - reelRef.current.scrollLeft) ? curr : prev
     })
-    console.log('closets', closest)
+
     reelRef.current.scrollTo({
       top: 0,
       left: atEnd ? reelRef.current.scrollWidth : closest,
