@@ -209,7 +209,8 @@ const Layout = ({
     lastScrollQ,
     setLastScrollQ,
     menuRef,
-    heightRef
+    heightRef,
+    canvasElement
   )
   useParam1(param1, scene, inlets)
   useParam2(param2, scene, inlets)
@@ -227,7 +228,7 @@ const Layout = ({
 
     resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef)
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
-    handleScroll(showBordersRef, halfPageHelperRef, lastScrollQ, setLastScrollQ, menuRef, heightRef)
+    handleScroll(showBordersRef, halfPageHelperRef, lastScrollQ, setLastScrollQ, menuRef, heightRef, canvasElement)
 
     renderer.current.render(scene.current, camera.current)
     controls.current.update()

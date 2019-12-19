@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
@@ -9,8 +9,48 @@ import Text from '@components/Text'
 const cx = classnames.bind(styles)
 
 const SectionReel = ({ className, showBorders }) => {
+  const reelRef = useRef(null)
+  const [mouseDown, setMouseDown] = useState(false)
+  const [startX, setStartX] = useState(0)
+  const [startScrollX, setStartScrollX] = useState(0)
+  const handleMouseDown = e => {
+    setMouseDown(true)
+    setStartX(e.pageX)
+    setStartScrollX(e.currentTarget.scrollLeft)
+  }
+
+  const handleMouseMove = e => {
+    if (!mouseDown || !reelRef.current) {
+      return
+    }
+
+    reelRef.current.scrollLeft = startScrollX + startX - e.pageX
+  }
+
+  const handleMouseUp = () => {
+    setMouseDown(false)
+    const children = reelRef.current.children
+    const margin = parseInt(window.getComputedStyle(children[0]).marginLeft)
+    const atEnd = reelRef.current.scrollLeft + window.innerWidth >= reelRef.current.scrollWidth - margin // scrolled to the end?
+
+    const positions = []
+    for (let i = 0; i < children.length; i++) {
+      positions.push(children[i].offsetLeft - margin)
+    }
+
+    const closest = positions.reduce(function(prev, curr) {
+      return Math.abs(curr - reelRef.current.scrollLeft) < Math.abs(prev - reelRef.current.scrollLeft) ? curr : prev
+    })
+
+    reelRef.current.scrollTo({
+      top: 0,
+      left: atEnd ? reelRef.current.scrollWidth : closest,
+      behavior: 'smooth',
+    })
+  }
+
   return (
-    <div className={`${cx(className, 'section-reel', { borders: showBorders })}`}>
+    <div className={`${cx(className, 'section-reel', { borders: showBorders, 'mouse-down': mouseDown })}`}>
       <div className={`section-container`}>
         <div className={`section`}>
           <div className={`row`}>
@@ -36,36 +76,114 @@ const SectionReel = ({ className, showBorders }) => {
         </div>
       </div>
 
-      <div className={cx('reel')}>
+      <div
+        ref={reelRef}
+        draggable="false"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        className={cx('reel')}
+      >
         <div className={cx('reel-item')}>
-          <img src="/images/reel/01.png" alt="img" />
+          <img
+            onDragStart={e => {
+              e.preventDefault()
+            }}
+            draggable="false"
+            src="/images/reel/01.png"
+            alt="img"
+          />
         </div>
         <div className={cx('reel-item')}>
-          <img src="/images/reel/02.png" alt="img" />
+          <img
+            onDragStart={e => {
+              e.preventDefault()
+            }}
+            draggable="false"
+            src="/images/reel/02.png"
+            alt="img"
+          />
         </div>
         <div className={cx('reel-item')}>
-          <img src="/images/reel/03.png" alt="img" />
+          <img
+            onDragStart={e => {
+              e.preventDefault()
+            }}
+            draggable="false"
+            src="/images/reel/03.png"
+            alt="img"
+          />
         </div>
         <div className={cx('reel-item')}>
-          <img src="/images/reel/04.png" alt="img" />
+          <img
+            onDragStart={e => {
+              e.preventDefault()
+            }}
+            draggable="false"
+            src="/images/reel/04.png"
+            alt="img"
+          />
         </div>
         <div className={cx('reel-item')}>
-          <img src="/images/reel/05.png" alt="img" />
+          <img
+            onDragStart={e => {
+              e.preventDefault()
+            }}
+            draggable="false"
+            src="/images/reel/05.png"
+            alt="img"
+          />
         </div>
         <div className={cx('reel-item')}>
-          <img src="/images/reel/06.png" alt="img" />
+          <img
+            onDragStart={e => {
+              e.preventDefault()
+            }}
+            draggable="false"
+            src="/images/reel/06.png"
+            alt="img"
+          />
         </div>
         <div className={cx('reel-item')}>
-          <img src="/images/reel/07.png" alt="img" />
+          <img
+            onDragStart={e => {
+              e.preventDefault()
+            }}
+            draggable="false"
+            src="/images/reel/07.png"
+            alt="img"
+          />
         </div>
         <div className={cx('reel-item')}>
-          <img src="/images/reel/08.png" alt="img" />
+          <img
+            onDragStart={e => {
+              e.preventDefault()
+            }}
+            draggable="false"
+            src="/images/reel/08.png"
+            alt="img"
+          />
         </div>
         <div className={cx('reel-item')}>
-          <img src="/images/reel/09.png" alt="img" />
+          <img
+            onDragStart={e => {
+              e.preventDefault()
+            }}
+            draggable="false"
+            src="/images/reel/09.png"
+            alt="img"
+          />
         </div>
         <div className={cx('reel-item')}>
-          <img src="/images/reel/10.png" alt="img" />
+          <img
+            onDragStart={e => {
+              e.preventDefault()
+            }}
+            draggable="false"
+            src="/images/reel/10.png"
+            alt="img"
+          />
         </div>
       </div>
     </div>
