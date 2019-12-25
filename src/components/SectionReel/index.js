@@ -2,11 +2,16 @@ import React, { useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
+import gsap, { Linear } from 'gsap'
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
+import { detect } from 'detect-browser'
 
 import styles from './SectionReel.module.scss'
 import Text from '@components/Text'
 
 const cx = classnames.bind(styles)
+const browser = detect()
+gsap.registerPlugin(ScrollToPlugin)
 
 const SectionReel = ({ className, showBorders }) => {
   const reelRef = useRef(null)
@@ -28,10 +33,13 @@ const SectionReel = ({ className, showBorders }) => {
   }
 
   const handleMouseUp = () => {
+    if (!mouseDown || !reelRef.current) {
+      return
+    }
     setMouseDown(false)
     const children = reelRef.current.children
     const margin = parseInt(window.getComputedStyle(children[0]).marginLeft)
-    const atEnd = reelRef.current.scrollLeft + window.innerWidth >= reelRef.current.scrollWidth - margin // scrolled to the end?
+    const atEnd = reelRef.current.scrollLeft + window.innerWidth >= reelRef.current.scrollWidth // scrolled to the end?
 
     const positions = []
     for (let i = 0; i < children.length; i++) {
@@ -42,11 +50,21 @@ const SectionReel = ({ className, showBorders }) => {
       return Math.abs(curr - reelRef.current.scrollLeft) < Math.abs(prev - reelRef.current.scrollLeft) ? curr : prev
     })
 
-    reelRef.current.scrollTo({
-      top: 0,
-      left: atEnd ? reelRef.current.scrollWidth : closest,
-      behavior: 'smooth',
-    })
+    if (browser && browser.name !== 'chrome' && browser.name !== 'safari') {
+      const scrollToParams = { y: 0, x: atEnd ? 'max' : closest }
+      gsap.to(reelRef.current, {
+        duration: 0.2,
+        // scrollLeft: atEnd ? positions[closestIndex + 1] : closest,
+        scrollTo: scrollToParams,
+        ease: Linear.ease,
+      })
+    } else {
+      reelRef.current.scrollTo({
+        top: 0,
+        left: atEnd ? reelRef.current.scrollWidth : closest,
+        behavior: 'smooth',
+      })
+    }
   }
 
   return (

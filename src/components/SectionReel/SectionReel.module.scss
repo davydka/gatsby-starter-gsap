@@ -17,6 +17,8 @@
     scroll-padding: $holder-margin-sides;
     position: relative;
     height: 42rem;
+    transform-style: preserve-3d;
+    //scroll-behavior: smooth;
     -ms-overflow-style: none; /* IE */
     scrollbar-width: none; /* Firefox */
 
@@ -63,6 +65,7 @@
 .mouse-down {
   &.section-reel {
     .reel {
+      //scroll-behavior: auto;
       scroll-snap-type: none;
     }
   }
