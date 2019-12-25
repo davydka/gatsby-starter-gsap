@@ -8,6 +8,8 @@
   }
 
   .reel {
+    cursor: grab;
+    user-select: none;
     display: flex;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -15,6 +17,8 @@
     scroll-padding: $holder-margin-sides;
     position: relative;
     height: 42rem;
+    transform-style: preserve-3d;
+    //scroll-behavior: smooth;
     -ms-overflow-style: none; /* IE */
     scrollbar-width: none; /* Firefox */
 
@@ -22,8 +26,8 @@
       display: none; /* Safari & Chrome */
     }
 
-    @include siteMaxOnly {
-      scroll-padding: calc((100vw - #{$site-max-width}) / 2 - 1rem);
+    @include siteMaxWithMarginsOnly {
+      scroll-padding: $site-max-margin-sides-calc;
     }
 
     &-item {
@@ -46,14 +50,23 @@
         padding-right: $holder-margin-sides;
       }
 
-      @include siteMaxOnly {
+      @include siteMaxWithMarginsOnly {
         &:first-of-type {
-          margin-left: calc((100vw - #{$site-max-width}) / 2 - 1rem);
+          margin-left: $site-max-margin-sides-calc;
         }
         &:last-of-type {
-          padding-right: calc((100vw - #{$site-max-width}) / 2 - 1rem);
+          padding-right: $site-max-margin-sides-calc;
         }
       }
+    }
+  }
+}
+
+.mouse-down {
+  &.section-reel {
+    .reel {
+      //scroll-behavior: auto;
+      scroll-snap-type: none;
     }
   }
 }

@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import gsap from 'gsap'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import smoothscroll from 'smoothscroll-polyfill'
 
 import styles from './Layout.module.scss'
 import GridHelper from './GridHelper'
@@ -127,6 +128,7 @@ const Layout = ({
       `%c    THREE JS version - ${THREE.REVISION}    `,
       'background-color: fuchsia; color: white; font-weight: bold;'
     )
+    smoothscroll.polyfill()
 
     // On first load, mobile browsers have different initial viewport heights that change after scrolling
     // capture that difference here as a CSS variable
@@ -209,7 +211,8 @@ const Layout = ({
     lastScrollQ,
     setLastScrollQ,
     menuRef,
-    heightRef
+    heightRef,
+    canvasElement
   )
   useParam1(param1, scene, inlets)
   useParam2(param2, scene, inlets)
@@ -227,7 +230,7 @@ const Layout = ({
 
     resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef)
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
-    handleScroll(showBordersRef, halfPageHelperRef, lastScrollQ, setLastScrollQ, menuRef, heightRef)
+    handleScroll(showBordersRef, halfPageHelperRef, lastScrollQ, setLastScrollQ, menuRef, heightRef, canvasElement)
 
     renderer.current.render(scene.current, camera.current)
     controls.current.update()
