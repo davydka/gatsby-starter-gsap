@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import gsap from 'gsap'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import smoothscroll from 'smoothscroll-polyfill'
 
 import styles from './Layout.module.scss'
 import GridHelper from './GridHelper'
@@ -127,6 +128,7 @@ const Layout = ({
       `%c    THREE JS version - ${THREE.REVISION}    `,
       'background-color: fuchsia; color: white; font-weight: bold;'
     )
+    smoothscroll.polyfill()
 
     // On first load, mobile browsers have different initial viewport heights that change after scrolling
     // capture that difference here as a CSS variable
