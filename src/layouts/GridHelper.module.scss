@@ -13,10 +13,33 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: calc(100% - #{$holder-margin-sides * 2});
-  margin: 0 $holder-margin-sides;
   pointer-events: none;
   background: #FFDAB911;
+
+  @include extraSmallOnly {
+    width: calc(100% - #{$holder-margin-sides-xs * 2});
+    margin: 0 $holder-margin-sides-xs;
+  }
+
+  @include smallOnly {
+    width: calc(100% - #{$holder-margin-sides-sm * 2});
+    margin: 0 $holder-margin-sides-sm;
+  }
+
+  @include mediumOnly {
+    width: calc(100% - #{$holder-margin-sides-md * 2});
+    margin: 0 $holder-margin-sides-md;
+  }
+
+  @include largeOnly {
+    width: calc(100% - #{$holder-margin-sides-lg * 2});
+    margin: 0 $holder-margin-sides-lg;
+  }
+
+  @include extraLargeOnly {
+    width: calc(100% - #{$holder-margin-sides-xl * 2});
+    margin: 0 $holder-margin-sides-xl;
+  }
 }
 
 .row-container {

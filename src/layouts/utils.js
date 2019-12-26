@@ -45,6 +45,11 @@ export const initGUI = (gui, inletsHolder, handleInletChange) => {
   // gui.current.useLocalStorage = true
   // gui.current.remember(inletsHolder.current)
   gui.current
+    .add(inletsHolder.current, 'browserWidth')
+    .onChange(handleInletChange.current)
+    .name('browser width')
+    .listen()
+  gui.current
     .add(inletsHolder.current, 'speed', 0.0, 2.0)
     .onChange(handleInletChange.current)
     .listen()
@@ -113,7 +118,7 @@ export const addMesh = (sceneSize, mesh, scene) => {
     flatShading: true,
   })
   mesh.current = new THREE.Mesh(geometry, material)
-  // mesh.current.visible = false
+  mesh.current.visible = false
   mesh.current.position.setZ(-mesh.current.geometry.parameters.radius * 2)
   scene.current.add(mesh.current)
 }

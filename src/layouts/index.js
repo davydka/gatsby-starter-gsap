@@ -59,12 +59,13 @@ const Layout = ({
 
   // GUI Inlets
   const inletsHolder = useRef({
+    browserWidth: window.innerWidth,
     speed: 1.0,
     param1: 0,
     param2: 0,
     param3: 0,
     showMain: true,
-    gridHelper: false,
+    gridHelper: true,
     showBorders: false,
   })
   const [inlets, setInlets] = useState(null)
@@ -231,6 +232,7 @@ const Layout = ({
     resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef)
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
     handleScroll(showBordersRef, halfPageHelperRef, lastScrollQ, setLastScrollQ, menuRef, heightRef, canvasElement)
+    inletsHolder.current.browserWidth = window.innerWidth
 
     renderer.current.render(scene.current, camera.current)
     controls.current.update()

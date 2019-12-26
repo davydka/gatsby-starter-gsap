@@ -79,7 +79,7 @@
 }
 
 @mixin siteMaxWithMarginsOnly() {
-  @media only screen and (min-width: $site-max-width + ($holder-margin-sides * 2)) {
+  @media only screen and (min-width: calc(#{$site-max-width} + #{($holder-margin-sides-xl * 2)})) {
     @content;
   }
 }

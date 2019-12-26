@@ -13,25 +13,25 @@ $font-medium: 500;
 $font-bold: 700;
 
 /* BREAKPOINTS */
-$bp-small: 576px;
-$bp-medium: 768px;
-$bp-large: 992px;
 $bp-extra-large: 1200px;
+$bp-large: 992px;
+$bp-medium: 768px;
+$bp-small: 576px;
 
-$site-max-width: 1440px;
+$site-max-width: 4440px;
 
 /* GRID SYSTEM */
 $grid-columns-xl: 12;
 $grid-columns-lg: 12;
 $grid-columns-md: 8;
-$grid-columns-sm: 8;
-$grid-columns-xs: 10;
+$grid-columns-sm: 4;
+$grid-columns-xs: 4;
 
-$grid-gap-xl: 4rem;
-$grid-gap-lg: 2rem;
-$grid-gap-md: 1rem;
-$grid-gap-sm: .5rem;
-$grid-gap-xs: .5rem;
+$grid-gap-xl: 1.4%; // 20px at 1440px
+$grid-gap-lg: 1.4%;
+$grid-gap-md: 2.6%; // 20px at 768px
+$grid-gap-sm: 5.2%;
+$grid-gap-xs: 5.2%; // 20px at 375px
 
 /* Z-INDEX */
 $z-index-negative-1: -1;
@@ -45,8 +45,13 @@ $z-index-6: 60;
 /* UI */
 $holder-margin-top: 2rem;
 //$holder-margin-top: 0.01rem; // 0 margin-top breaks iOS canvas at the moment
-$holder-margin-sides: 40px;
 $holder-margin-bottom: 4rem;
+$holder-margin-sides: 4rem;
+$holder-margin-sides-xl: 4rem; // 40px at 1440px
+$holder-margin-sides-lg: 4rem;
+$holder-margin-sides-md: 3rem; // 30px at 768px
+$holder-margin-sides-sm: 3rem;
+$holder-margin-sides-xs: 3rem; // 30px at 375px
 
 $menu-height: 4rem;
 $footer-height: 6rem;

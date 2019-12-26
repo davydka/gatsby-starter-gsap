@@ -48,7 +48,26 @@
   display: flex;
   align-items: flex-end;
   height: $footer-height + $holder-margin-bottom;
-  padding: 0 $holder-margin-sides $holder-margin-bottom;
+
+  @include extraSmallOnly {
+    padding: 0 $holder-margin-sides-xs $holder-margin-bottom;
+  }
+
+  @include smallOnly {
+    padding: 0 $holder-margin-sides-sm $holder-margin-bottom;
+  }
+
+  @include mediumOnly {
+    padding: 0 $holder-margin-sides-md $holder-margin-bottom;
+  }
+
+  @include largeOnly {
+    padding: 0 $holder-margin-sides-lg $holder-margin-bottom;
+  }
+
+  @include extraLargeOnly {
+    padding: 0 $holder-margin-sides-xl $holder-margin-bottom;
+  }
 }
 
 .heroTarget {
