@@ -72,6 +72,12 @@ $site-max-margin-sides-calc: calc((100vw - #{$site-max-width}) / 2);
 
   siteMaxWidth: $site-max-width;
 
+  /* Media Queries */
+  bpXl: $bp-extra-large;
+  bpLg: $bp-large;
+  bpMd: $bp-medium;
+  bpSm: $bp-small;
+
   /* UI */
   holderMarginTop: $holder-margin-top;
   menuHeight: $menu-height;

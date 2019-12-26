@@ -50,6 +50,10 @@ export const initGUI = (gui, inletsHolder, handleInletChange) => {
     .name('browser width')
     .listen()
   gui.current
+    .add(inletsHolder.current, 'breakpoint')
+    .onChange(handleInletChange.current)
+    .listen()
+  gui.current
     .add(inletsHolder.current, 'speed', 0.0, 2.0)
     .onChange(handleInletChange.current)
     .listen()

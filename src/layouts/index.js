@@ -28,6 +28,7 @@ import {
   useParam3,
   useScrollRotateMesh,
 } from './utils'
+import getBreakpoint from '@utils/getBreakpoint'
 import Menu from '@components/Menu'
 import Target from '@components/Target'
 
@@ -60,6 +61,7 @@ const Layout = ({
   // GUI Inlets
   const inletsHolder = useRef({
     browserWidth: window.innerWidth,
+    breakpoint: '',
     speed: 1.0,
     param1: 0,
     param2: 0,
@@ -233,6 +235,7 @@ const Layout = ({
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
     handleScroll(showBordersRef, halfPageHelperRef, lastScrollQ, setLastScrollQ, menuRef, heightRef, canvasElement)
     inletsHolder.current.browserWidth = window.innerWidth
+    inletsHolder.current.breakpoint = getBreakpoint()
 
     renderer.current.render(scene.current, camera.current)
     controls.current.update()
@@ -252,6 +255,7 @@ const Layout = ({
       className={cx('main', {
         borders: showBorders,
         hideMain: inlets && !inlets.showMain,
+        getBreakpoint,
       })}
     >
       {/*dummy section containers for imperative width/height measurements*/}
