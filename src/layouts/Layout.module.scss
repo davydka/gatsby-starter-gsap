@@ -74,6 +74,26 @@
   border-radius: 1000px;
 }
 
+.overlay {
+  position: fixed;
+  z-index: $z-index-1;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: #000;
+  opacity: 0;
+  transition: opacity 200ms;
+  pointer-events: none;
+}
+
+.mobile-open {
+  .overlay {
+    opacity: 0.9;
+    pointer-events: auto;
+  }
+}
+
 
 
 .hideMain {

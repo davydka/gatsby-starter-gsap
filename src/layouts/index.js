@@ -267,6 +267,7 @@ const Layout = ({
         borders: showBorders,
         hideMain: inlets && !inlets.showMain,
         getBreakpoint,
+        'mobile-open': mobileOpen,
       })}
     >
       {/*dummy section containers for imperative width/height measurements*/}
@@ -282,6 +283,7 @@ const Layout = ({
       <div ref={heightRef} style={{ position: 'absolute', top: 0, left: 0, height: '100vh' }} />
 
       <GridHelper />
+      <div className={cx('overlay')} />
       <Target className={cx('heroTarget')} ref={heroTarget} target={heroRef} />
       {showBorders && <div ref={halfPageHelperRef} className={cx('halfPageHelper')} />}
       <Menu menuRef={menuRef} siteTitle={siteData.site.siteMetadata.title} className={cx('menu-container')} />
