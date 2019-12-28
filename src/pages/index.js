@@ -49,7 +49,6 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
           </div>
         </div>
 
-        <SectionLorem />
         <SectionGrid />
         <SectionLorem />
         <SectionVideo />
