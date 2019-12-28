@@ -6,8 +6,7 @@ import { connect } from 'react-redux'
 const Link = ({ children, to, className, setPageNavigate }) => {
   const handleClick = e => {
     e.preventDefault()
-    const target = e.target.getAttribute('href')
-    setPageNavigate(target)
+    setPageNavigate(to)
   }
 
   return (

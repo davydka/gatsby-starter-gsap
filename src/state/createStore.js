@@ -11,6 +11,11 @@ const reducer = (state, action) => {
       lastScroll: typeof action.payload !== 'undefined' ? action.payload : initialState.lastScroll,
     })
   }
+  if (action.type === `SETMOBILEOPEN`) {
+    return Object.assign({}, state, {
+      mobileOpen: typeof action.payload !== 'undefined' ? action.payload : initialState.mobileOpen,
+    })
+  }
   if (action.type === `SETPREVLOCATION`) {
     return Object.assign({}, state, {
       prevLocation: typeof action.payload !== 'undefined' ? action.payload : initialState.prevLocation,
@@ -77,6 +82,7 @@ const reducer = (state, action) => {
 const initialState = {
   currentScroll: 0,
   lastScroll: 0,
+  mobileOpen: false,
   param1: 0.0,
   param2: 0.0,
   param3: 0.0,

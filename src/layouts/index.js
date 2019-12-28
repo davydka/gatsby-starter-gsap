@@ -37,6 +37,7 @@ const cx = classnames.bind(styles)
 const Layout = ({
   setPrevLocation,
   setCurrentScroll,
+  mobileOpen,
   location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
   heroRef,
   showBorders,
@@ -60,7 +61,7 @@ const Layout = ({
 
   // GUI Inlets
   const inletsHolder = useRef({
-    browserWidth: window.innerWidth,
+    browserWidth: typeof window !== `undefined` ? window.innerWidth : 1920,
     breakpoint: '',
     speed: 1.0,
     param1: 0,
@@ -215,7 +216,8 @@ const Layout = ({
     setLastScrollQ,
     menuRef,
     heightRef,
-    canvasElement
+    canvasElement,
+    mobileOpen
   )
   useParam1(param1, scene, inlets)
   useParam2(param2, scene, inlets)
@@ -233,7 +235,16 @@ const Layout = ({
 
     resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef)
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
-    handleScroll(showBordersRef, halfPageHelperRef, lastScrollQ, setLastScrollQ, menuRef, heightRef, canvasElement)
+    handleScroll(
+      showBordersRef,
+      halfPageHelperRef,
+      lastScrollQ,
+      setLastScrollQ,
+      menuRef,
+      heightRef,
+      canvasElement,
+      mobileOpen
+    )
     inletsHolder.current.browserWidth = window.innerWidth
     inletsHolder.current.breakpoint = getBreakpoint()
 
@@ -298,10 +309,11 @@ Layout.propTypes = {
   pageTransitioning: PropTypes.bool,
   setCurrentScroll: PropTypes.func,
   currentScroll: PropTypes.number,
+  mobileOpen: PropTypes.bool,
 }
 
-const mapStateToProps = ({ heroRef, param1, param2, param3, showBorders, currentScroll }) => {
-  return { heroRef, param1, param2, param3, showBorders, currentScroll }
+const mapStateToProps = ({ heroRef, param1, param2, param3, showBorders, currentScroll, mobileOpen }) => {
+  return { heroRef, param1, param2, param3, showBorders, currentScroll, mobileOpen }
 }
 
 const mapDispatchToProps = dispatch => {

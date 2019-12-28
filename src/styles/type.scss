@@ -2,39 +2,50 @@
 
 @mixin type-headline-1 {
   font-family: $font-sans-serif;
-  font-weight: $font-bold;
-  font-size: 4.3rem;
-  line-height: 1;
+  font-weight: $font-medium;
+  font-size: 4.0rem;
+  line-height: 1.125; // 45px  // from design file: line-height(px) / font-size
+  letter-spacing: 0.075rem;
 }
 
 @mixin type-headline-2 {
   font-family: $font-sans-serif;
-  font-weight: $font-bold;
-  font-size: 3.225rem;
+  font-weight: $font-medium;
+  font-size: 2.6rem;
+  line-height: 1.15385; // 30px
+  letter-spacing: 0.05rem;
 }
 
 @mixin type-headline-3 {
   font-family: $font-sans-serif;
-  font-weight: $font-bold;
-  font-size: 3.225rem;
+  font-weight: $font-medium;
+  font-size: 2.0rem;
+  line-height: 1.2rem; // 24px
+  letter-spacing: 0.05rem;
 }
 
 @mixin type-headline-4 {
   font-family: $font-sans-serif;
-  font-weight: $font-bold;
-  font-size: 2.5155rem;
+  font-weight: $font-medium;
+  font-size: 1.3rem;
+  line-height: 1.15385; // 20px
+  letter-spacing: 0.15rem;
 }
 
 @mixin type-headline-5 {
   font-family: $font-sans-serif;
-  font-weight: $font-bold;
-  font-size: 2.408rem;
+  font-weight: $font-medium;
+  font-size: 1.3rem;
+  line-height: 1.15385; // 20px
+  letter-spacing: 0.15rem;
 }
 
 @mixin type-headline-6 {
   font-family: $font-sans-serif;
-  font-weight: $font-bold;
-  font-size: 1.6125rem;
+  font-weight: $font-medium;
+  font-size: 1.3rem;
+  line-height: 1.15385; // 20px
+  letter-spacing: 0.15rem;
 }
 
 

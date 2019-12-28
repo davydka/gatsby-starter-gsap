@@ -84,6 +84,18 @@
   }
 }
 
+@mixin minMax($min-size, $max-size, $inclusive: false) {
+  @if $inclusive {
+    @media only screen and (min-width: $min-size) and (max-width: $max-size) {
+      @content;
+    }
+  } @else {
+    @media only screen and (min-width: $min-size) and (max-width: $max-size - 1) {
+      @content;
+    }
+  }
+}
+
 // Breakpoint viewport sizes and media queries.
 //
 // Breakpoints are defined as a map of (name: minimum width), order from small to large:

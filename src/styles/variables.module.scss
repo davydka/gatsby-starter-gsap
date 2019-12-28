@@ -53,7 +53,12 @@ $holder-margin-sides-md: 3rem; // 30px at 768px
 $holder-margin-sides-sm: 3rem;
 $holder-margin-sides-xs: 3rem; // 30px at 375px
 
-$menu-height: 4rem;
+$menu-height: 8rem;
+$menu-height-xl: 8rem;
+$menu-height-lg: 8rem;
+$menu-height-md: 7.5rem;
+$menu-height-sm: 7.5rem;
+$menu-height-xs: 6.5rem;
 $footer-height: 6rem;
 
 $site-max-margin-sides-calc: calc((100vw - #{$site-max-width}) / 2);

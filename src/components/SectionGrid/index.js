@@ -35,9 +35,7 @@ const SectionGrid = ({ className, showBorders }) => {
               col-md-4
               offset-md-2
               col-sm-4
-              offset-sm-2
-              col-xs-8
-              offset-xs-1
+              col-xs-4
             `}
           >
             <Text tag="h3" type="h3" className={cx('section-title')}>

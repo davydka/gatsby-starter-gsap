@@ -21,6 +21,7 @@ body {
 // GUI パラメータの準備
 .dg.ac {
   z-index: 9999 !important;
+  //display: none !important;
 
   @include extraSmallOnly {
     display: none !important;

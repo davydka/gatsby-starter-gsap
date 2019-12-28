@@ -5,7 +5,8 @@ import * as THREE from 'three'
 import debounce from 'lodash.debounce'
 
 import { holderMarginTop, menuHeight } from '@styles/variables.module.scss'
-import remStringToFloat from '@src/utils/remStringToFloat'
+import remStringToFloat from '@utils/remStringToFloat'
+import getBreakpoint from '@utils/getBreakpoint'
 
 const menuSize = remStringToFloat(holderMarginTop) + remStringToFloat(menuHeight)
 
@@ -153,7 +154,8 @@ export const handleScroll = (
   setLastScroll,
   menuRef,
   heightRef,
-  canvasElement
+  canvasElement,
+  mobileOpen
 ) => {
   const currentScroll = window.pageYOffset || document.documentElement.scrollTop
   const topThreshold = heightRef.current.offsetHeight - window.innerHeight
@@ -173,21 +175,22 @@ export const handleScroll = (
   const debounceMs = 10
   const debounceOpts = { leading: true, trailing: false }
   const hideMenu = () => {
-    menuRef.current.style.transform = `translate3d(0px, -${menuSize + 1}px, 0)`
+    if (getBreakpoint() === 'xs' && !mobileOpen)
+      menuRef.current.style.transform = `translate3d(0, -${menuSize + 1}px, 0)`
   }
   const showMenu = () => {
-    menuRef.current.style.transform = 'translate3d(0px, 0, 0)'
+    menuRef.current.style.transform = 'translate3d(0, 0, 0)'
   }
 
   const initialCanvas = () => {
-    canvasElement.current.style.transform = `translate3d(0px, -${initialThreshold - menuSize / 2}px, 0)`
+    canvasElement.current.style.transform = `translate3d(0, -${initialThreshold - menuSize / 2}px, 0)`
   }
   const smallCanvas = () => {
     // if near the top, before the 'resize zone' on mobile
     if (currentScroll <= initialThreshold) {
       initialCanvas()
     } else {
-      canvasElement.current.style.transform = `translate3d(0px, -${initialThreshold}px, 0)`
+      canvasElement.current.style.transform = `translate3d(0, -${initialThreshold}px, 0)`
     }
   }
   const fullCanvas = () => {
@@ -306,11 +309,21 @@ export const useShowBorders = (
   setLastScroll,
   menuRef,
   heightRef,
-  canvasElement
+  canvasElement,
+  mobileOpen
 ) => {
   useEffect(() => {
     showBordersRef.current = showBorders // ref here for eventlistener not updating with Redux Store state
-    handleScroll(showBordersRef, halfPageHelperRef, lastScroll, setLastScroll, menuRef, heightRef, canvasElement)
+    handleScroll(
+      showBordersRef,
+      halfPageHelperRef,
+      lastScroll,
+      setLastScroll,
+      menuRef,
+      heightRef,
+      canvasElement,
+      mobileOpen
+    )
 
     if (axisHelper.current) {
       axisHelper.current.visible = showBorders
