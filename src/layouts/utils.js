@@ -58,18 +58,18 @@ export const initGUI = (gui, inletsHolder, handleInletChange) => {
     .add(inletsHolder.current, 'speed', 0.0, 2.0)
     .onChange(handleInletChange.current)
     .listen()
-  gui.current
-    .add(inletsHolder.current, 'param1', -7.5, 7.5)
-    .onChange(handleInletChange.current)
-    .listen()
-  gui.current
-    .add(inletsHolder.current, 'param2', -7.5, 7.5)
-    .onChange(handleInletChange.current)
-    .listen()
-  gui.current
-    .add(inletsHolder.current, 'param3', -7.5, 7.5)
-    .onChange(handleInletChange.current)
-    .listen()
+  // gui.current
+  //   .add(inletsHolder.current, 'param1', -7.5, 7.5)
+  //   .onChange(handleInletChange.current)
+  //   .listen()
+  // gui.current
+  //   .add(inletsHolder.current, 'param2', -7.5, 7.5)
+  //   .onChange(handleInletChange.current)
+  //   .listen()
+  // gui.current
+  //   .add(inletsHolder.current, 'param3', -7.5, 7.5)
+  //   .onChange(handleInletChange.current)
+  //   .listen()
   gui.current
     .add(inletsHolder.current, 'showMain')
     .onChange(handleInletChange.current)
