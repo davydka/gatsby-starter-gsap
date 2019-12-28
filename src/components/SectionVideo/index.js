@@ -35,8 +35,8 @@ const SectionVideo = ({ className, showBorders }) => {
       </div>
 
       <div className={cx('video-holder')}>
-        <video width={`1280`} height={`720`} autoPlay muted playsInline loop preload="true" poster="jelly.png">
-          <source src="jelly.mp4" type="video/mp4" />
+        <video width={`1280`} height={`720`} autoPlay muted playsInline loop preload="true" poster="/jelly.png">
+          <source src="/jelly.mp4" type="video/mp4" />
         </video>
       </div>
     </div>

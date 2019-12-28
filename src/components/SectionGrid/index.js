@@ -15,7 +15,7 @@ const SectionGrid = ({ className, showBorders }) => {
     <div key={index} className={latticeItemStyle}>
       <div className={cx('lattice-item')}>
         <Text tag={`span`} type={`bold`}>
-          <img src={`images/300x300/0${(index % 5) + 1}.jpg`} alt={`fake image ${index + 1}`} />
+          <img src={`/images/300x300/0${(index % 5) + 1}.jpg`} alt={`fake image ${index + 1}`} />
           {`item ${index + 1}`}
         </Text>
       </div>
