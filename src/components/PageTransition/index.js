@@ -47,10 +47,10 @@ const PageTransition = ({
     ) {
       gsap.to(refContainer.current, 0.5, {
         opacity: 0,
-        x: 100,
+        // x: 100,
         startAt: {
           opacity: 1,
-          x: 0,
+          // x: 0,
         },
         onStart: () => {
           setPageTransitionStart(Date.now())
@@ -93,10 +93,10 @@ const PageTransition = ({
         const loadingOut = !location.pathname.includes(pagePath)
         gsap.to(node, 1.5, {
           opacity: loadingOut ? 0 : 1,
-          x: loadingOut ? 100 : 0,
+          // x: loadingOut ? 100 : 0,
           startAt: {
             opacity: loadingOut ? 1 : 0,
-            x: loadingOut ? 0 : 100,
+            // x: loadingOut ? 0 : 100,
           },
           onStart: () => {
             setPageTransitionStart(Date.now())

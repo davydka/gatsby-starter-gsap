@@ -39,6 +39,7 @@ const Layout = ({
   setCurrentScroll,
   setStoreMobileOpen,
   mobileOpen,
+  setFTUI,
   location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
   heroRef,
   showBorders,
@@ -68,6 +69,7 @@ const Layout = ({
     param1: 0,
     param2: 0,
     param3: 0,
+    FTUI: true,
     showMain: true,
     gridHelper: false,
     showBorders: false,
@@ -84,6 +86,7 @@ const Layout = ({
     setparam3(inletsHolder.current.param3)
     toggleGrid(inletsHolder.current.gridHelper)
     toggleBorders(inletsHolder.current.showBorders)
+    setFTUI(inletsHolder.current.FTUI)
 
     // 🌎 Global Scale
     document.documentElement.style.setProperty('--speed', inletsHolder.current.speed)
@@ -316,6 +319,7 @@ Layout.propTypes = {
   currentScroll: PropTypes.number,
   mobileOpen: PropTypes.bool,
   setStoreMobileOpen: PropTypes.func,
+  setFTUI: PropTypes.func,
 }
 
 const mapStateToProps = ({ heroRef, param1, param2, param3, showBorders, currentScroll, mobileOpen }) => {
@@ -332,6 +336,7 @@ const mapDispatchToProps = dispatch => {
     setPrevLocation: loc => dispatch({ type: `SETPREVLOCATION`, payload: loc }),
     setCurrentScroll: target => dispatch({ type: `SETCURRENTSCROLL`, payload: target }),
     setStoreMobileOpen: target => dispatch({ type: `SETMOBILEOPEN`, payload: target }),
+    setFTUI: target => dispatch({ type: `SETFTUI`, payload: target }),
   }
 }
 

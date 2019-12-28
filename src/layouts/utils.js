@@ -58,6 +58,10 @@ export const initGUI = (gui, inletsHolder, handleInletChange) => {
     .add(inletsHolder.current, 'speed', 0.0, 2.0)
     .onChange(handleInletChange.current)
     .listen()
+  gui.current
+    .add(inletsHolder.current, 'FTUI')
+    .onChange(handleInletChange.current)
+    .listen()
   // gui.current
   //   .add(inletsHolder.current, 'param1', -7.5, 7.5)
   //   .onChange(handleInletChange.current)

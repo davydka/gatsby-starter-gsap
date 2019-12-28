@@ -11,6 +11,11 @@ const reducer = (state, action) => {
       lastScroll: typeof action.payload !== 'undefined' ? action.payload : initialState.lastScroll,
     })
   }
+  if (action.type === `SETFTUI`) {
+    return Object.assign({}, state, {
+      FTUI: typeof action.payload !== 'undefined' ? action.payload : initialState.FTUI,
+    })
+  }
   if (action.type === `SETMOBILEOPEN`) {
     return Object.assign({}, state, {
       mobileOpen: typeof action.payload !== 'undefined' ? action.payload : initialState.mobileOpen,
@@ -83,6 +88,7 @@ const initialState = {
   currentScroll: 0,
   lastScroll: 0,
   mobileOpen: false,
+  FTUI: true,
   param1: 0.0,
   param2: 0.0,
   param3: 0.0,
