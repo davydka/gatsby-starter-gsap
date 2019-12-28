@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
@@ -14,12 +14,7 @@ import Text from '@components/Text'
 
 const cx = classnames.bind(styles)
 
-const Menu = ({ className, showBorders, menuRef, setStoreMobileOpen }) => {
-  const [mobileOpen, setMobileOpen] = useState(false)
-  useEffect(() => {
-    setStoreMobileOpen(mobileOpen)
-  }, [mobileOpen])
-
+const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen }) => {
   const parsed = typeof location !== `undefined` ? querystring.parse(location.search) : { parsed: '' }
 
   const getSelected = page => {
@@ -140,18 +135,19 @@ const Menu = ({ className, showBorders, menuRef, setStoreMobileOpen }) => {
 Menu.propTypes = {
   menuRef: PropTypes.object,
   className: PropTypes.string,
+  mobileOpen: PropTypes.bool,
   showBorders: PropTypes.bool,
   setPageNavigate: PropTypes.func,
-  setStoreMobileOpen: PropTypes.func,
+  setMobileOpen: PropTypes.func,
 }
 
-const mapStateToProps = ({ showBorders }) => {
-  return { showBorders }
+const mapStateToProps = ({ showBorders, mobileOpen }) => {
+  return { showBorders, mobileOpen }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    setStoreMobileOpen: target => dispatch({ type: `SETMOBILEOPEN`, payload: target }),
+    setMobileOpen: target => dispatch({ type: `SETMOBILEOPEN`, payload: target }),
   }
 }
 

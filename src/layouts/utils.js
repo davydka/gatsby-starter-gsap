@@ -226,7 +226,14 @@ export const handleScroll = (
   }
 }
 
-export const resizeRendererToDisplaySize = (canvasElement, renderer, camera, sceneSize, heightRef) => {
+export const resizeRendererToDisplaySize = (
+  canvasElement,
+  renderer,
+  camera,
+  sceneSize,
+  heightRef,
+  setStoreMobileOpen
+) => {
   // css sets actual height and width
   const width = canvasElement.current.clientWidth | 0
   const height = canvasElement.current.clientHeight | 0
@@ -243,6 +250,7 @@ export const resizeRendererToDisplaySize = (canvasElement, renderer, camera, sce
     )
     let vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)
+    setStoreMobileOpen(false)
 
     renderer.current.setSize(width, height, false)
 

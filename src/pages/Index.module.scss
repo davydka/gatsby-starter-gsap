@@ -6,7 +6,7 @@
   .logo-container {
     //margin-top: #{$menu-height + $holder-margin-top};
     will-change: height;
-    transition: height, 250ms;
+    transition: height, 200ms;
     height: 100vh;
     height: calc(var(--vh, 1vh) * 100 - 20rem);
 

@@ -37,6 +37,7 @@ const cx = classnames.bind(styles)
 const Layout = ({
   setPrevLocation,
   setCurrentScroll,
+  setStoreMobileOpen,
   mobileOpen,
   location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
   heroRef,
@@ -85,6 +86,7 @@ const Layout = ({
     toggleBorders(inletsHolder.current.showBorders)
 
     // 🌎 Global Scale
+    document.documentElement.style.setProperty('--speed', inletsHolder.current.speed)
     gsap.globalTimeline.timeScale(inletsHolder.current.speed)
   }
 
@@ -141,6 +143,7 @@ const Layout = ({
       `${heightRef.current.offsetHeight - window.innerHeight}px`
     )
     document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`)
+    document.documentElement.style.setProperty('--speed', `1.0`)
 
     /** Stats **/
     initStats(stats)
@@ -187,7 +190,7 @@ const Layout = ({
     initGSAP(gs)
 
     /** Animate Kickoff **/
-    resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef)
+    resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef, setStoreMobileOpen)
     tick.current = 0
     animate.current()
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
@@ -233,7 +236,7 @@ const Layout = ({
 
     setCurrentScroll(window.pageYOffset | document.documentElement.scrollTop)
 
-    resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef)
+    resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef, setStoreMobileOpen)
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
     handleScroll(
       showBordersRef,
@@ -312,6 +315,7 @@ Layout.propTypes = {
   setCurrentScroll: PropTypes.func,
   currentScroll: PropTypes.number,
   mobileOpen: PropTypes.bool,
+  setStoreMobileOpen: PropTypes.func,
 }
 
 const mapStateToProps = ({ heroRef, param1, param2, param3, showBorders, currentScroll, mobileOpen }) => {
@@ -327,6 +331,7 @@ const mapDispatchToProps = dispatch => {
     toggleBorders: target => dispatch({ type: `TOGGLESHOWBORDERS`, payload: target }),
     setPrevLocation: loc => dispatch({ type: `SETPREVLOCATION`, payload: loc }),
     setCurrentScroll: target => dispatch({ type: `SETCURRENTSCROLL`, payload: target }),
+    setStoreMobileOpen: target => dispatch({ type: `SETMOBILEOPEN`, payload: target }),
   }
 }
 

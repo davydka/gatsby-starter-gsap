@@ -26,7 +26,7 @@
   z-index: $z-index-1;
   top: 0;
   left: 0;
-  transition: transform 200ms;
+  transition: transform calc(200ms * (1 / var(--speed)));
 }
 
 .canvas {
@@ -41,7 +41,7 @@
   //margin-top: calc(-1 * (var(--vhThreshold)));
   height: calc(100vh + var(--vhThreshold)) !important;
   transform: translate3d(0px, calc(-1 * (var(--vhThreshold))), 0);
-  transition: transform 200ms;
+  transition: transform calc(200ms * (1 / var(--speed)));
 }
 
 .footer {
@@ -83,12 +83,15 @@
   width: 100vw;
   background-color: #000;
   opacity: 0;
-  transition: opacity 200ms;
+  transition: opacity calc(200ms * (1 / var(--speed)));
+  transition-delay: calc(200ms * (1 / var(--speed)));
   pointer-events: none;
 }
 
 .mobile-open {
   .overlay {
+    transition: opacity calc(400ms * (1 / var(--speed)));
+    transition-delay: 0;
     opacity: 0.9;
     pointer-events: auto;
   }
