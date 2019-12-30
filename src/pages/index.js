@@ -53,7 +53,7 @@ const IndexPage = ({ location, showBorders, setHeroRef, FTUI }) => {
       >
         <SEO title="Records, Tapes" />
 
-        <div className={`section-container`}>
+        <div className={`section-container ${cx('section-spacer')}`}>
           <div className={`section`}>
             <div className={`row`}>
               <div className={`col`}>

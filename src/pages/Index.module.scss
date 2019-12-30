@@ -5,9 +5,8 @@
   transition: transform calc(1000ms * (1 / var(--speed)));
 
   .logo-container {
-    //margin-top: #{$menu-height + $holder-margin-top};
-    will-change: height;
-    transition: height 200ms;
+    //will-change: height;
+    //transition: height 200ms;
     height: 100vh;
     height: calc(var(--vh, 1vh) * 78); // allow 200px (22%) to peek up from bottom at 1440/900
 
@@ -41,6 +40,10 @@
 .no-ftui {
  &.index-page {
    padding-top: calc(25vh);
+
+   .section-spacer {
+     display: none;
+   }
 
    .logo-container {
      display: none;
