@@ -21,18 +21,25 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
   useEffect(() => {
     if (!menuRef) return
 
-    if (FTUI) {
-      gsap.fromTo(
-        menuRef.current,
-        { opacity: 0 },
-        {
-          opacity: 1,
-          duration: 1,
-          delay: 1,
-        }
-      )
-    }
+    gsap.fromTo(
+      menuRef.current,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        duration: 1,
+        delay: FTUI ? 1 : 0,
+      }
+    )
   }, [])
+
+  useEffect(() => {
+    if (!menuRef) return
+    if (FTUI) {
+      menuRef.current.classList.add(cx('FTUI'))
+    } else {
+      menuRef.current.classList.remove(cx('FTUI'))
+    }
+  }, [FTUI])
 
   const getSelected = page => {
     if (typeof page === 'undefined' && typeof parsed.page === 'undefined') return true
@@ -44,7 +51,6 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
       className={`section-container ${cx('menu-container', className, {
         borders: showBorders,
         'mobile-open': mobileOpen,
-        FTUI,
       })}`}
     >
       <div className={`${cx('hover')}`} />
@@ -154,7 +160,6 @@ Menu.propTypes = {
   className: PropTypes.string,
   mobileOpen: PropTypes.bool,
   showBorders: PropTypes.bool,
-  setPageNavigate: PropTypes.func,
   setMobileOpen: PropTypes.func,
 }
 

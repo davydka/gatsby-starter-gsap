@@ -32,7 +32,6 @@ const IndexPage = ({ location, showBorders, setHeroRef, FTUI }) => {
     if (initialFTUI === true) {
       sectionRef.current.classList.add(cx('ftui-in'))
     }
-    console.log('initialFTUI', initialFTUI)
   }, [])
 
   const localHeroRef = useCallback(node => {
