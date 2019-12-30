@@ -8,7 +8,7 @@
     will-change: height;
     transition: height, 200ms;
     height: 100vh;
-    height: calc(var(--vh, 1vh) * 100 - 20rem);
+    height: calc(var(--vh, 1vh) * 78); // allow 200px (22%) to peek up from bottom at 1440/900
 
     .moon,
     .logo {

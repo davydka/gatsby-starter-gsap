@@ -10,7 +10,7 @@ import PageTransition from '@components/PageTransition'
 import SEO from '@components/seo'
 import Logo from '@components/Logo'
 import SectionLorem from '@components/SectionLorem'
-import SectionGrid from '@components/SectionGrid'
+import SectionCover from '@components/SectionCover'
 import SectionVideo from '@components/SectionVideo'
 import SectionReel from '@components/SectionReel'
 import isiOS from '@utils/isiOS'
@@ -49,7 +49,7 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
           </div>
         </div>
 
-        <SectionGrid />
+        <SectionCover />
         <SectionLorem />
         <SectionVideo />
         <SectionLorem />

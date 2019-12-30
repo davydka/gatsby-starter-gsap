@@ -1,0 +1,112 @@
+@import 'styles/includes';
+
+.section-cover {
+  .content-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .vinyl,
+  .cassette {
+    position: relative;
+    text-align: center;
+
+    .play-pause {
+      @include reset-button();
+      position: absolute;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      width: 4.5rem;
+      height: 4.5rem;
+      opacity: 0;
+      transition: opacity calc(200ms * (1 / var(--speed)));
+
+      &:hover {
+        circle {
+          fill: $violet-light;
+        }
+      }
+
+      @include extraSmallOnly { top: auto; bottom: -6.75rem; opacity: 1; }
+      @include smallOnly      { top: auto; bottom: -6.75rem; opacity: 1; }
+      @include mediumOnly     { top: auto; bottom: -6.75rem; opacity: 1; }
+      @include largeOnly      { top: 42.5%; }
+      @include extraLargeOnly { top: 44%; }
+    }
+
+    img {
+      width: 100%;
+      display: block;
+      //object-fit: contain;
+    }
+
+    .content {
+      min-height: 8rem;
+      display: block;
+    }
+
+    .band-name {
+      padding-top: 2.5rem;
+      //min-height: 4rem;
+      text-transform: uppercase;
+    }
+
+    .title {
+      padding-top: .4rem;
+      //min-height: 4rem;
+      opacity: 1;
+      transition: opacity calc(200ms * (1 / var(--speed)));
+
+      @include largeOnly      { opacity: 0; }
+      @include extraLargeOnly { opacity: 0 }
+    }
+
+    &.playing,
+    &:hover {
+      .title { opacity: 1; }
+      .play-pause { opacity: 1; }
+    }
+
+    &.playing {
+      .play-pause {
+        circle {
+          fill: $violet-light;
+        }
+      }
+    }
+
+    @include extraSmallOnly { margin-bottom: 10rem; }
+    @include smallOnly      { margin-bottom: 10rem; }
+    @include mediumOnly     { margin-bottom: 10.5rem; }
+    @include largeOnly      { margin-bottom: 8rem; }
+    @include extraLargeOnly { margin-bottom: 8rem; }
+  }
+
+  @include extraSmallOnly {
+    .vinyl    { width: 95%; }
+    .cassette { width: 63%; }
+  }
+  @include smallOnly {
+    .vinyl    { width: 95%; }
+    .cassette { width: 63%; }
+  }
+  @include mediumOnly {
+    .vinyl    { width: 50%; }
+    .cassette { width: 30%; }
+  }
+  @include largeOnly {
+    .vinyl    { width: 33.333%; }
+    .cassette { width: 20%; }
+  }
+  @include extraLargeOnly {
+    .vinyl    { width: 33.333%; } // 1:1 aspect ratio - 408px at 1360 (design shows 420, but this is works really well for now)
+    .cassette { width: 20%; }
+  }
+}
+
+.borders {
+  .content-container {
+    border: 1px solid #5e91ff;
+  }
+}
