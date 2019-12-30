@@ -2,11 +2,12 @@
 
 .index-page {
   overflow: hidden;
+  transition: transform calc(1000ms * (1 / var(--speed)));
 
   .logo-container {
     //margin-top: #{$menu-height + $holder-margin-top};
     will-change: height;
-    transition: height, 200ms;
+    transition: height 200ms;
     height: 100vh;
     height: calc(var(--vh, 1vh) * 78); // allow 200px (22%) to peek up from bottom at 1440/900
 
@@ -23,8 +24,52 @@
   }
 }
 
+.ftui-in {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transition: opacity 600ms;
+}
+
+.ftui-complete {
+  .ftui-in {
+    opacity: 0;
+  }
+}
+ .no-ftui {
+   &.index-page {
+     padding-top: calc(25vh);
+
+     .logo-container {
+       display: none;
+       height: 6.87rem;
+
+       @include extraSmallOnly {
+         display: block;
+         margin: $menu-height-xs 0 $menu-height-xs/3.3;
+       }
+       @include smallOnly {
+         display: block;
+         margin: $menu-height-sm 0 $menu-height-sm/2;
+       }
+       @include mediumOnly {
+         display: block;
+         margin: $menu-height-md 0 $menu-height-md/2;
+       }
+     }
+
+     @include extraSmallOnly  { padding-top: 0 }
+     @include smallOnly       { padding-top: 0 }
+     @include mediumOnly      { padding-top: 0 }
+   }
+ }
+
+
+/* stylelint-disable */
 .page-borders {
   .logo-container {
     border: 1px solid red;
   }
 }
+/* stylelint-enable */

@@ -84,11 +84,16 @@ const reducer = (state, action) => {
   return state
 }
 
+const storage = typeof window !== `undefined` ? window.localStorage : false
+if (storage && !storage.getItem('FTUI')) {
+  storage.setItem('FTUI', 'true')
+}
+
 const initialState = {
   currentScroll: 0,
   lastScroll: 0,
   mobileOpen: false,
-  FTUI: true,
+  FTUI: storage ? storage.getItem('FTUI') === 'true' : false,
   param1: 0.0,
   param2: 0.0,
   param3: 0.0,

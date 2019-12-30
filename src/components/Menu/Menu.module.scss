@@ -65,12 +65,13 @@ $mobile-menu-height: 16rem;
     display: flex;
     flex-grow: 0;
     margin-right: 3rem;
+    transition: opacity calc(1000ms * (1 / var(--speed)));
 
     .logo {
       width: 17.6rem;
     }
 
-    @include minMax(0, $bp-medium, true) {
+    @include minMax(0, $bp-large) {
       display: none;
     }
   }
@@ -236,6 +237,12 @@ $mobile-menu-height: 16rem;
       display: block !important;
       opacity: 1;
     }
+  }
+}
+
+.FTUI {
+  .logo-container {
+    opacity: 0;
   }
 }
 

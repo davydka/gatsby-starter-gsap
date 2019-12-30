@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
 import querystring from 'query-string'
+import gsap from 'gsap'
 
 import styles from './Menu.module.scss'
 import Logo from '@components/Logo'
@@ -14,8 +15,24 @@ import Text from '@components/Text'
 
 const cx = classnames.bind(styles)
 
-const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen }) => {
+const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI }) => {
   const parsed = typeof location !== `undefined` ? querystring.parse(location.search) : { parsed: '' }
+
+  useEffect(() => {
+    if (!menuRef) return
+
+    if (FTUI) {
+      gsap.fromTo(
+        menuRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 1,
+          delay: 1,
+        }
+      )
+    }
+  }, [])
 
   const getSelected = page => {
     if (typeof page === 'undefined' && typeof parsed.page === 'undefined') return true
@@ -24,12 +41,11 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen }) =>
   return (
     <div
       ref={menuRef}
-      className={`section-container ${cx(
-        'menu-container',
-        className,
-        { borders: showBorders },
-        { 'mobile-open': mobileOpen }
-      )}`}
+      className={`section-container ${cx('menu-container', className, {
+        borders: showBorders,
+        'mobile-open': mobileOpen,
+        FTUI,
+      })}`}
     >
       <div className={`${cx('hover')}`} />
       <div className={`section`}>
@@ -133,6 +149,7 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen }) =>
 }
 
 Menu.propTypes = {
+  FTUI: PropTypes.bool,
   menuRef: PropTypes.object,
   className: PropTypes.string,
   mobileOpen: PropTypes.bool,
@@ -141,8 +158,8 @@ Menu.propTypes = {
   setMobileOpen: PropTypes.func,
 }
 
-const mapStateToProps = ({ showBorders, mobileOpen }) => {
-  return { showBorders, mobileOpen }
+const mapStateToProps = ({ showBorders, mobileOpen, FTUI }) => {
+  return { showBorders, mobileOpen, FTUI }
 }
 
 const mapDispatchToProps = dispatch => {

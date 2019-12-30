@@ -34,11 +34,17 @@ import Target from '@components/Target'
 
 const cx = classnames.bind(styles)
 
+const storage = typeof window !== `undefined` ? window.localStorage : false
+if (storage && !storage.getItem('FTUI')) {
+  storage.setItem('FTUI', 'true')
+}
+
 const Layout = ({
   setPrevLocation,
   setCurrentScroll,
   setStoreMobileOpen,
   mobileOpen,
+  FTUI,
   setFTUI,
   location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
   heroRef,
@@ -69,7 +75,7 @@ const Layout = ({
     param1: 0,
     param2: 0,
     param3: 0,
-    FTUI: true,
+    FTUI: storage && storage.getItem('FTUI') === 'true',
     showMain: true,
     gridHelper: false,
     showBorders: false,
@@ -87,6 +93,10 @@ const Layout = ({
     toggleGrid(inletsHolder.current.gridHelper)
     toggleBorders(inletsHolder.current.showBorders)
     setFTUI(inletsHolder.current.FTUI)
+    if (inletsHolder.current.FTUI && !initialFTUI) {
+      storage.setItem('FTUI', 'true')
+      if (typeof window !== `undefined`) window.location.reload()
+    }
 
     // 🌎 Global Scale
     document.documentElement.style.setProperty('--speed', inletsHolder.current.speed)
@@ -223,7 +233,8 @@ const Layout = ({
     menuRef,
     heightRef,
     canvasElement,
-    mobileOpen
+    mobileOpen,
+    setFTUI
   )
   useParam1(param1, scene, inlets)
   useParam2(param2, scene, inlets)
@@ -237,6 +248,7 @@ const Layout = ({
     // animate stuff
     animationID.current = undefined
 
+    // handleFTUIScroll()
     setCurrentScroll(window.pageYOffset | document.documentElement.scrollTop)
 
     resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef, setStoreMobileOpen)
@@ -266,6 +278,25 @@ const Layout = ({
     animationID.current = requestAnimationFrame(animate.current)
     stats.current.end()
   }
+
+  /** FTUI **/
+  const [initialFTUI] = useState(FTUI)
+  useEffect(() => {
+    if (!FTUI && !initialFTUI) return
+
+    const target = window.innerHeight / 2 - 40
+
+    if (currentScroll <= target && !FTUI && initialFTUI) {
+      setFTUI(true)
+      inletsHolder.current.FTUI = true
+    }
+
+    if (currentScroll >= target && FTUI) {
+      setFTUI(false)
+      inletsHolder.current.FTUI = false
+      storage.setItem('FTUI', 'false')
+    }
+  }, [currentScroll, FTUI])
 
   return (
     <main
@@ -319,11 +350,12 @@ Layout.propTypes = {
   currentScroll: PropTypes.number,
   mobileOpen: PropTypes.bool,
   setStoreMobileOpen: PropTypes.func,
+  FTUI: PropTypes.bool,
   setFTUI: PropTypes.func,
 }
 
-const mapStateToProps = ({ heroRef, param1, param2, param3, showBorders, currentScroll, mobileOpen }) => {
-  return { heroRef, param1, param2, param3, showBorders, currentScroll, mobileOpen }
+const mapStateToProps = ({ heroRef, param1, param2, param3, showBorders, currentScroll, mobileOpen, FTUI }) => {
+  return { heroRef, param1, param2, param3, showBorders, currentScroll, mobileOpen, FTUI }
 }
 
 const mapDispatchToProps = dispatch => {

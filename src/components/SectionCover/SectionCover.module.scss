@@ -17,8 +17,9 @@
       position: absolute;
       left: 50%;
       transform: translate3d(-50%, -50%, 0);
-      width: 4.5rem;
-      height: 4.5rem;
+      width: 5.7rem;
+      height: 5.7rem;
+      padding: 0.2rem;
       opacity: 0;
       transition: opacity calc(200ms * (1 / var(--speed)));
 
@@ -28,11 +29,11 @@
         }
       }
 
-      @include extraSmallOnly { top: auto; bottom: -6.75rem; opacity: 1; }
-      @include smallOnly      { top: auto; bottom: -6.75rem; opacity: 1; }
-      @include mediumOnly     { top: auto; bottom: -6.75rem; opacity: 1; }
-      @include largeOnly      { top: 42.5%; }
-      @include extraLargeOnly { top: 44%; }
+      @include extraSmallOnly { top: auto; bottom: -7.75rem; opacity: 1; }
+      @include smallOnly      { top: auto; bottom: -7.75rem; opacity: 1; }
+      @include mediumOnly     { top: auto; bottom: -7.75rem; opacity: 1; }
+      @include largeOnly      { top: 42.5%; width: 7.7rem; height: 7.5rem; }
+      @include extraLargeOnly { top: 44%;   width: 7.7rem; height: 7.5rem; }
     }
 
     img {
@@ -44,6 +45,7 @@
     .content {
       min-height: 8rem;
       display: block;
+      position: relative;
     }
 
     .band-name {
@@ -85,7 +87,7 @@
 
   @include extraSmallOnly {
     .vinyl    { width: 95%; }
-    .cassette { width: 63%; }
+    .cassette { width: 63%; .title { width: 150%; margin-left: -25%; } }
   }
   @include smallOnly {
     .vinyl    { width: 95%; }

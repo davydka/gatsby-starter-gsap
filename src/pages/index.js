@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
@@ -17,14 +17,8 @@ import isiOS from '@utils/isiOS'
 
 const cx = classnames.bind({ ...styles, ...layoutStyles })
 
-const IndexPage = ({ location, showBorders, setHeroRef }) => {
-  // componentDidMount
-  useEffect(() => {
-    // console.log('📟 Page mounted')
-
-    /** CleanUp **/
-    return () => {}
-  }, [])
+const IndexPage = ({ location, showBorders, setHeroRef, FTUI }) => {
+  const [initialFTUI] = useState(FTUI)
 
   const localHeroRef = useCallback(node => {
     if (node !== null) {
@@ -34,10 +28,31 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
 
   return (
     <PageTransition location={location} pagePath="/">
-      <div className={cx('index-page', { 'page-borders': showBorders, 'mobile-safari': isiOS() })}>
-        <SEO title="GSAP - Starter" />
+      <div
+        className={cx('index-page', {
+          'page-borders': showBorders,
+          'mobile-safari': isiOS(),
+          FTUI,
+          'ftui-complete': !FTUI && initialFTUI,
+          'no-ftui': !initialFTUI,
+        })}
+      >
+        <SEO title="Records, Tapes" />
 
-        <div className={`section-container`}>
+        {initialFTUI && (
+          <div className={`section-container`}>
+            <div className={`section`}>
+              <div className={`row`}>
+                <div className={`col`}>
+                  <div className={cx('logo-container')} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/*{initialFTUI && (*/}
+        <div className={`section-container ${cx({ 'ftui-in': initialFTUI })}`}>
           <div className={`section`}>
             <div className={`row`}>
               <div className={`col`}>
@@ -48,6 +63,7 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
             </div>
           </div>
         </div>
+        {/*)}*/}
 
         <SectionCover />
         <SectionLorem />
@@ -62,12 +78,13 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
 
 IndexPage.propTypes = {
   location: PropTypes.object,
+  FTUI: PropTypes.bool,
   showBorders: PropTypes.bool,
   setHeroRef: PropTypes.func,
 }
 
-const mapStateToProps = ({ showBorders }) => {
-  return { showBorders }
+const mapStateToProps = ({ showBorders, FTUI }) => {
+  return { showBorders, FTUI }
 }
 
 const mapDispatchToProps = dispatch => {
