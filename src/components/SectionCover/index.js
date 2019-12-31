@@ -14,26 +14,27 @@ const cx = classnames.bind(styles)
 
 const SectionCover = ({ className, showBorders }) => {
   const [selectedSKU, setSelectedSKU] = useState(false)
-  // const handleClick = sku => {
-  //   setSelectedSKU(sku)
-  // }
+  const handleClick = sku => {
+    console.log(selectedSKU)
+    setSelectedSKU(sku)
+  }
 
   const Cover = forwardRef(({ sku, type, image /*selected*/ }, ref) => {
     return (
-      <div ref={ref} className={cx(type, { playing: sku === selectedSKU })}>
+      <div ref={ref} className={cx(type /*{ playing: sku === selectedSKU }*/)}>
         <Link to="/" className={cx('')}>
           <img src={`/moon-glyph/images/${type}/${image}.png`} alt={type} height={1400} width={840} />
           {/*<img src={cassette01} alt={type} height={1400} width={840} />*/}
         </Link>
 
         {/*{!selected && (*/}
-        <button className={cx('play-pause', 'play')} onClick={() => setSelectedSKU(sku)}>
+        <button className={cx('play-pause', 'play')} onClick={() => handleClick(sku)}>
           <Play />
         </button>
         {/*)}*/}
 
         {/*{selected && (*/}
-        <button className={cx('play-pause', 'pause')} onClick={() => setSelectedSKU(false)}>
+        <button className={cx('play-pause', 'pause')} onClick={() => handleClick(false)}>
           <Pause />
         </button>
         {/*)}*/}
