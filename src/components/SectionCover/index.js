@@ -1,8 +1,8 @@
-import React, { /*useState,*/ useRef, createRef, forwardRef } from 'react'
+import React, { useRef, createRef, forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
-// import faker from 'faker'
+import faker from 'faker'
 
 import styles from './SectionCover.module.scss'
 import Text from '@components/Text'
@@ -13,9 +13,7 @@ import Pause from '@components/Logo/Pause'
 const cx = classnames.bind(styles)
 
 const SectionCover = ({ className, showBorders }) => {
-  // const [selectedSKU, setSelectedSKU] = useState(false)
   const handleClick = sku => {
-    console.log(sku)
     itemsArray.map((item, index) => {
       if (item.sku === sku) {
         elRef.current[index].current.classList.add(cx('playing'))
@@ -23,38 +21,30 @@ const SectionCover = ({ className, showBorders }) => {
         elRef.current[index].current.classList.remove(cx('playing'))
       }
     })
-    // setSelectedSKU(sku)
   }
 
-  const Cover = forwardRef(({ sku, type, image /*selected*/ }, ref) => {
+  const Cover = forwardRef(({ sku, type, image }, ref) => {
     return (
-      <div ref={ref} className={cx(type /*{ playing: sku === selectedSKU }*/)}>
+      <div ref={ref} className={cx(type)}>
         <Link to="/" className={cx('')}>
           <img src={`/moon-glyph/images/${type}/${image}.png`} alt={type} height={1400} width={840} />
-          {/*<img src={cassette01} alt={type} height={1400} width={840} />*/}
         </Link>
 
-        {/*{!selected && (*/}
         <button className={cx('play-pause', 'play')} onClick={() => handleClick(sku)}>
           <Play />
         </button>
-        {/*)}*/}
 
-        {/*{selected && (*/}
         <button className={cx('play-pause', 'pause')} onClick={() => handleClick(false)}>
           <Pause />
         </button>
-        {/*)}*/}
 
         <Link to="/" className={cx('content')}>
           <Text tag="h4" type="h4" className={cx('band-name')}>
-            {/*{faker.hacker.verb()} {faker.hacker.noun()}*/}
-            hello2
+            {faker.hacker.verb()} {faker.hacker.noun()}
           </Text>
 
           <Text tag="h4" type="h4" className={cx('title')}>
-            {/*{faker.hacker.ingverb()} {faker.random.word()}*/}
-            hello
+            {faker.hacker.ingverb()} {faker.random.word()}
           </Text>
         </Link>
       </div>
