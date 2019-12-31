@@ -5,6 +5,7 @@
   "version": "0.1.0",
   "author": "davydka",
   "dependencies": {
+    "@welldone-software/why-did-you-render": "^3.5.0",
     "classnames": "^2.2.6",
     "detect-browser": "^4.8.0",
     "faker": "^4.1.0",

@@ -40,6 +40,7 @@
       width: 100%;
       display: block;
       //object-fit: contain;
+      height: auto;
     }
 
     .content {
@@ -70,7 +71,9 @@
       .play-pause { opacity: 1; }
     }
 
+    .pause { display: none; }
     &.playing {
+      .pause { display: block; }
       .play-pause {
         circle {
           fill: $violet-light;
