@@ -16,6 +16,13 @@ const SectionCover = ({ className, showBorders }) => {
   // const [selectedSKU, setSelectedSKU] = useState(false)
   const handleClick = sku => {
     console.log(sku)
+    itemsArray.map((item, index) => {
+      if (item.sku === sku) {
+        elRef.current[index].current.classList.add(cx('playing'))
+      } else {
+        elRef.current[index].current.classList.remove(cx('playing'))
+      }
+    })
     // setSelectedSKU(sku)
   }
 
