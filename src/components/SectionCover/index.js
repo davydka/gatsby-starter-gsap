@@ -1,4 +1,4 @@
-import React, { useState, useRef, createRef, forwardRef } from 'react'
+import React, { /*useState,*/ useRef, createRef, forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
@@ -13,10 +13,10 @@ import Pause from '@components/Logo/Pause'
 const cx = classnames.bind(styles)
 
 const SectionCover = ({ className, showBorders }) => {
-  const [selectedSKU, setSelectedSKU] = useState(false)
+  // const [selectedSKU, setSelectedSKU] = useState(false)
   const handleClick = sku => {
-    console.log(selectedSKU)
-    setSelectedSKU(sku)
+    console.log(sku)
+    // setSelectedSKU(sku)
   }
 
   const Cover = forwardRef(({ sku, type, image /*selected*/ }, ref) => {
