@@ -96,23 +96,7 @@ const SectionCover = ({ className, showBorders }) => {
       <div className={`section`}>
         <div className={`row`}>
           <div className={`col`}>
-            <div className={cx('content-container')}>
-              {items}
-              {/*<Cover sku="mg001" type="cassette" image="01" />*/}
-              {/*<Cover sku="mg002" type="cassette" image="02" />*/}
-              {/*<Cover sku="mg003" type="cassette" image="03" />*/}
-              {/*<Cover sku="mg004" type="cassette" image="04" />*/}
-              {/*<Cover sku="mg005" type="cassette" image="05" />*/}
-
-              {/*<Cover sku="mg006" type="vinyl" image="01" />*/}
-              {/*<Cover sku="mg007" type="vinyl" image="02" />*/}
-              {/*<Cover sku="mg008" type="vinyl" image="03" />*/}
-
-              {/*<Cover sku="mg009" type="cassette" image="06" />*/}
-              {/*<Cover sku="mg010" type="vinyl" image="04" />*/}
-              {/*<Cover sku="mg011" type="cassette" image="07" />*/}
-              {/*<Cover sku="mg012" type="cassette" image="08" />*/}
-            </div>
+            <div className={cx('content-container')}>{items}</div>
           </div>
         </div>
       </div>
