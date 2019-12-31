@@ -9,10 +9,7 @@ import layoutStyles from '../layouts/Layout.module.scss'
 import PageTransition from '@components/PageTransition'
 import SEO from '@components/seo'
 import Logo from '@components/Logo'
-import SectionLorem from '@components/SectionLorem'
 import SectionCover from '@components/SectionCover'
-import SectionVideo from '@components/SectionVideo'
-import SectionReel from '@components/SectionReel'
 import isiOS from '@utils/isiOS'
 
 const cx = classnames.bind({ ...styles, ...layoutStyles })
@@ -76,11 +73,6 @@ const IndexPage = ({ location, showBorders, setHeroRef, FTUI }) => {
         </div>
 
         <SectionCover />
-        <SectionLorem />
-        <SectionVideo />
-        <SectionLorem />
-        <SectionReel />
-        <SectionLorem />
       </div>
     </PageTransition>
   )

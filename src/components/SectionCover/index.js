@@ -12,13 +12,17 @@ import Pause from '@components/Logo/Pause'
 
 const cx = classnames.bind(styles)
 
-const SectionCover = ({ className, showBorders }) => {
+const SectionCover = ({ className, showBorders, type }) => {
   const handleClick = sku => {
     itemsArray.map((item, index) => {
+      const targetRef = elRef.current[index]
+
+      if (!targetRef.current) return
+
       if (item.sku === sku) {
-        elRef.current[index].current.classList.add(cx('playing'))
+        targetRef.current.classList.add(cx('playing'))
       } else {
-        elRef.current[index].current.classList.remove(cx('playing'))
+        targetRef.current.classList.remove(cx('playing'))
       }
     })
   }
@@ -79,16 +83,13 @@ const SectionCover = ({ className, showBorders }) => {
 
   const elRef = useRef([...Array(itemsArray.length)].map(() => createRef()))
   const items = itemsArray.map((item, index) => {
-    return (
-      <Cover
-        ref={elRef.current[index]}
-        key={index}
-        sku={item.sku}
-        type={item.type}
-        image={item.image}
-        // selected={item.sku === selectedSKU}
-      />
-    )
+    const target = <Cover ref={elRef.current[index]} key={index} sku={item.sku} type={item.type} image={item.image} />
+
+    if (!type) {
+      return target
+    } else if (item.type === type) {
+      return target
+    }
   })
 
   return (
@@ -106,6 +107,7 @@ const SectionCover = ({ className, showBorders }) => {
 
 SectionCover.propTypes = {
   className: PropTypes.string,
+  type: PropTypes.string,
   showBorders: PropTypes.bool,
 }
 
