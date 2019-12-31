@@ -42,7 +42,7 @@ const SectionCover = ({ className, showBorders }) => {
         <Link to="/" className={cx('content')}>
           <Text tag="h4" type="h4" className={cx('band-name')}>
             {/*{faker.hacker.verb()} {faker.hacker.noun()}*/}
-            hello
+            hello2
           </Text>
 
           <Text tag="h4" type="h4" className={cx('title')}>
