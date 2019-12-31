@@ -2,7 +2,7 @@ import React, { useState, useRef, createRef, forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
-import faker from 'faker'
+// import faker from 'faker'
 
 import styles from './SectionCover.module.scss'
 import Text from '@components/Text'
@@ -41,11 +41,13 @@ const SectionCover = ({ className, showBorders }) => {
 
         <Link to="/" className={cx('content')}>
           <Text tag="h4" type="h4" className={cx('band-name')}>
-            {faker.hacker.verb()} {faker.hacker.noun()}
+            {/*{faker.hacker.verb()} {faker.hacker.noun()}*/}
+            hello
           </Text>
 
           <Text tag="h4" type="h4" className={cx('title')}>
-            {faker.hacker.ingverb()} {faker.random.word()}
+            {/*{faker.hacker.ingverb()} {faker.random.word()}*/}
+            hello
           </Text>
         </Link>
       </div>
