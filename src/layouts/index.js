@@ -36,7 +36,11 @@ const cx = classnames.bind(styles)
 
 const storage = typeof window !== `undefined` ? window.localStorage : false
 if (storage && !storage.getItem('FTUI')) {
-  storage.setItem('FTUI', 'true')
+  if (window.location.pathname === '/') {
+    storage.setItem('FTUI', 'true')
+  } else {
+    storage.setItem('FTUI', 'false')
+  }
 }
 
 const Layout = ({
@@ -95,7 +99,7 @@ const Layout = ({
     setFTUI(inletsHolder.current.FTUI)
     if (inletsHolder.current.FTUI && !initialFTUI) {
       storage.setItem('FTUI', 'true')
-      if (typeof window !== `undefined`) window.location.reload()
+      if (typeof window !== `undefined`) window.location.href = '/'
     }
 
     // 🌎 Global Scale
@@ -233,8 +237,7 @@ const Layout = ({
     menuRef,
     heightRef,
     canvasElement,
-    mobileOpen,
-    setFTUI
+    mobileOpen
   )
   useParam1(param1, scene, inlets)
   useParam2(param2, scene, inlets)
@@ -288,7 +291,7 @@ const Layout = ({
 
     if (currentScroll <= target && !FTUI && initialFTUI) {
       setFTUI(true)
-      inletsHolder.current.FTUI = true
+      // inletsHolder.current.FTUI = true
     }
 
     if (currentScroll >= target && FTUI) {

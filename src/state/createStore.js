@@ -86,7 +86,11 @@ const reducer = (state, action) => {
 
 const storage = typeof window !== `undefined` ? window.localStorage : false
 if (storage && !storage.getItem('FTUI')) {
-  storage.setItem('FTUI', 'true')
+  if (window.location.pathname === '/') {
+    storage.setItem('FTUI', 'true')
+  } else {
+    storage.setItem('FTUI', 'false')
+  }
 }
 
 const initialState = {
