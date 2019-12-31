@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useCallback, useEffect, useState, useRef } from 'react'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
@@ -9,20 +9,26 @@ import layoutStyles from '../layouts/Layout.module.scss'
 import PageTransition from '@components/PageTransition'
 import SEO from '@components/seo'
 import Logo from '@components/Logo'
-import SectionLorem from '@components/SectionLorem'
-import SectionVideo from '@components/SectionVideo'
-import SectionReel from '@components/SectionReel'
+import SectionCover from '@components/SectionCover'
 import isiOS from '@utils/isiOS'
 
 const cx = classnames.bind({ ...styles, ...layoutStyles })
 
-const IndexPage = ({ location, showBorders, setHeroRef }) => {
-  // componentDidMount
-  useEffect(() => {
-    // console.log('📟 Page mounted')
+const IndexPage = ({ location, showBorders, setHeroRef, FTUI }) => {
+  const indexRef = useRef(null)
+  const sectionRef = useRef(null)
+  const [initialFTUI] = useState(FTUI)
 
-    /** CleanUp **/
-    return () => {}
+  useEffect(() => {
+    if (!indexRef.current) return
+    if (!sectionRef.current) return
+
+    if (initialFTUI === false) {
+      indexRef.current.classList.add(cx('no-ftui'))
+    }
+    if (initialFTUI === true) {
+      sectionRef.current.classList.add(cx('ftui-in'))
+    }
   }, [])
 
   const localHeroRef = useCallback(node => {
@@ -33,10 +39,28 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
 
   return (
     <PageTransition location={location} pagePath="/">
-      <div className={cx('index-page', { 'page-borders': showBorders, 'mobile-safari': isiOS() })}>
-        <SEO title="GSAP - Starter" />
+      <div
+        ref={indexRef}
+        className={cx('index-page', {
+          'page-borders': showBorders,
+          'mobile-safari': isiOS(),
+          FTUI,
+          'ftui-complete': !FTUI && initialFTUI,
+        })}
+      >
+        <SEO title="Records, Tapes" />
 
-        <div className={`section-container`}>
+        <div className={`section-container ${cx('section-spacer')}`}>
+          <div className={`section`}>
+            <div className={`row`}>
+              <div className={`col`}>
+                <div className={cx('logo-container')} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div ref={sectionRef} className={`section-container`}>
           <div className={`section`}>
             <div className={`row`}>
               <div className={`col`}>
@@ -48,10 +72,7 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
           </div>
         </div>
 
-        <SectionVideo />
-        <SectionLorem />
-        <SectionReel />
-        <SectionLorem />
+        <SectionCover />
       </div>
     </PageTransition>
   )
@@ -59,12 +80,13 @@ const IndexPage = ({ location, showBorders, setHeroRef }) => {
 
 IndexPage.propTypes = {
   location: PropTypes.object,
+  FTUI: PropTypes.bool,
   showBorders: PropTypes.bool,
   setHeroRef: PropTypes.func,
 }
 
-const mapStateToProps = ({ showBorders }) => {
-  return { showBorders }
+const mapStateToProps = ({ showBorders, FTUI }) => {
+  return { showBorders, FTUI }
 }
 
 const mapDispatchToProps = dispatch => {
