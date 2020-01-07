@@ -16,7 +16,10 @@ import Text from '@components/Text'
 const cx = classnames.bind(styles)
 
 const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI }) => {
-  const parsed = typeof location !== `undefined` ? querystring.parse(location.search) : { parsed: '' }
+  const parsed =
+    typeof location !== `undefined` && typeof location.search !== `undefined` && location.search !== ''
+      ? querystring.parse(location.search)
+      : { page: '' }
 
   useEffect(() => {
     if (!menuRef) return
@@ -42,7 +45,7 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
   }, [FTUI])
 
   const getSelected = page => {
-    if (typeof page === 'undefined' && typeof parsed.page === 'undefined') return true
+    if (typeof page === 'undefined' && (typeof parsed.page === 'undefined' || parsed.page === '')) return true
     return page === parsed.page
   }
   return (
@@ -124,7 +127,10 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
               </li>
               <li className={cx('list-or-cover')}>
                 <Text tag="h4" type="h4" className={`${cx('menu-link-holder', '')}`}>
-                  <Link to={`/page-2?page=${parsed.page}`} className={`${cx('menu-link', 'callout')}`}>
+                  <Link
+                    to={`/page-2${parsed.page !== '' ? `?page=${parsed.page}` : ''}`}
+                    className={`${cx('menu-link', 'callout')}`}
+                  >
                     By List
                   </Link>
                 </Text>
