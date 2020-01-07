@@ -6,6 +6,8 @@ import { Transition } from 'react-transition-group'
 import gsap from 'gsap'
 
 const PageTransition = ({
+  FTUI,
+  setFTUI,
   children,
   pagePath,
   location,
@@ -24,6 +26,9 @@ const PageTransition = ({
       setOpacity(0)
     }
   }, [opacity, prevLocation])
+
+  /** FTUI **/
+  const [initialFTUI] = useState(FTUI)
 
   const refContainer = useRef(null)
   useEffect(() => {
@@ -61,7 +66,12 @@ const PageTransition = ({
           setPageTransitionEnd(Date.now())
           setPageTransitioning(false)
           setPageTranstionURLTarget(false)
-          navigate(pageTransitionURLTarget)
+          if (initialFTUI) {
+            setFTUI(false)
+            window.location = pageTransitionURLTarget
+          } else {
+            navigate(pageTransitionURLTarget)
+          }
         },
       })
     }
@@ -131,10 +141,12 @@ PageTransition.propTypes = {
   setPageTransitionEnd: PropTypes.func,
   setPageTransitioning: PropTypes.func,
   setPageTransitioningIn: PropTypes.func,
+  FTUI: PropTypes.bool,
+  setFTUI: PropTypes.func,
 }
 
-const mapStateToProps = ({ prevLocation, pageTransitionURLTarget, pageTransitionStart, pageTransitionEnd }) => {
-  return { prevLocation, pageTransitionURLTarget, pageTransitionStart, pageTransitionEnd }
+const mapStateToProps = ({ prevLocation, pageTransitionURLTarget, pageTransitionStart, pageTransitionEnd, FTUI }) => {
+  return { prevLocation, pageTransitionURLTarget, pageTransitionStart, pageTransitionEnd, FTUI }
 }
 
 const mapDispatchToProps = dispatch => {
@@ -144,6 +156,7 @@ const mapDispatchToProps = dispatch => {
     setPageTransitionEnd: target => dispatch({ type: `SETPAGETRANSITIONEND`, payload: target }),
     setPageTransitioning: target => dispatch({ type: `SETPAGETRANSITIONING`, payload: target }),
     setPageTransitioningIn: target => dispatch({ type: `SETPAGETRANSITIONINGIN`, payload: target }),
+    setFTUI: target => dispatch({ type: `SETFTUI`, payload: target }),
   }
 }
 
