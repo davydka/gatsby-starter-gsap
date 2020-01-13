@@ -1,5 +1,10 @@
 @import 'styles/includes';
 
+p {
+  display:block;
+  white-space: pre-wrap;
+}
+
 .borders {
   .content-container {
     border: 1px solid rebeccapurple;

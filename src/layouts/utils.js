@@ -102,7 +102,7 @@ export const initCameraThunk = camera => {
   return () => {
     camera.current.position.x = 0
     camera.current.position.y = 0
-    camera.current.position.z = 2.5
+    camera.current.position.z = 20.5
   }
 }
 
@@ -113,7 +113,7 @@ export const addMesh = (sceneSize, mesh, scene) => {
     flatShading: true,
   })
   mesh.current = new THREE.Mesh(geometry, material)
-  // mesh.current.visible = false
+  mesh.current.visible = false
   mesh.current.position.setZ(-mesh.current.geometry.parameters.radius * 2)
   scene.current.add(mesh.current)
 }
@@ -341,10 +341,11 @@ export const useParam3 = (param3, ref, inlets) => {
 
 export const useScrollRotateMesh = (currentScroll, ref) => {
   useEffect(() => {
+    if (!ref.current) return
     // scale scroll position from 0 to 1
     const targetHeight = currentScroll / (document.body.clientHeight - window.innerHeight)
     gsap.to(ref.current.rotation, 1, {
-      y: targetHeight * (Math.PI / 2) * 2,
+      z: Math.PI / 2 + targetHeight * Math.PI * 8,
       ease: Linear.ease,
     })
   }, [currentScroll])

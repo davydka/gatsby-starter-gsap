@@ -29,7 +29,7 @@ const SectionVideo = ({ className, showBorders }) => {
               `}
             >
               <Text tag="h3" type="h3" className={cx('section-title')}>
-                Video Section.
+                🐍🐍🐍
               </Text>
             </div>
           </div>

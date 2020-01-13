@@ -5,10 +5,17 @@ import { connect } from 'react-redux'
 import gsap from 'gsap'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import smoothscroll from 'smoothscroll-polyfill'
+import { Player /*Sampler*/ } from 'tone'
 
 import styles from './Layout.module.scss'
 import GridHelper from './GridHelper'
+import soundFile from './snake-heist.mp3'
+// import A1 from './A1.mp3'
+// import snakeObj from './snake/rattlesnake.obj'
+// import snakeTexture from './snake/rattlesnake.jpg'
+
 import {
   useSiteMetadata,
   initStats,
@@ -16,7 +23,7 @@ import {
   initGSAP,
   initOrbitsThunk,
   initCameraThunk,
-  addMesh,
+  // addMesh,
   addSceneHelperMesh,
   handleScroll,
   resizeRendererToDisplaySize,
@@ -32,6 +39,8 @@ import Menu from '@components/Menu'
 import Target from '@components/Target'
 
 const cx = classnames.bind(styles)
+
+const loader = new GLTFLoader()
 
 const Layout = ({
   setPrevLocation,
@@ -56,6 +65,33 @@ const Layout = ({
 
   //GUIパラメータの準備
   const gui = useRef()
+
+  const player = useRef()
+  const [playerLoaded, setPlayerLoaded] = useState(false)
+  useEffect(() => {
+    if (!player.current || !playerLoaded) return
+    console.log('🎭🎼 audio file loaded')
+    // player.current.start()
+    // console.log(player.current.buffer.duration)
+    // console.log(player.current.context)
+  }, [playerLoaded])
+
+  const handleTouchStart = () => {
+    console.log(player.current.state)
+    if (player.current.state !== 'started') {
+      player.current.start()
+    }
+  }
+
+  /*
+  const sampler = useRef()
+  const [samplerLoaded, setSamplerLoaded] = useState(false)
+  useEffect(() => {
+    if (!sampler.current || !samplerLoaded) return
+    console.log('🎭🎼 audio file loaded')
+    sampler.current.triggerAttack('A1')
+  }, [samplerLoaded])
+   */
 
   // GUI Inlets
   const inletsHolder = useRef({
@@ -99,7 +135,7 @@ const Layout = ({
   const menuRef = useRef(null)
 
   // THREE
-  const sceneSize = 6 // in meters
+  const sceneSize = 3.55 // in meters
   const scene = useRef()
   const camera = useRef()
   const renderer = useRef()
@@ -130,6 +166,20 @@ const Layout = ({
     )
     smoothscroll.polyfill()
 
+    /** Tone JS Player **/
+    player.current = new Player(soundFile, () => {
+      setPlayerLoaded(true)
+    }).toMaster()
+
+    // sampler.current = new Sampler(
+    //   { A1 },
+    //   {
+    //     onload: () => {
+    //       setSamplerLoaded(true)
+    //     },
+    //   }
+    // ).toMaster()
+
     // On first load, mobile browsers have different initial viewport heights that change after scrolling
     // capture that difference here as a CSS variable
     document.documentElement.style.setProperty(
@@ -146,8 +196,9 @@ const Layout = ({
 
     /** THREE **/
     scene.current = new THREE.Scene()
-    scene.current.background = new THREE.Color(0xf1f1f1)
-    scene.current.scale.set(0.25)
+    // scene.current.background = new THREE.Color(0xf1f1f1)
+    scene.current.background = new THREE.Color(0x000000)
+    // scene.current.scale.set(0.25)
     // camera.current = new THREE.PerspectiveCamera(75, 960 / 540, 0.1, 10000)
 
     const aspect = canvasElement.current.clientWidth / canvasElement.current.clientHeight
@@ -157,7 +208,7 @@ const Layout = ({
       (sceneSize * aspect) / 2,
       (sceneSize * aspect) / -2,
       1,
-      1000
+      10000
     )
 
     renderer.current = new THREE.WebGLRenderer({
@@ -173,11 +224,47 @@ const Layout = ({
     initializeOrbits.current()
     initializeCamera.current()
 
-    addMesh(sceneSize, mesh, scene)
+    // addMesh(sceneSize, mesh, scene)
     addSceneHelperMesh(sceneSize, sceneHelperMesh, axisHelper, scene)
 
     const light = new THREE.AmbientLight(0x404040) // soft white light
     scene.current.add(light)
+
+    /** 3D Model **/
+    loader.load(
+      // resource URL
+      '/snake/rattlesnake.gltf',
+      // called when resource is loaded
+      object => {
+        let material = new THREE.MeshNormalMaterial({
+          // wireframe: true,
+          flatShading: true,
+        })
+
+        // console.log(object.scene.children)
+
+        // RATTLESNAKE
+        let rattlesnake = object.scene.children.filter(item => item.name.toLowerCase() === 'rattlesnake')
+        rattlesnake = rattlesnake.length > 0 ? rattlesnake[0] : false
+        rattlesnake.material = material
+        rattlesnake.position.set(0, 0, 0)
+        rattlesnake.rotation.set(Math.PI / 2, 0, Math.PI / 2)
+        mesh.current = rattlesnake
+        // console.log(rattlesnake)
+
+        scene.current.add(rattlesnake)
+      },
+
+      // called when loading is in progresses
+      xhr => {
+        console.log('model loading: ', (xhr.loaded / xhr.total) * 100 + '% loaded')
+      },
+
+      // called when loading has errors
+      error => {
+        console.log('An error happened', error)
+      }
+    )
 
     /** GSAP **/
     initGSAP(gs)
@@ -236,8 +323,23 @@ const Layout = ({
     controls.current.update()
 
     tick.current = tick.current + 1
-    if (tick.current >= 3) {
+    if (tick.current >= 5) {
       // do something at a lower framerate here
+
+      if (player.current && playerLoaded) {
+        const playerProgress = player.current.context.now() / player.current.buffer.duration
+        // console.log(playerProgress)
+        const scrollTarget = playerProgress * (document.body.clientHeight - window.innerHeight)
+        // console.log(scrollTarget)
+        if (player.current.state === 'started') {
+          scrollTo({
+            top: scrollTarget,
+            left: 0,
+            behavior: 'smooth',
+          })
+        }
+      }
+
       tick.current = 0
     }
 
@@ -251,7 +353,15 @@ const Layout = ({
         borders: showBorders,
         hideMain: inlets && !inlets.showMain,
       })}
+      onTouchStart={handleTouchStart}
+      onClick={handleTouchStart}
     >
+      <button
+        onClick={handleTouchStart}
+        style={{ position: 'fixed', top: '0', left: '0', backgroundColor: 'pink', zIndex: '100' }}
+      >
+        <h1>PLAY</h1>
+      </button>
       {/*dummy section containers for imperative width/height measurements*/}
       <div className={`section-container`}>
         <div className={`section`}>
