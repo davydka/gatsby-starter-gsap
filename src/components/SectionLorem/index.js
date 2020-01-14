@@ -16,7 +16,7 @@ const SectionLorem = ({ className, showBorders }) => {
           <div className={`col`}>
             <div className={cx('content-container')}>
               <p>
-                you find yourself at the zoo
+                so you find yourself at the zoo
                 <br />
                 the snake house to be exact
                 <br />

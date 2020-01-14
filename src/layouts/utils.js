@@ -44,14 +44,14 @@ export const initGUI = (gui, inletsHolder, handleInletChange) => {
   gui.current = new window.dat.GUI()
   // gui.current.useLocalStorage = true
   // gui.current.remember(inletsHolder.current)
-  gui.current
-    .add(inletsHolder.current, 'speed', 0.0, 2.0)
-    .onChange(handleInletChange.current)
-    .listen()
-  gui.current
-    .add(inletsHolder.current, 'param1', -7.5, 7.5)
-    .onChange(handleInletChange.current)
-    .listen()
+  // gui.current
+  //   .add(inletsHolder.current, 'speed', 0.0, 2.0)
+  //   .onChange(handleInletChange.current)
+  //   .listen()
+  // gui.current
+  //   .add(inletsHolder.current, 'param1', -7.5, 7.5)
+  //   .onChange(handleInletChange.current)
+  //   .listen()
   gui.current
     .add(inletsHolder.current, 'param2', -7.5, 7.5)
     .onChange(handleInletChange.current)
@@ -80,12 +80,32 @@ export const initGUI = (gui, inletsHolder, handleInletChange) => {
 
 /**********/
 /** GSAP **/
-export const initGSAP = gs => {
+export const initGSAP = (gs, player, textMesh1) => {
   gs.current = gsap.timeline({
-    repeat: -1,
+    // repeat: -1,
     timeScale: 1.0,
-    // paused: true,
+    paused: true,
+    duration: 192, // seconds
   })
+
+  gs.current.to(
+    textMesh1.current.position,
+    {
+      x: 3,
+      duration: 1,
+    },
+    3.0
+    // 0
+  )
+  gs.current.to(
+    textMesh1.current.position,
+    {
+      x: 0,
+      duration: 1,
+    },
+    // 3.5
+    191
+  )
 }
 
 /***********/
@@ -113,7 +133,7 @@ export const addMesh = (sceneSize, mesh, scene) => {
     flatShading: true,
   })
   mesh.current = new THREE.Mesh(geometry, material)
-  mesh.current.visible = false
+  // mesh.current.visible = false
   mesh.current.position.setZ(-mesh.current.geometry.parameters.radius * 2)
   scene.current.add(mesh.current)
 }
@@ -144,6 +164,7 @@ export const handleScroll = (
   setLastScroll,
   menuRef,
   heightRef,
+  // eslint-disable-next-line no-unused-vars
   canvasElement
 ) => {
   const currentScroll = window.pageYOffset || document.documentElement.scrollTop
@@ -171,18 +192,18 @@ export const handleScroll = (
   }
 
   const initialCanvas = () => {
-    canvasElement.current.style.transform = `translate3d(0px, -${initialThreshold - menuSize / 2}px, 0)`
+    // canvasElement.current.style.transform = `translate3d(0px, -${initialThreshold - menuSize / 2}px, 0)`
   }
   const smallCanvas = () => {
     // if near the top, before the 'resize zone' on mobile
     if (currentScroll <= initialThreshold) {
       initialCanvas()
     } else {
-      canvasElement.current.style.transform = `translate3d(0px, -${initialThreshold}px, 0)`
+      // canvasElement.current.style.transform = `translate3d(0px, -${initialThreshold}px, 0)`
     }
   }
   const fullCanvas = () => {
-    canvasElement.current.style.transform = `translate3d(0px, -${initialThreshold / 2}px, 0)`
+    // canvasElement.current.style.transform = `translate3d(0px, -${initialThreshold / 2}px, 0)`
   }
 
   // bottom 'bounce zone' (inertial scrolling) on mobile

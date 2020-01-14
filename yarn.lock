@@ -6467,10 +6467,10 @@ graphql@^14.5.8:
   dependencies:
     iterall "^1.2.2"
 
-gsap@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/gsap/-/gsap-3.0.1.tgz#946b49e860487bd23e6c884b95152d556a5f86f1"
-  integrity sha512-9nzEBF7Ss9Ogyw6oEOXZxxVYH8WNRA/nHmIp3DrPOTKmlLxX9MN2ovSoH9TApA+rucBgp9veCedujp5oSQRvZw==
+gsap@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/gsap/-/gsap-3.0.5.tgz#49075d3377e9f43da29ec9853134b6a6274aefe3"
+  integrity sha512-TpIeFoIU8x+46/RGTD/qY+jUAnxcPgqxwOZtJ0YZSaLoL5JR87tyH8p3X02ZnYrMpE0Tt9cOA3ueiWhCVuRv1A==
 
 gud@^1.0.0:
   version "1.0.0"
@@ -12922,11 +12922,6 @@ toidentifier@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.0.tgz#7e1be3470f1e77948bc43d94a3c8f4d7752ba553"
   integrity sha512-yaOH/Pk/VEhBWWTlhI+qXxDFXlejDGcQipMlyxda9nthulaxLZUNcUqFxokp0vcYnvteJln5FNQDRrxj3YcbVw==
-
-tone@^13.8.25:
-  version "13.8.25"
-  resolved "https://registry.yarnpkg.com/tone/-/tone-13.8.25.tgz#057eefb39d4c749524db0ca210e34303cdc3c025"
-  integrity sha512-8QqmLn+/R+Urib/78zf93+NqFLddXS777kQO7+EbJHwqy+nmug+SJFRp2KIytT0LQY2sJBiopNb2ceHA8uQQJg==
 
 tough-cookie@~2.4.3:
   version "2.4.3"

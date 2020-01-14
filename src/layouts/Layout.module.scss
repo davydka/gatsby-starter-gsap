@@ -37,10 +37,10 @@
   z-index: -1;
   width: 100% !important;
   height: 100vh !important; // fallback fro IE 11
-  //height: calc(100vh + var(--vhThreshold) + #{$menu-height + $holder-margin-top}) !important;
-  //margin-top: calc(-1 * (var(--vhThreshold)));
   height: calc(100vh + var(--vhThreshold)) !important;
-  transform: translate3d(0px, calc(-1 * (var(--vhThreshold))), 0);
+  //height: calc(100vh + var(--vhThreshold) + #{$menu-height + $holder-margin-top}) !important;
+  margin-top: calc(-1 * (var(--vhThreshold)));
+  //transform: translate3d(0px, calc(-1 * (var(--vhThreshold))), 0);
   transition: transform 200ms;
 }
 

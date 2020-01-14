@@ -7,14 +7,10 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import smoothscroll from 'smoothscroll-polyfill'
-import { Player /*Sampler*/ } from 'tone'
 
 import styles from './Layout.module.scss'
 import GridHelper from './GridHelper'
 import soundFile from './snake-heist.mp3'
-// import A1 from './A1.mp3'
-// import snakeObj from './snake/rattlesnake.obj'
-// import snakeTexture from './snake/rattlesnake.jpg'
 
 import {
   useSiteMetadata,
@@ -23,7 +19,7 @@ import {
   initGSAP,
   initOrbitsThunk,
   initCameraThunk,
-  // addMesh,
+  addMesh,
   addSceneHelperMesh,
   handleScroll,
   resizeRendererToDisplaySize,
@@ -67,31 +63,31 @@ const Layout = ({
   const gui = useRef()
 
   const player = useRef()
-  const [playerLoaded, setPlayerLoaded] = useState(false)
+  const [playerLoaded /*setPlayerLoaded*/] = useState(false)
   useEffect(() => {
     if (!player.current || !playerLoaded) return
     console.log('🎭🎼 audio file loaded')
-    // player.current.start()
-    // console.log(player.current.buffer.duration)
-    // console.log(player.current.context)
   }, [playerLoaded])
 
   const handleTouchStart = () => {
-    console.log(player.current.state)
-    if (player.current.state !== 'started') {
-      player.current.start()
-    }
+    // console.log(player.current)
+    player.current.play()
+    // gs.current.play()
   }
 
-  /*
-  const sampler = useRef()
-  const [samplerLoaded, setSamplerLoaded] = useState(false)
   useEffect(() => {
-    if (!sampler.current || !samplerLoaded) return
-    console.log('🎭🎼 audio file loaded')
-    sampler.current.triggerAttack('A1')
-  }, [samplerLoaded])
-   */
+    if (!player.current) return
+
+    player.current.oncanplay = () => {
+      console.log(player.current.duration)
+    }
+    player.current.ontimeupdate = () => {
+      // gs.current.progress(player.current.currentTime/player.current.duration)
+      // console.log(player.current.currentTime/player.current.duration)
+      console.log(gs.current.duration())
+      // console.log(player.current.currentTime)
+    }
+  }, [player])
 
   // GUI Inlets
   const inletsHolder = useRef({
@@ -141,6 +137,7 @@ const Layout = ({
   const renderer = useRef()
   const controls = useRef()
   const mesh = useRef()
+  const textMesh1 = useRef()
   const axisHelper = useRef()
   const sceneHelperMesh = useRef()
   const raycaster = useRef()
@@ -166,19 +163,7 @@ const Layout = ({
     )
     smoothscroll.polyfill()
 
-    /** Tone JS Player **/
-    player.current = new Player(soundFile, () => {
-      setPlayerLoaded(true)
-    }).toMaster()
-
-    // sampler.current = new Sampler(
-    //   { A1 },
-    //   {
-    //     onload: () => {
-    //       setSamplerLoaded(true)
-    //     },
-    //   }
-    // ).toMaster()
+    /* Audio */
 
     // On first load, mobile browsers have different initial viewport heights that change after scrolling
     // capture that difference here as a CSS variable
@@ -197,7 +182,7 @@ const Layout = ({
     /** THREE **/
     scene.current = new THREE.Scene()
     // scene.current.background = new THREE.Color(0xf1f1f1)
-    scene.current.background = new THREE.Color(0x000000)
+    scene.current.background = new THREE.Color(0x151515)
     // scene.current.scale.set(0.25)
     // camera.current = new THREE.PerspectiveCamera(75, 960 / 540, 0.1, 10000)
 
@@ -224,7 +209,7 @@ const Layout = ({
     initializeOrbits.current()
     initializeCamera.current()
 
-    // addMesh(sceneSize, mesh, scene)
+    addMesh(sceneSize, textMesh1, scene)
     addSceneHelperMesh(sceneSize, sceneHelperMesh, axisHelper, scene)
 
     const light = new THREE.AmbientLight(0x404040) // soft white light
@@ -256,8 +241,8 @@ const Layout = ({
       },
 
       // called when loading is in progresses
-      xhr => {
-        console.log('model loading: ', (xhr.loaded / xhr.total) * 100 + '% loaded')
+      (/*xhr*/) => {
+        // console.log('model loading: ', (xhr.loaded / xhr.total) * 100 + '% loaded')
       },
 
       // called when loading has errors
@@ -267,7 +252,7 @@ const Layout = ({
     )
 
     /** GSAP **/
-    initGSAP(gs)
+    initGSAP(gs, player, textMesh1)
 
     /** Animate Kickoff **/
     resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef)
@@ -322,23 +307,14 @@ const Layout = ({
     renderer.current.render(scene.current, camera.current)
     controls.current.update()
 
+    if (player.current && player.current.duration > 0) {
+      // console.log(player.current.currentTime/player.current.duration)
+      gs.current.progress(player.current.currentTime / player.current.duration)
+    }
+
     tick.current = tick.current + 1
     if (tick.current >= 5) {
       // do something at a lower framerate here
-
-      if (player.current && playerLoaded) {
-        const playerProgress = player.current.context.now() / player.current.buffer.duration
-        // console.log(playerProgress)
-        const scrollTarget = playerProgress * (document.body.clientHeight - window.innerHeight)
-        // console.log(scrollTarget)
-        if (player.current.state === 'started') {
-          scrollTo({
-            top: scrollTarget,
-            left: 0,
-            behavior: 'smooth',
-          })
-        }
-      }
 
       tick.current = 0
     }
@@ -353,8 +329,6 @@ const Layout = ({
         borders: showBorders,
         hideMain: inlets && !inlets.showMain,
       })}
-      onTouchStart={handleTouchStart}
-      onClick={handleTouchStart}
     >
       <button
         onClick={handleTouchStart}
@@ -362,6 +336,11 @@ const Layout = ({
       >
         <h1>PLAY</h1>
       </button>
+
+      <audio ref={player} id="player" controls preload="auto">
+        <source type="audio/mp3" src={soundFile} />
+      </audio>
+
       {/*dummy section containers for imperative width/height measurements*/}
       <div className={`section-container`}>
         <div className={`section`}>
