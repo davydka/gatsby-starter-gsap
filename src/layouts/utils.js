@@ -371,3 +371,65 @@ export const useScrollRotateMesh = (currentScroll, ref) => {
     })
   }, [currentScroll])
 }
+
+/** Waveform Data **/
+// export const initWaveform = (waveform, svgWaveform) => {
+//   if (!svgWaveform.current) return
+//
+//   console.log(d3)
+//   const channel = waveform.channel(0)
+//   const layout = d3.select(this).select('svg')
+//   const x = d3.scaleLinear()
+//   const y = d3.scaleLinear()
+//   const offsetX = 100
+//
+//   const min = channel.min_array()
+//   const max = channel.max_array()
+//
+//   x.domain([0, waveform.length]).rangeRound([0, 1024])
+//   y.domain([d3.min(min), d3.max(max)]).rangeRound([offsetX, -offsetX])
+//
+//   const area = d3.area()
+//     .x((d, i) => x(i))
+//     .y0((d, i) => y(min[i]))
+//     .y1((d, i) => y(d))
+//
+//   d3.graph.select('path')
+//     .datum(max)
+//     .attr('transform', () => `translate(0, ${offsetX})`)
+//     .attr('d', area)
+// }
+
+export const initWaveform = (waveform, canvasWaveform) => {
+  if (!canvasWaveform.current) return
+
+  const scaleY = (amplitude, height) => {
+    const range = 256
+    const offset = 128
+
+    return height - ((amplitude + offset) * height) / range
+  }
+
+  const ctx = canvasWaveform.current.getContext('2d')
+  ctx.beginPath()
+
+  const channel = waveform.channel(0)
+
+  // Loop forwards, drawing the upper half of the waveform
+  for (let x = 0; x < waveform.length; x++) {
+    const val = channel.max_sample(x)
+
+    ctx.lineTo(x + 0.5, scaleY(val, canvasWaveform.current.height) + 0.5)
+  }
+
+  // Loop backwards, drawing the lower half of the waveform
+  for (let x = waveform.length - 1; x >= 0; x--) {
+    const val = channel.min_sample(x)
+
+    ctx.lineTo(x + 0.5, scaleY(val, canvasWaveform.current.height) + 0.5)
+  }
+
+  ctx.closePath()
+  ctx.stroke()
+  ctx.fill()
+}

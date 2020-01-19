@@ -3,14 +3,16 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
 import gsap from 'gsap'
+import smoothscroll from 'smoothscroll-polyfill'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import smoothscroll from 'smoothscroll-polyfill'
+import WaveformData from 'waveform-data'
 
 import styles from './Layout.module.scss'
 import GridHelper from './GridHelper'
-import soundFile from './snake-heist.mp3'
+import soundFile from './snake-heistx.mp3'
+import soundFileData from './snake-heistx.json'
 
 import {
   useSiteMetadata,
@@ -30,6 +32,7 @@ import {
   useParam2,
   useParam3,
   useScrollRotateMesh,
+  initWaveform,
 } from './utils'
 import Menu from '@components/Menu'
 import Target from '@components/Target'
@@ -79,7 +82,7 @@ const Layout = ({
     if (!player.current) return
 
     player.current.oncanplay = () => {
-      console.log(player.current.duration)
+      console.log('html audio element soundfile ready \n\tduration in seconds: ', player.current.duration)
     }
     player.current.ontimeupdate = () => {
       // gs.current.progress(player.current.currentTime/player.current.duration)
@@ -126,6 +129,8 @@ const Layout = ({
   const widthRef = useRef(null)
   const heightRef = useRef(null)
   const canvasElement = useRef(null)
+  const canvasWaveform = useRef(null)
+  const svgWaveform = useRef(null)
   const heroTarget = useRef(null)
   const halfPageHelperRef = useRef(null)
   const menuRef = useRef(null)
@@ -254,6 +259,11 @@ const Layout = ({
     /** GSAP **/
     initGSAP(gs, player, textMesh1)
 
+    /** Waveform Data**/
+    const waveform = WaveformData.create(soundFileData)
+    initWaveform(waveform, canvasWaveform)
+    // initWaveform(waveform, svgWaveform)
+
     /** Animate Kickoff **/
     resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef)
     tick.current = 0
@@ -360,6 +370,8 @@ const Layout = ({
       {children}
       <footer className={cx('footer')}>© {new Date().getFullYear()}, Footer goes here</footer>
       <canvas className={cx('canvas')} ref={canvasElement} />
+      <canvas className={cx('canvas-waveform')} ref={canvasWaveform} />
+      <svg className={cx('svg-waveform')} ref={svgWaveform} />
     </main>
   )
 }
