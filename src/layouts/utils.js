@@ -80,31 +80,48 @@ export const initGUI = (gui, inletsHolder, handleInletChange) => {
 
 /**********/
 /** GSAP **/
-export const initGSAP = (gs, player, textMesh1) => {
+export const initGSAP = (gs, player, scene, camera, textMesh1, e1) => {
   gs.current = gsap.timeline({
     // repeat: -1,
     timeScale: 1.0,
     paused: true,
-    duration: 192, // seconds
+    duration: player.current.duration, // seconds
+    onStart: () => {
+      textMesh1.current.scale.set(0, 0, 0)
+      textMesh1.current.position.set(-12, 0, 0)
+    },
   })
 
   gs.current.to(
     textMesh1.current.position,
     {
-      x: 3,
-      duration: 1,
+      startAt: { x: -3.55 * e1.end.y },
+      x: 3.55 * e1.end.y,
+      duration: (e1.end.x - e1.start.x) * player.current.duration,
     },
-    3.0
+    e1.start.x * player.current.duration
+    // 0
+  )
+  gs.current.to(
+    textMesh1.current.scale,
+    {
+      startAt: { x: e1.start.y, y: e1.start.y, z: e1.start.y },
+      x: e1.end.y,
+      y: e1.end.y,
+      z: e1.end.y,
+      duration: (e1.end.x - e1.start.x) * player.current.duration,
+    },
+    e1.start.x * player.current.duration
     // 0
   )
   gs.current.to(
     textMesh1.current.position,
     {
-      x: 0,
+      dummyVal: 0,
       duration: 1,
     },
     // 3.5
-    191
+    player.current.duration
   )
 }
 
@@ -235,7 +252,17 @@ export const handleScroll = (
   }
 }
 
-export const resizeRendererToDisplaySize = (canvasElement, renderer, camera, sceneSize, heightRef) => {
+export const resizeRendererToDisplaySize = (
+  canvasElement,
+  canvasWaveform,
+  renderer,
+  camera,
+  sceneSize,
+  heightRef,
+  initWaveform,
+  waveform,
+  e1
+) => {
   // css sets actual height and width
   const width = canvasElement.current.clientWidth | 0
   const height = canvasElement.current.clientHeight | 0
@@ -252,6 +279,10 @@ export const resizeRendererToDisplaySize = (canvasElement, renderer, camera, sce
     )
     let vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)
+
+    canvasWaveform.current.width = window.innerWidth
+    // canvasWaveform.current.height = '200'
+    initWaveform(waveform, canvasWaveform, e1)
 
     renderer.current.setSize(width, height, false)
 
@@ -373,34 +404,7 @@ export const useScrollRotateMesh = (currentScroll, ref) => {
 }
 
 /** Waveform Data **/
-// export const initWaveform = (waveform, svgWaveform) => {
-//   if (!svgWaveform.current) return
-//
-//   console.log(d3)
-//   const channel = waveform.channel(0)
-//   const layout = d3.select(this).select('svg')
-//   const x = d3.scaleLinear()
-//   const y = d3.scaleLinear()
-//   const offsetX = 100
-//
-//   const min = channel.min_array()
-//   const max = channel.max_array()
-//
-//   x.domain([0, waveform.length]).rangeRound([0, 1024])
-//   y.domain([d3.min(min), d3.max(max)]).rangeRound([offsetX, -offsetX])
-//
-//   const area = d3.area()
-//     .x((d, i) => x(i))
-//     .y0((d, i) => y(min[i]))
-//     .y1((d, i) => y(d))
-//
-//   d3.graph.select('path')
-//     .datum(max)
-//     .attr('transform', () => `translate(0, ${offsetX})`)
-//     .attr('d', area)
-// }
-
-export const initWaveform = (waveform, canvasWaveform) => {
+export const initWaveform = (waveform, canvasWaveform, e1) => {
   if (!canvasWaveform.current) return
 
   const scaleY = (amplitude, height) => {
@@ -411,25 +415,49 @@ export const initWaveform = (waveform, canvasWaveform) => {
   }
 
   const ctx = canvasWaveform.current.getContext('2d')
+  ctx.clearRect(0, 0, canvasWaveform.current.width, canvasWaveform.current.height)
+  ctx.strokeStyle = '#000'
+  ctx.fillStyle = '#000'
   ctx.beginPath()
 
-  const channel = waveform.channel(0)
+  const channel = waveform.current.channel(0)
+  const xStep = canvasWaveform.current.width / waveform.current.length
 
   // Loop forwards, drawing the upper half of the waveform
-  for (let x = 0; x < waveform.length; x++) {
+  for (let x = 0; x < waveform.current.length; x++) {
     const val = channel.max_sample(x)
 
-    ctx.lineTo(x + 0.5, scaleY(val, canvasWaveform.current.height) + 0.5)
+    ctx.lineTo(x * xStep + 0.5, scaleY(val, canvasWaveform.current.height) + 0.5)
   }
 
   // Loop backwards, drawing the lower half of the waveform
-  for (let x = waveform.length - 1; x >= 0; x--) {
+  for (let x = waveform.current.length - 1; x >= 0; x--) {
     const val = channel.min_sample(x)
 
-    ctx.lineTo(x + 0.5, scaleY(val, canvasWaveform.current.height) + 0.5)
+    ctx.lineTo(x * xStep + 0.5, scaleY(val, canvasWaveform.current.height) + 0.5)
   }
 
   ctx.closePath()
   ctx.stroke()
   ctx.fill()
+
+  ctx.fillStyle = '#007f00'
+  ctx.strokeStyle = '#007f00'
+  const w = canvasWaveform.current.width
+  const h = canvasWaveform.current.height
+  ctx.beginPath()
+  ctx.arc(e1.start.x * w, e1.start.y * h, 9, 0, 2 * Math.PI)
+  ctx.fill()
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.moveTo(e1.start.x * w, e1.start.y * h)
+  ctx.lineTo(e1.end.x * w, e1.end.y * h)
+  ctx.closePath()
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.arc(e1.end.x * w, e1.end.y * h, 9, 0, 2 * Math.PI)
+  ctx.fill()
+  ctx.stroke()
 }

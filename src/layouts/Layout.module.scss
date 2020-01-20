@@ -22,11 +22,16 @@
 }
 
 .menu-container {
+  display: none;
   position: fixed;
   z-index: $z-index-1;
   top: 0;
   left: 0;
   transition: transform 200ms;
+}
+
+#player {
+  display: none;
 }
 
 .canvas {
@@ -45,35 +50,26 @@
 }
 
 .canvas-waveform {
-  display: none;
   box-sizing: border-box;
   position: fixed;
   bottom: 0;
   left: 0;
-  margin: 2rem;
-  border: 1px solid red;
-  width: calc(100% - 4rem);
-  background: white;
+  border: 1px solid #ddd;
+  background: #ddd;
 
   @include media-breakpoint-between('xs', 'sm') {
     display: none;
   }
 }
 
-.svg-waveform {
-  box-sizing: border-box;
+.playhead {
   position: fixed;
   bottom: 0;
-  left: 0;
-  margin: 2rem;
-  border: 1px solid red;
-  width: calc(100% - 4rem);
-  background: white;
-
-  @include media-breakpoint-between('xs', 'sm') {
-    display: none;
-  }
+  //height: 20rem;
+  width: 1px;
+  background: saddlebrown;
 }
+
 
 .footer {
   display: flex;

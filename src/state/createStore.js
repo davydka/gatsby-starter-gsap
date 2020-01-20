@@ -71,6 +71,11 @@ const reducer = (state, action) => {
       showBorders: typeof action.payload !== 'undefined' ? action.payload : !state.showBorders,
     })
   }
+  if (action.type === `SETE1`) {
+    return Object.assign({}, state, {
+      e1: typeof action.payload !== 'undefined' ? action.payload : initialState.e1,
+    })
+  }
   return state
 }
 
@@ -89,6 +94,18 @@ const initialState = {
   showBorders: false,
   prevLocation: {},
   heroRef: null,
+  e1: {
+    start: {
+      x: 0.012,
+      y: 0.0,
+      scale: 1,
+    },
+    end: {
+      x: 0.045,
+      y: 1.0,
+      scale: 1,
+    },
+  },
 }
 
 const createStore = () =>

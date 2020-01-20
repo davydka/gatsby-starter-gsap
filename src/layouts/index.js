@@ -11,8 +11,8 @@ import WaveformData from 'waveform-data'
 
 import styles from './Layout.module.scss'
 import GridHelper from './GridHelper'
-import soundFile from './snake-heistx.mp3'
-import soundFileData from './snake-heistx.json'
+import soundFile from './snake-heist.mp3'
+import soundFileData from './snake-heist.json'
 
 import {
   useSiteMetadata,
@@ -47,9 +47,11 @@ const Layout = ({
   location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
   heroRef,
   showBorders,
+  e1,
   param1,
   param2,
   param3,
+  sete1,
   setparam1,
   setparam2,
   setparam3,
@@ -65,6 +67,7 @@ const Layout = ({
   //GUIパラメータの準備
   const gui = useRef()
 
+  /** Waveform **/
   const player = useRef()
   const [playerLoaded /*setPlayerLoaded*/] = useState(false)
   useEffect(() => {
@@ -72,8 +75,7 @@ const Layout = ({
     console.log('🎭🎼 audio file loaded')
   }, [playerLoaded])
 
-  const handleTouchStart = () => {
-    // console.log(player.current)
+  const handlePlayTouchStart = () => {
     player.current.play()
     // gs.current.play()
   }
@@ -83,14 +85,64 @@ const Layout = ({
 
     player.current.oncanplay = () => {
       console.log('html audio element soundfile ready \n\tduration in seconds: ', player.current.duration)
+      initGSAP(gs, player, scene, camera, textMesh1, e1)
     }
     player.current.ontimeupdate = () => {
       // gs.current.progress(player.current.currentTime/player.current.duration)
       // console.log(player.current.currentTime/player.current.duration)
-      console.log(gs.current.duration())
+      // console.log(gs.current.duration())
       // console.log(player.current.currentTime)
     }
   }, [player])
+
+  const [waveDown, setWaveDown] = useState(false)
+  const handleWaveformClick = e => {
+    if (!waveDown && e.type !== 'mousedown') return
+
+    const etarget = {
+      x: e.nativeEvent.offsetX / canvasWaveform.current.width,
+      y: e.nativeEvent.offsetY / canvasWaveform.current.height,
+    }
+
+    if (etarget.x <= e1.start.x + 0.02) {
+      sete1({
+        start: {
+          x: etarget.x,
+          y: etarget.y,
+          scale: 1,
+        },
+        end: {
+          x: e1.end.x,
+          y: e1.end.y,
+          scale: 1,
+        },
+      })
+    }
+
+    if (etarget.x >= e1.start.x + 0.02 && etarget.x >= e1.end.x - 0.02 && etarget.x <= e1.end.x + 0.02) {
+      sete1({
+        start: {
+          x: e1.start.x,
+          y: e1.start.y,
+          scale: 1,
+        },
+        end: {
+          x: etarget.x,
+          y: etarget.y,
+          scale: 1,
+        },
+      })
+    }
+
+    gs.current.clear()
+    initGSAP(gs, player, scene, camera, textMesh1, e1)
+  }
+
+  useEffect(() => {
+    if (!waveform.current) return
+    // console.log(e1)
+    initWaveform(waveform, canvasWaveform, e1)
+  }, [e1])
 
   // GUI Inlets
   const inletsHolder = useRef({
@@ -130,7 +182,8 @@ const Layout = ({
   const heightRef = useRef(null)
   const canvasElement = useRef(null)
   const canvasWaveform = useRef(null)
-  const svgWaveform = useRef(null)
+  const waveform = useRef(null)
+  const playHead = useRef(null)
   const heroTarget = useRef(null)
   const halfPageHelperRef = useRef(null)
   const menuRef = useRef(null)
@@ -257,15 +310,24 @@ const Layout = ({
     )
 
     /** GSAP **/
-    initGSAP(gs, player, textMesh1)
+    // initGSAP(gs, player, textMesh1, e1)
 
     /** Waveform Data**/
-    const waveform = WaveformData.create(soundFileData)
-    initWaveform(waveform, canvasWaveform)
-    // initWaveform(waveform, svgWaveform)
+    waveform.current = WaveformData.create(soundFileData)
+    initWaveform(waveform, canvasWaveform, e1)
 
     /** Animate Kickoff **/
-    resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef)
+    resizeRendererToDisplaySize(
+      canvasElement,
+      canvasWaveform,
+      renderer,
+      camera,
+      sceneSize,
+      heightRef,
+      initWaveform,
+      waveform,
+      e1
+    )
     tick.current = 0
     animate.current()
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
@@ -310,16 +372,27 @@ const Layout = ({
 
     setCurrentScroll(window.pageYOffset | document.documentElement.scrollTop)
 
-    resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef)
+    resizeRendererToDisplaySize(
+      canvasElement,
+      canvasWaveform,
+      renderer,
+      camera,
+      sceneSize,
+      heightRef,
+      initWaveform,
+      waveform,
+      e1
+    )
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
     handleScroll(showBordersRef, halfPageHelperRef, lastScrollQ, setLastScrollQ, menuRef, heightRef, canvasElement)
 
     renderer.current.render(scene.current, camera.current)
     controls.current.update()
 
-    if (player.current && player.current.duration > 0) {
+    if (player.current && gs.current && player.current.duration > 0) {
       // console.log(player.current.currentTime/player.current.duration)
       gs.current.progress(player.current.currentTime / player.current.duration)
+      playHead.current.style.left = `calc(${(player.current.currentTime / player.current.duration) * 100}%)`
     }
 
     tick.current = tick.current + 1
@@ -341,13 +414,14 @@ const Layout = ({
       })}
     >
       <button
-        onClick={handleTouchStart}
-        style={{ position: 'fixed', top: '0', left: '0', backgroundColor: 'pink', zIndex: '100' }}
+        onClick={handlePlayTouchStart}
+        style={{ position: 'fixed', top: '0', left: '0', backgroundColor: 'pink', zIndex: '100', fontSize: '64px' }}
+        className={cx('playbutton')}
       >
         <h1>PLAY</h1>
       </button>
 
-      <audio ref={player} id="player" controls preload="auto">
+      <audio ref={player} id={cx('player')} controls preload="auto">
         <source type="audio/mp3" src={soundFile} />
       </audio>
 
@@ -370,19 +444,32 @@ const Layout = ({
       {children}
       <footer className={cx('footer')}>© {new Date().getFullYear()}, Footer goes here</footer>
       <canvas className={cx('canvas')} ref={canvasElement} />
-      <canvas className={cx('canvas-waveform')} ref={canvasWaveform} />
-      <svg className={cx('svg-waveform')} ref={svgWaveform} />
+      <canvas
+        height={200}
+        onMouseDown={e => {
+          setWaveDown(true)
+          handleWaveformClick(e)
+        }}
+        onMouseMove={handleWaveformClick}
+        onMouseUp={() => setWaveDown(false)}
+        onMouseLeave={() => setWaveDown(false)}
+        className={cx('canvas-waveform')}
+        ref={canvasWaveform}
+      />
+      <div style={{ height: '200px' }} className={cx('playhead')} ref={playHead} />
     </main>
   )
 }
 
 Layout.propTypes = {
+  e1: PropTypes.object,
   children: PropTypes.node.isRequired,
   heroRef: PropTypes.object,
   location: PropTypes.object,
   param1: PropTypes.number.isRequired,
   param2: PropTypes.number.isRequired,
   param3: PropTypes.number.isRequired,
+  sete1: PropTypes.func.isRequired,
   setparam1: PropTypes.func.isRequired,
   setparam2: PropTypes.func.isRequired,
   setparam3: PropTypes.func.isRequired,
@@ -395,12 +482,13 @@ Layout.propTypes = {
   currentScroll: PropTypes.number,
 }
 
-const mapStateToProps = ({ heroRef, param1, param2, param3, showBorders, currentScroll }) => {
-  return { heroRef, param1, param2, param3, showBorders, currentScroll }
+const mapStateToProps = ({ heroRef, e1, param1, param2, param3, showBorders, currentScroll }) => {
+  return { heroRef, e1, param1, param2, param3, showBorders, currentScroll }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
+    sete1: target => dispatch({ type: `SETE1`, payload: target }),
     setparam1: target => dispatch({ type: `SETPARAM1`, payload: target }),
     setparam2: target => dispatch({ type: `SETPARAM2`, payload: target }),
     setparam3: target => dispatch({ type: `SETPARAM3`, payload: target }),
