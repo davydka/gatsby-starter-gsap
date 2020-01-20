@@ -80,40 +80,34 @@ export const initGUI = (gui, inletsHolder, handleInletChange) => {
 
 /**********/
 /** GSAP **/
-export const initGSAP = (gs, player, scene, camera, textMesh1, e1) => {
+export const initGSAP = (gs, player, scene, camera, textMesh1, e2) => {
+  textMesh1.current.position.set((1 - 2 * e2.points[0].y) * 3, 0, -textMesh1.current.geometry.parameters.radius * 2)
   gs.current = gsap.timeline({
     // repeat: -1,
     timeScale: 1.0,
     paused: true,
     duration: player.current.duration, // seconds
     onStart: () => {
-      textMesh1.current.scale.set(0, 0, 0)
-      textMesh1.current.position.set(-12, 0, 0)
+      // textMesh1.current.scale.set(0, 0, 0)
+      // textMesh1.current.position.set(-12 * e2.points[0].x, 0, -textMesh1.current.geometry.parameters.radius * 2)
     },
   })
 
-  gs.current.to(
-    textMesh1.current.position,
-    {
-      startAt: { x: -3.55 * e1.end.y },
-      x: 3.55 * e1.end.y,
-      duration: (e1.end.x - e1.start.x) * player.current.duration,
-    },
-    e1.start.x * player.current.duration
-    // 0
-  )
-  gs.current.to(
-    textMesh1.current.scale,
-    {
-      startAt: { x: e1.start.y, y: e1.start.y, z: e1.start.y },
-      x: e1.end.y,
-      y: e1.end.y,
-      z: e1.end.y,
-      duration: (e1.end.x - e1.start.x) * player.current.duration,
-    },
-    e1.start.x * player.current.duration
-    // 0
-  )
+  e2.points.map((point, index) => {
+    const last = index + 1 === e2.points.length
+    if (last) return
+    const nextPoint = e2.points[index + 1]
+    gs.current.to(
+      textMesh1.current.position,
+      {
+        x: (1 - 2 * nextPoint.y) * 3,
+        duration: (nextPoint.x - point.x) * player.current.duration,
+      },
+      point.x * player.current.duration
+      // 0
+    )
+  })
+
   gs.current.to(
     textMesh1.current.position,
     {
@@ -260,8 +254,7 @@ export const resizeRendererToDisplaySize = (
   sceneSize,
   heightRef,
   initWaveform,
-  waveform,
-  e1
+  waveform
 ) => {
   // css sets actual height and width
   const width = canvasElement.current.clientWidth | 0
@@ -282,7 +275,7 @@ export const resizeRendererToDisplaySize = (
 
     canvasWaveform.current.width = window.innerWidth
     // canvasWaveform.current.height = '200'
-    initWaveform(waveform, canvasWaveform, e1)
+    initWaveform(waveform, canvasWaveform)
 
     renderer.current.setSize(width, height, false)
 
@@ -404,7 +397,7 @@ export const useScrollRotateMesh = (currentScroll, ref) => {
 }
 
 /** Waveform Data **/
-export const initWaveform = (waveform, canvasWaveform, e1) => {
+export const initWaveform = (waveform, canvasWaveform) => {
   if (!canvasWaveform.current) return
 
   const scaleY = (amplitude, height) => {
@@ -440,24 +433,4 @@ export const initWaveform = (waveform, canvasWaveform, e1) => {
   ctx.closePath()
   ctx.stroke()
   ctx.fill()
-
-  ctx.fillStyle = '#007f00'
-  ctx.strokeStyle = '#007f00'
-  const w = canvasWaveform.current.width
-  const h = canvasWaveform.current.height
-  ctx.beginPath()
-  ctx.arc(e1.start.x * w, e1.start.y * h, 9, 0, 2 * Math.PI)
-  ctx.fill()
-  ctx.stroke()
-
-  ctx.beginPath()
-  ctx.moveTo(e1.start.x * w, e1.start.y * h)
-  ctx.lineTo(e1.end.x * w, e1.end.y * h)
-  ctx.closePath()
-  ctx.stroke()
-
-  ctx.beginPath()
-  ctx.arc(e1.end.x * w, e1.end.y * h, 9, 0, 2 * Math.PI)
-  ctx.fill()
-  ctx.stroke()
 }

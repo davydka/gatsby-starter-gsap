@@ -68,7 +68,23 @@
   //height: 20rem;
   width: 1px;
   background: saddlebrown;
+
+  @include media-breakpoint-between('xs', 'sm') {
+    display: none;
+  }
 }
+
+.envelopeHolder {
+  position: fixed;
+  bottom: 0;
+  height: 200px;
+  width: 100%;
+
+  @include media-breakpoint-between('xs', 'sm') {
+    display: none;
+  }
+}
+
 
 
 .footer {

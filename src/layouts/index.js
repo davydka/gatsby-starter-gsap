@@ -8,6 +8,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import WaveformData from 'waveform-data'
+import * as Nexus from 'nexusui'
 
 import styles from './Layout.module.scss'
 import GridHelper from './GridHelper'
@@ -47,11 +48,11 @@ const Layout = ({
   location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
   heroRef,
   showBorders,
-  e1,
+  e2,
   param1,
   param2,
   param3,
-  sete1,
+  sete2,
   setparam1,
   setparam2,
   setparam3,
@@ -85,7 +86,7 @@ const Layout = ({
 
     player.current.oncanplay = () => {
       console.log('html audio element soundfile ready \n\tduration in seconds: ', player.current.duration)
-      initGSAP(gs, player, scene, camera, textMesh1, e1)
+      initGSAP(gs, player, scene, camera, textMesh1, e2)
     }
     player.current.ontimeupdate = () => {
       // gs.current.progress(player.current.currentTime/player.current.duration)
@@ -99,50 +100,34 @@ const Layout = ({
   const handleWaveformClick = e => {
     if (!waveDown && e.type !== 'mousedown') return
 
-    const etarget = {
-      x: e.nativeEvent.offsetX / canvasWaveform.current.width,
-      y: e.nativeEvent.offsetY / canvasWaveform.current.height,
-    }
-
-    if (etarget.x <= e1.start.x + 0.02) {
-      sete1({
-        start: {
-          x: etarget.x,
-          y: etarget.y,
-          scale: 1,
-        },
-        end: {
-          x: e1.end.x,
-          y: e1.end.y,
-          scale: 1,
-        },
-      })
-    }
-
-    if (etarget.x >= e1.start.x + 0.02 && etarget.x >= e1.end.x - 0.02 && etarget.x <= e1.end.x + 0.02) {
-      sete1({
-        start: {
-          x: e1.start.x,
-          y: e1.start.y,
-          scale: 1,
-        },
-        end: {
-          x: etarget.x,
-          y: etarget.y,
-          scale: 1,
-        },
-      })
-    }
-
     gs.current.clear()
-    initGSAP(gs, player, scene, camera, textMesh1, e1)
+    initGSAP(gs, player, scene, camera, textMesh1, e2)
   }
 
+  const envelopeHolder = useRef(null)
+  const envelope = useRef(null)
   useEffect(() => {
-    if (!waveform.current) return
-    // console.log(e1)
-    initWaveform(waveform, canvasWaveform, e1)
-  }, [e1])
+    if (!envelopeHolder.current) return
+    if (envelopeHolder.current.destroy) envelope.current.destroy()
+
+    Nexus.colors.accent = '#ffff00ff'
+    Nexus.colors.fill = '#ffffff00'
+
+    envelope.current = new Nexus.Envelope(envelopeHolder.current, {
+      size: [window.innerWidth, 200],
+      points: e2.points,
+    })
+    envelope.current.on('change', v => {
+      sete2({ points: v })
+    })
+  }, [envelopeHolder])
+
+  useEffect(() => {
+    if (!textMesh1.current) return
+
+    gs.current.clear()
+    initGSAP(gs, player, scene, camera, textMesh1, e2)
+  }, [e2])
 
   // GUI Inlets
   const inletsHolder = useRef({
@@ -310,11 +295,11 @@ const Layout = ({
     )
 
     /** GSAP **/
-    // initGSAP(gs, player, textMesh1, e1)
+    // initGSAP(gs, player, textMesh1)
 
     /** Waveform Data**/
     waveform.current = WaveformData.create(soundFileData)
-    initWaveform(waveform, canvasWaveform, e1)
+    initWaveform(waveform, canvasWaveform)
 
     /** Animate Kickoff **/
     resizeRendererToDisplaySize(
@@ -325,8 +310,7 @@ const Layout = ({
       sceneSize,
       heightRef,
       initWaveform,
-      waveform,
-      e1
+      waveform
     )
     tick.current = 0
     animate.current()
@@ -380,8 +364,7 @@ const Layout = ({
       sceneSize,
       heightRef,
       initWaveform,
-      waveform,
-      e1
+      waveform
     )
     resizeThreeScene(heroRef, canvasElement, raycaster, scene, camera, sceneSize)
     handleScroll(showBordersRef, halfPageHelperRef, lastScrollQ, setLastScrollQ, menuRef, heightRef, canvasElement)
@@ -444,6 +427,7 @@ const Layout = ({
       {children}
       <footer className={cx('footer')}>© {new Date().getFullYear()}, Footer goes here</footer>
       <canvas className={cx('canvas')} ref={canvasElement} />
+
       <canvas
         height={200}
         onMouseDown={e => {
@@ -456,20 +440,21 @@ const Layout = ({
         className={cx('canvas-waveform')}
         ref={canvasWaveform}
       />
+      <div ref={envelopeHolder} className={cx('envelopeHolder')} />
       <div style={{ height: '200px' }} className={cx('playhead')} ref={playHead} />
     </main>
   )
 }
 
 Layout.propTypes = {
-  e1: PropTypes.object,
+  e2: PropTypes.object,
   children: PropTypes.node.isRequired,
   heroRef: PropTypes.object,
   location: PropTypes.object,
   param1: PropTypes.number.isRequired,
   param2: PropTypes.number.isRequired,
   param3: PropTypes.number.isRequired,
-  sete1: PropTypes.func.isRequired,
+  sete2: PropTypes.func.isRequired,
   setparam1: PropTypes.func.isRequired,
   setparam2: PropTypes.func.isRequired,
   setparam3: PropTypes.func.isRequired,
@@ -482,13 +467,13 @@ Layout.propTypes = {
   currentScroll: PropTypes.number,
 }
 
-const mapStateToProps = ({ heroRef, e1, param1, param2, param3, showBorders, currentScroll }) => {
-  return { heroRef, e1, param1, param2, param3, showBorders, currentScroll }
+const mapStateToProps = ({ heroRef, e2, param1, param2, param3, showBorders, currentScroll }) => {
+  return { heroRef, e2, param1, param2, param3, showBorders, currentScroll }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    sete1: target => dispatch({ type: `SETE1`, payload: target }),
+    sete2: target => dispatch({ type: `SETE2`, payload: target }),
     setparam1: target => dispatch({ type: `SETPARAM1`, payload: target }),
     setparam2: target => dispatch({ type: `SETPARAM2`, payload: target }),
     setparam3: target => dispatch({ type: `SETPARAM3`, payload: target }),

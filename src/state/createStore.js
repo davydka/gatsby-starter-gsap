@@ -76,6 +76,11 @@ const reducer = (state, action) => {
       e1: typeof action.payload !== 'undefined' ? action.payload : initialState.e1,
     })
   }
+  if (action.type === `SETE2`) {
+    return Object.assign({}, state, {
+      e2: typeof action.payload !== 'undefined' ? action.payload : initialState.e2,
+    })
+  }
   return state
 }
 
@@ -105,6 +110,42 @@ const initialState = {
       y: 1.0,
       scale: 1,
     },
+  },
+  e2: {
+    points: [
+      {
+        x: 0,
+        y: 0.505,
+      },
+      {
+        x: 0.025,
+        y: 1,
+      },
+      {
+        x: 0.025,
+        y: 0,
+      },
+      {
+        x: 0.04375,
+        y: 0.5,
+      },
+      {
+        x: 0.06302083333333333,
+        y: 0,
+      },
+      {
+        x: 0.06302083333333333,
+        y: 1,
+      },
+      {
+        x: 0.0828125,
+        y: 0.5,
+      },
+      {
+        x: 0.9,
+        y: 0.4,
+      },
+    ],
   },
 }
 
