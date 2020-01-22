@@ -29,7 +29,7 @@ const IndexPage = ({ location, showBorders, setHeroRef, FTUI }) => {
     if (initialFTUI === true) {
       sectionRef.current.classList.add(cx('ftui-in'))
     }
-  }, [])
+  }, [showBorders])
 
   const localHeroRef = useCallback(node => {
     if (node !== null) {

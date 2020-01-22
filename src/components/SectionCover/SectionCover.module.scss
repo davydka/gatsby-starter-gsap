@@ -97,15 +97,15 @@
     .cassette { width: 63%; }
   }
   @include mediumOnly {
-    .vinyl    { width: 50%; }
+    .vinyl    { width: 46.46%; }
     .cassette { width: 30%; }
   }
   @include largeOnly {
-    .vinyl    { width: 33.333%; }
+    .vinyl    { width: 30.09%; }
     .cassette { width: 20%; }
   }
   @include extraLargeOnly {
-    .vinyl    { width: 33.333%; } // 1:1 aspect ratio - 408px at 1360 (design shows 420, but this is works really well for now)
+    .vinyl    { width: 30.9%; } // 1:1 aspect ratio
     .cassette { width: 20%; }
   }
 }
