@@ -179,7 +179,7 @@ export const handleScroll = (
   const debounceMs = 10
   const debounceOpts = { leading: true, trailing: false }
   const hideMenu = () => {
-    if (getBreakpoint() === 'xs' && !mobileOpen)
+    if ((getBreakpoint() === 'xs' || getBreakpoint() === 'sm') && !mobileOpen)
       menuRef.current.style.transform = `translate3d(0, -${menuSize + 1}px, 0)`
   }
   const showMenu = () => {

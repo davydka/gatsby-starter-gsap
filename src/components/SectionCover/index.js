@@ -27,7 +27,7 @@ const SectionCover = ({ className, showBorders, type }) => {
     })
   }
 
-  const Cover = forwardRef(({ sku, type, image }, ref) => {
+  const Cover = forwardRef(({ sku, type, image, count }, ref) => {
     return (
       <div ref={ref} className={cx(type)}>
         <Link to="/" className={cx('')}>
@@ -44,11 +44,13 @@ const SectionCover = ({ className, showBorders, type }) => {
 
         <Link to="/" className={cx('content')}>
           <Text tag="h4" type="h4" className={cx('band-name')}>
-            {faker.hacker.verb()} {faker.hacker.noun()}
+            {(count / 2) % 1 ? `Capricorn Vertical Slum` : `${faker.hacker.verb()} ${faker.hacker.noun()}`}
           </Text>
 
           <Text tag="h4" type="h4" className={cx('title')}>
-            {faker.hacker.ingverb()} {faker.random.word()}
+            {(count / 2) % 1
+              ? `Various Portals & Sleazo Inputs Vol.1: Tourism`
+              : `${faker.hacker.ingverb()} ${faker.random.word()}`}
           </Text>
         </Link>
       </div>
@@ -62,6 +64,7 @@ const SectionCover = ({ className, showBorders, type }) => {
     type: PropTypes.string,
     selected: PropTypes.bool,
     image: PropTypes.string,
+    count: PropTypes.number,
   }
 
   const itemsArray = [
@@ -83,7 +86,9 @@ const SectionCover = ({ className, showBorders, type }) => {
 
   const elRef = useRef([...Array(itemsArray.length)].map(() => createRef()))
   const items = itemsArray.map((item, index) => {
-    const target = <Cover ref={elRef.current[index]} key={index} sku={item.sku} type={item.type} image={item.image} />
+    const target = (
+      <Cover ref={elRef.current[index]} key={index} count={index} sku={item.sku} type={item.type} image={item.image} />
+    )
 
     if (!type) {
       return target
@@ -115,8 +120,8 @@ const mapStateToProps = ({ showBorders }) => {
   return { showBorders }
 }
 
-SectionCover.whyDidYouRender = {
-  logOnDifferentValues: true,
-}
+// SectionCover.whyDidYouRender = {
+//   logOnDifferentValues: true,
+// }
 
 export default connect(mapStateToProps)(SectionCover)
