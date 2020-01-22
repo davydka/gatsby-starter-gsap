@@ -101,11 +101,11 @@
     .cassette { width: 30%; }
   }
   @include largeOnly {
-    .vinyl    { width: 30.09%; }
+    .vinyl    { width: 30.97%; }
     .cassette { width: 20%; }
   }
   @include extraLargeOnly {
-    .vinyl    { width: 30.9%; } // 1:1 aspect ratio
+    .vinyl    { width: 30.97%; } // 1:1 aspect ratio
     .cassette { width: 20%; }
   }
 }
@@ -114,4 +114,7 @@
   .content-container {
     border: 1px solid #5e91ff;
   }
+
+  .vinyl img { border: 1px solid #fecccc; }
+  .cassette img { border: 1px solid #a1cfb5; }
 }
