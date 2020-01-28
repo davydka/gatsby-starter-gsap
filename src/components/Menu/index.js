@@ -19,7 +19,7 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
   const parsed =
     typeof location !== `undefined` && typeof location.search !== `undefined` && location.search !== ''
       ? querystring.parse(location.search)
-      : { page: '' }
+      : { page: '', bylist: '' }
 
   useEffect(() => {
     if (!menuRef) return
@@ -48,6 +48,39 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
     if (typeof page === 'undefined' && (typeof parsed.page === 'undefined' || parsed.page === '')) return true
     return page === parsed.page
   }
+
+  const buildTo = (to, page, forceByList) => {
+    // records?page=records&bylist=true
+    let target = to
+
+    if (to !== '/' && page !== '') {
+      target = `${target}?page=${page}`
+      if (!parsed.bylist && forceByList) {
+        target = `bylist-${target}&bylist=true`
+      }
+      if (parsed.bylist && typeof forceByList === 'undefined') {
+        target = `bylist-${target}&bylist=true`
+      }
+    }
+
+    if (to !== '/' && page === '') {
+      if (!parsed.bylist && forceByList) {
+        target = `bylist-${target}?bylist=true`
+      }
+      if (parsed.bylist && typeof forceByList === 'undefined') {
+        target = `bylist-${target}?bylist=true`
+      }
+    }
+
+    if (to === '/') {
+      if (parsed.bylist && typeof forceByList === 'undefined') {
+        target = `bylist${target}?bylist=true`
+      }
+    }
+
+    return `/${target}`
+  }
+
   return (
     <div
       ref={menuRef}
@@ -80,7 +113,10 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
 
               <li className={cx('list-or-cover')}>
                 <Text tag="h4" type="h4" className={cx('menu-link-holder', '')}>
-                  <Link to="/page-2?page=bylist" className={cx('menu-link', 'callout')}>
+                  <Link
+                    to={buildTo('page-2', parsed.page ? parsed.page : '', true)}
+                    className={cx('menu-link', 'callout')}
+                  >
                     By List
                   </Link>
                 </Text>
@@ -90,7 +126,7 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
             <ul className={cx('non-mobile')}>
               <li>
                 <Text tag="h4" type="h4" className={`${cx('menu-link-holder')}`}>
-                  <Link to="/" className={`${cx('menu-link', { selected: getSelected() })}`}>
+                  <Link to={buildTo('/')} className={`${cx('menu-link', { selected: getSelected() })}`}>
                     All
                   </Link>
                 </Text>
@@ -98,7 +134,7 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
               <li>
                 <Text tag="h4" type="h4" className={`${cx('menu-link-holder')}`}>
                   <Link
-                    to="/records?page=records"
+                    to={buildTo('records', 'records')}
                     className={`${cx('menu-link', { selected: getSelected('records') })}`}
                   >
                     Records
@@ -108,7 +144,7 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
               <li>
                 <Text tag="h4" type="h4" className={`${cx('menu-link-holder')}`}>
                   <Link
-                    to="/cassettes?page=cassettes"
+                    to={buildTo('cassettes', 'cassettes')}
                     className={`${cx('menu-link', { selected: getSelected('cassettes') })}`}
                   >
                     Cassettes
@@ -118,7 +154,7 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
               <li>
                 <Text tag="h4" type="h4" className={`${cx('menu-link-holder')}`}>
                   <Link
-                    to="/in-print?page=inprint"
+                    to={buildTo('in-print', 'inprint')}
                     className={`${cx('menu-link', { selected: getSelected('inprint') })}`}
                   >
                     In Print
@@ -128,10 +164,10 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
               <li className={cx('list-or-cover')}>
                 <Text tag="h4" type="h4" className={`${cx('menu-link-holder', '')}`}>
                   <Link
-                    to={`/page-2${parsed.page !== '' ? `?page=${parsed.page}` : ''}`}
+                    to={buildTo('page-2', parsed.page ? parsed.page : '', true)}
                     className={`${cx('menu-link', 'callout')}`}
                   >
-                    By List
+                    {parsed.bylist ? 'By Cover' : 'By List'}
                   </Link>
                 </Text>
               </li>
