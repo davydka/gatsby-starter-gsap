@@ -15,7 +15,7 @@ import Text from '@components/Text'
 
 const cx = classnames.bind(styles)
 
-const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI }) => {
+const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI, theme }) => {
   const parsed =
     typeof location !== `undefined` && typeof location.search !== `undefined` && location.search !== ''
       ? querystring.parse(location.search)
@@ -85,6 +85,8 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
     <div
       ref={menuRef}
       className={`section-container ${cx('menu-container', className, {
+        light: theme === 'light',
+        dark: theme === 'dark',
         borders: showBorders,
         'mobile-open': mobileOpen,
       })}`}
@@ -198,6 +200,7 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
 
 Menu.propTypes = {
   FTUI: PropTypes.bool,
+  theme: PropTypes.string,
   menuRef: PropTypes.object,
   className: PropTypes.string,
   mobileOpen: PropTypes.bool,
@@ -205,8 +208,8 @@ Menu.propTypes = {
   setMobileOpen: PropTypes.func,
 }
 
-const mapStateToProps = ({ showBorders, mobileOpen, FTUI }) => {
-  return { showBorders, mobileOpen, FTUI }
+const mapStateToProps = ({ showBorders, mobileOpen, FTUI, theme }) => {
+  return { showBorders, mobileOpen, FTUI, theme }
 }
 
 const mapDispatchToProps = dispatch => {

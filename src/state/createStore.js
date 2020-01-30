@@ -81,6 +81,11 @@ const reducer = (state, action) => {
       showBorders: typeof action.payload !== 'undefined' ? action.payload : !state.showBorders,
     })
   }
+  if (action.type === `SETTHEME`) {
+    return Object.assign({}, state, {
+      theme: typeof action.payload !== 'undefined' ? action.payload : initialState.theme,
+    })
+  }
   return state
 }
 
@@ -110,6 +115,7 @@ const initialState = {
   showBorders: false,
   prevLocation: {},
   heroRef: null,
+  theme: null,
 }
 
 const createStore = () =>

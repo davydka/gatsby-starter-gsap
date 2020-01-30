@@ -1,9 +1,17 @@
 @import 'styles/includes';
 
-.main {
+.light {
   color: $black;
+   a { color: $black; }
+}
+
+.dark {
+  color: $grey;
+  a { color: $grey; }
+}
+
+.main {
   background: transparent;
-  //background: $grey-background;
   font-family: $font-serif;
   font-size: 1.8rem;
   line-height: 1.444;

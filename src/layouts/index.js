@@ -47,9 +47,12 @@ const Layout = ({
   setPrevLocation,
   setCurrentScroll,
   setStoreMobileOpen,
+  pageTransitionURLTarget,
   mobileOpen,
   FTUI,
   setFTUI,
+  setTheme,
+  theme,
   location, // location comes from /pages, location.state.prevComponent comes from gatsby-browser
   heroRef,
   showBorders,
@@ -171,6 +174,7 @@ const Layout = ({
     /** THREE **/
     scene.current = new THREE.Scene()
     scene.current.background = new THREE.Color(0xf1f1f1)
+    // scene.current.background = new THREE.Color(0x151515)
     scene.current.scale.set(0.25)
     // camera.current = new THREE.PerspectiveCamera(75, 960 / 540, 0.1, 10000)
 
@@ -206,6 +210,16 @@ const Layout = ({
     /** GSAP **/
     initGSAP(gs)
 
+    if (location && location.pathname) {
+      const pageTheme = location.pathname.includes('bylist') ? 'dark' : 'light'
+      setTheme(pageTheme)
+      if (pageTheme === 'dark') {
+        scene.current.background = new THREE.Color(0x151515)
+      } else {
+        scene.current.background = new THREE.Color(0xf1f1f1)
+      }
+    }
+
     /** Animate Kickoff **/
     resizeRendererToDisplaySize(canvasElement, renderer, camera, sceneSize, heightRef, setStoreMobileOpen)
     tick.current = 0
@@ -223,6 +237,7 @@ const Layout = ({
       }
     }
   }, [])
+  // END componentDidMount
 
   // HELPERS
   useShowBorders(
@@ -301,9 +316,23 @@ const Layout = ({
     }
   }, [currentScroll, FTUI])
 
+  // const [theme, setTheme] = useState('light')
+  useEffect(() => {
+    if (!pageTransitionURLTarget) return
+    const pageTheme = pageTransitionURLTarget.includes('bylist') ? 'dark' : 'light'
+    setTheme(pageTheme)
+    if (pageTheme === 'dark') {
+      scene.current.background = new THREE.Color(0x151515)
+    } else {
+      scene.current.background = new THREE.Color(0xf1f1f1)
+    }
+  }, [pageTransitionURLTarget])
+
   return (
     <main
       className={cx('main', {
+        light: theme === 'light',
+        dark: theme === 'dark',
         borders: showBorders,
         hideMain: inlets && !inlets.showMain,
         getBreakpoint,
@@ -349,16 +378,41 @@ Layout.propTypes = {
   toggleBorders: PropTypes.func,
   setPrevLocation: PropTypes.func,
   pageTransitioning: PropTypes.bool,
+  pageTransitionURLTarget: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  setStoreMobileOpen: PropTypes.func,
   setCurrentScroll: PropTypes.func,
   currentScroll: PropTypes.number,
   mobileOpen: PropTypes.bool,
-  setStoreMobileOpen: PropTypes.func,
   FTUI: PropTypes.bool,
   setFTUI: PropTypes.func,
+  setTheme: PropTypes.func,
+  theme: PropTypes.string,
 }
 
-const mapStateToProps = ({ heroRef, param1, param2, param3, showBorders, currentScroll, mobileOpen, FTUI }) => {
-  return { heroRef, param1, param2, param3, showBorders, currentScroll, mobileOpen, FTUI }
+const mapStateToProps = ({
+  heroRef,
+  param1,
+  param2,
+  param3,
+  showBorders,
+  currentScroll,
+  mobileOpen,
+  FTUI,
+  theme,
+  pageTransitionURLTarget,
+}) => {
+  return {
+    heroRef,
+    param1,
+    param2,
+    param3,
+    showBorders,
+    currentScroll,
+    mobileOpen,
+    FTUI,
+    theme,
+    pageTransitionURLTarget,
+  }
 }
 
 const mapDispatchToProps = dispatch => {
@@ -372,6 +426,7 @@ const mapDispatchToProps = dispatch => {
     setCurrentScroll: target => dispatch({ type: `SETCURRENTSCROLL`, payload: target }),
     setStoreMobileOpen: target => dispatch({ type: `SETMOBILEOPEN`, payload: target }),
     setFTUI: target => dispatch({ type: `SETFTUI`, payload: target }),
+    setTheme: target => dispatch({ type: `SETTHEME`, payload: target }),
   }
 }
 

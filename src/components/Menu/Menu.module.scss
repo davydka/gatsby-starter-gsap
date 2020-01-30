@@ -15,7 +15,7 @@ $mobile-menu-height: 16rem;
   }
 
   .hover {
-    background-color: $grey-background;
+    background-color: $grey;
     position: absolute;
     z-index: $z-index-negative-1;
     top: 0;
@@ -37,13 +37,21 @@ $mobile-menu-height: 16rem;
     }
   }
 
+  &.dark {
+    background-color: $black;
+
+    .hover {
+      background-color: $black;
+    }
+  }
+
   @include extraSmallOnly {
     height: $menu-height-xs;
-    background-color: $grey-background;
+    background-color: $grey;
   }
   @include smallOnly {
     height: $menu-height-sm;
-    background-color: $grey-background;
+    background-color: $grey;
   }
   @include mediumOnly {
     height: $menu-height-md;
@@ -132,7 +140,7 @@ $mobile-menu-height: 16rem;
   .mobile {
     display: none;
     max-width: 60%;
-    background-color: $grey-background;
+    background-color: $grey;
   }
 
   @include extraSmallOnly {
@@ -145,7 +153,7 @@ $mobile-menu-height: 16rem;
       transition: transform calc(400ms * (1 / var(--speed))), opacity calc(400ms * (1 / var(--speed)));
       opacity: 0;
       transform: translate3d(0, -#{$menu-height + $mobile-menu-height}, 0);
-      background-color: $grey-background;
+      background-color: $grey;
 
       .list-or-cover {
         display: none;
@@ -238,6 +246,16 @@ $mobile-menu-height: 16rem;
       display: block !important;
       opacity: 1;
     }
+  }
+}
+
+.dark {
+  ul .menu-link.selected::before {
+    background-color: $grey;
+  }
+
+  ul .menu-link.callout::before {
+    border-color: $grey;
   }
 }
 
