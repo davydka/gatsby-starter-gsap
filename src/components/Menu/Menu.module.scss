@@ -257,6 +257,20 @@ $mobile-menu-height: 16rem;
   ul .menu-link.callout::before {
     border-color: $grey;
   }
+
+  .mobile {
+    background-color: $black;
+    button {
+      color: $grey;
+    }
+  }
+
+  .non-mobile {
+    background-color: $black;
+    li:not(.list-or-cover) .menu-link:not(.selected)::before {
+      border: 1px solid $grey;
+    }
+  }
 }
 
 .FTUI {
