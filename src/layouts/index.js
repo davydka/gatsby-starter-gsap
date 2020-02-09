@@ -47,7 +47,7 @@ const Layout = ({
   setPrevLocation,
   setCurrentScroll,
   setStoreMobileOpen,
-  pageTransitionURLTarget,
+  // pageTransitionURLTarget,
   mobileOpen,
   FTUI,
   setFTUI,
@@ -316,17 +316,16 @@ const Layout = ({
     }
   }, [currentScroll, FTUI])
 
-  // const [theme, setTheme] = useState('light')
   useEffect(() => {
-    if (!pageTransitionURLTarget) return
-    const pageTheme = pageTransitionURLTarget.includes('bylist') ? 'dark' : 'light'
+    if (!location && !location.pathname) return
+    const pageTheme = location.pathname.includes('bylist') ? 'dark' : 'light'
     setTheme(pageTheme)
     if (pageTheme === 'dark') {
       scene.current.background = new THREE.Color(0x151515)
     } else {
       scene.current.background = new THREE.Color(0xf1f1f1)
     }
-  }, [pageTransitionURLTarget])
+  }, [location])
 
   return (
     <main

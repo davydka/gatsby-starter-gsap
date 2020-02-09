@@ -1,0 +1,130 @@
+@import 'styles/includes';
+
+.section-list {
+  .content-container {
+    // something
+  }
+
+  .vinyl,
+  .cassette {
+    position: relative;
+
+    .cover-image {
+      width: 25%;
+      display: block;
+      height: auto;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      z-index: 0;
+      opacity: 0;
+      transition: opacity calc(200ms * (1 / var(--speed)));
+    }
+
+    .content {
+      min-height: 4rem;
+      display: flex;
+      position: relative;
+      opacity: 0.4;
+      transition: opacity calc(200ms * (1 / var(--speed)));
+      z-index: 1;
+    }
+
+    .band-name {
+      text-transform: capitalize; // temporary
+      width: 25%;
+    }
+
+    .title {
+      text-transform: capitalize; // temporary
+      width: 45%;
+      opacity: 0;
+      transition: opacity calc(200ms * (1 / var(--speed)));
+    }
+
+    .play-pause-container {
+      position: relative;
+      width: 20%;
+      text-align: right;
+
+      .type {
+        opacity: 0;
+        transition: opacity calc(200ms * (1 / var(--speed)));
+      }
+    }
+
+    .sku {
+      text-transform: uppercase;
+      text-align: right;
+      width: 10%;
+    }
+
+    .play-pause {
+      @include reset-button();
+      position: absolute;
+      left: 0;
+      transform: translate3d(0, -20%, 0);
+      width: 100%;
+      height: 4.5rem;
+      padding: 0.2rem;
+      opacity: 0;
+      transition: opacity calc(200ms * (1 / var(--speed)));
+      z-index: 0;
+      border: none;
+      outline:none;
+
+      svg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: auto;
+      }
+
+      circle { fill: $grey; }
+      path { fill: $black; }
+
+      &:hover {
+        path { fill: $grey; }
+        circle { fill: $violet-light; }
+      }
+
+      //@include extraSmallOnly { top: auto; bottom: -7.75rem; opacity: 1; }
+      //@include smallOnly      { top: auto; bottom: -7.75rem; opacity: 1; }
+      //@include mediumOnly     { top: auto; bottom: -7.75rem; opacity: 1; }
+      //@include largeOnly      { top: 42.5%; width: 7.7rem; height: 7.5rem; }
+      //@include extraLargeOnly { top: 44%;   width: 7.7rem; height: 7.5rem; }
+    }
+
+    &.playing,
+    &:hover {
+      .cover-image { opacity: 1; }
+      .type { opacity: 1; }
+      .content { opacity: 1; }
+      .title { opacity: 1; }
+      .play-pause { opacity: 1; }
+    }
+
+    .pause { display: none; }
+    &.playing {
+      .pause { display: block; }
+      .play-pause {
+        path {
+          fill: $grey;
+        }
+        circle {
+          fill: $violet-light;
+        }
+      }
+    }
+  }
+}
+
+.borders {
+  .content-container {
+    border: 1px solid #5e91ff;
+  }
+
+  .vinyl img { border: 1px solid #fecccc; }
+  .cassette img { border: 1px solid #a1cfb5; }
+}

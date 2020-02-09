@@ -9,7 +9,7 @@ import layoutStyles from '../layouts/Layout.module.scss'
 import PageTransition from '@components/PageTransition'
 import SEO from '@components/seo'
 import Logo from '@components/Logo'
-import SectionCover from '@components/SectionCover'
+import SectionList from '@components/SectionList'
 import isiOS from '@utils/isiOS'
 
 const cx = classnames.bind({ ...styles, ...layoutStyles })
@@ -41,14 +41,14 @@ const IndexPage = ({ location, showBorders, setHeroRef, FTUI }) => {
     <PageTransition location={location} pagePath="/">
       <div
         ref={indexRef}
-        className={cx('index-page', {
+        className={cx('index-page', 'bylist-page', {
           'page-borders': showBorders,
           'mobile-safari': isiOS(),
           FTUI,
           'ftui-complete': !FTUI && initialFTUI,
         })}
       >
-        <SEO title="Records, Tapes" />
+        <SEO title="A List of Records, Tapes" />
 
         <div className={`section-container ${cx('section-spacer')}`}>
           <div className={`section`}>
@@ -72,7 +72,7 @@ const IndexPage = ({ location, showBorders, setHeroRef, FTUI }) => {
           </div>
         </div>
 
-        <SectionCover />
+        <SectionList />
       </div>
     </PageTransition>
   )

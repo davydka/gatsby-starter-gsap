@@ -22,6 +22,8 @@
       padding: 0.2rem;
       opacity: 0;
       transition: opacity calc(200ms * (1 / var(--speed)));
+      border: none;
+      outline:none;
 
       &:hover {
         circle {

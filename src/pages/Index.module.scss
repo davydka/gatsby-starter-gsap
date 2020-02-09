@@ -69,6 +69,9 @@
    @include smallOnly       { padding-top: 0 }
    @include mediumOnly      { padding-top: 0 }
  }
+  &.bylist-page {
+    padding-top: $menu-height + 4;
+  }
 }
 
 
