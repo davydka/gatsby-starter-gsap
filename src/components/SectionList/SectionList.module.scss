@@ -1,5 +1,33 @@
 @import 'styles/includes';
 
+.borders {
+  .content-container {
+    border: 1px solid #5e91ff;
+  }
+
+  .vinyl img { border: 1px solid #fecccc; }
+  .cassette img { border: 1px solid #a1cfb5; }
+
+  .vinyl,
+  .cassette {
+    .band-name {
+      border: 1px solid red;
+    }
+
+    .title {
+      border: 1px solid green;
+    }
+
+    .release-format {
+      border: 1px solid blue;
+    }
+
+    .sku {
+      border: 1px solid yellow;
+    }
+  }
+}
+
 .section-list {
   .content-container {
     // something
@@ -8,11 +36,12 @@
   .vinyl,
   .cassette {
     position: relative;
+    white-space: nowrap;
 
     .cover-image {
-      width: 25%;
+      height: 60%;
       display: block;
-      height: auto;
+      width: auto;
       position: fixed;
       top: 50%;
       left: 50%;
@@ -32,21 +61,28 @@
     }
 
     .band-name {
-      text-transform: capitalize; // temporary
       width: 25%;
+      text-transform: capitalize; // temporary ?
+
+      @include minMax($bp-small, $bp-extra-large) {
+        width: 28%;
+      }
     }
 
     .title {
-      text-transform: capitalize; // temporary
-      width: 45%;
+      width: 55%;
+      text-transform: capitalize; // temporary ?
       opacity: 0;
       transition: opacity calc(200ms * (1 / var(--speed)));
+      padding-left: 6.5rem;
+
+      @include minMax($bp-small, $bp-extra-large) {
+        width: 62%;
+      }
     }
 
     .play-pause-container {
       position: relative;
-      width: 20%;
-      text-align: right;
 
       .type {
         opacity: 0;
@@ -54,10 +90,19 @@
       }
     }
 
+    .release-format {
+      width: 10%;
+      text-align: right;
+
+      @include minMax($bp-small, $bp-extra-large) {
+        display: none;
+      }
+    }
+
     .sku {
+      width: 10%;
       text-transform: uppercase;
       text-align: right;
-      width: 10%;
     }
 
     .play-pause {
@@ -98,7 +143,7 @@
 
     &.playing,
     &:hover {
-      .cover-image { opacity: 1; }
+      .cover-image { opacity: .6; }
       .type { opacity: 1; }
       .content { opacity: 1; }
       .title { opacity: 1; }
@@ -120,11 +165,3 @@
   }
 }
 
-.borders {
-  .content-container {
-    border: 1px solid #5e91ff;
-  }
-
-  .vinyl img { border: 1px solid #fecccc; }
-  .cassette img { border: 1px solid #a1cfb5; }
-}

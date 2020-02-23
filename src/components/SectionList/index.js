@@ -45,15 +45,7 @@ const SectionList = ({ className, showBorders, type }) => {
             </Text>
           </Link>
 
-          <Link to="/" className={cx('title')}>
-            <Text tag="h4" type="h2">
-              {(count / 2) % 1
-                ? `Various Portals & Sleazo Inputs Vol.1: Tourism`
-                : `${faker.hacker.ingverb()} ${faker.random.word()}`}
-            </Text>
-          </Link>
-
-          <div className={cx('play-pause-container')}>
+          <div className={cx('title', 'play-pause-container')}>
             <button className={cx('play-pause', 'play')} onClick={() => handleClick(sku)}>
               <Play />
             </button>
@@ -62,10 +54,18 @@ const SectionList = ({ className, showBorders, type }) => {
               <Pause />
             </button>
 
-            <Text tag="h4" type="h2" className={cx('type')}>
-              {Math.random() > 0.5 ? `Record, Cassette` : `Cassette`}
+            <Text tag="h4" type="h2">
+              {(count / 2) % 1
+                ? `Various Portals & Sleazo Inputs Vol.1: Tourism`
+                : `${faker.hacker.ingverb()} ${faker.random.word()}`}
             </Text>
           </div>
+
+          <Link to="/" className={cx('release-format')}>
+            <Text tag="h4" type="h2" className={cx('type')}>
+              {Math.random() > 0.5 ? `LP/CS` : `CS`}
+            </Text>
+          </Link>
 
           <Link to="/" className={cx('sku')}>
             <Text tag="h4" type="h2">
