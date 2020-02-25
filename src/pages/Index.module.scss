@@ -88,17 +88,17 @@
     }
 
     .logo-container {
-      display: none;
+      //display: none;
       margin-top: 0;
-
-      @include minMax(0, $bp-large) {
-        display: block;
-        position: fixed;
-        top: $menu-height-sm;
-        z-index: $z-index-3;
-        left: 50%;
-        transform: translate3d(-50%, 0, 0);
-      }
+      //
+      //@include minMax(0, $bp-large) {
+      //  display: block;
+      //  position: fixed;
+      //  top: $menu-height-sm;
+      //  z-index: $z-index-3;
+      //  left: 50%;
+      //  transform: translate3d(-50%, 0, 0);
+      //}
 
       .logo {
         fill: white;

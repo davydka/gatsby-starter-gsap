@@ -10,6 +10,10 @@ import Link from '@components/Link'
 import Play from '@components/Logo/Play'
 import Pause from '@components/Logo/Pause'
 
+import MobileBlock from './MobileBlock'
+import MobileInfo from './MobileInfo'
+import MobileCoverImage from './MobileCoverImage'
+
 const cx = classnames.bind(styles)
 
 const SectionList = ({ className, showBorders, type }) => {
@@ -51,19 +55,13 @@ const SectionList = ({ className, showBorders, type }) => {
   const List = forwardRef(({ sku, type, image, count }, ref) => {
     return (
       <div ref={ref} className={cx(type)} onMouseEnter={handleMouseEnter(sku)}>
-        <img
-          className={cx('cover-image')}
-          src={`/moon-glyph/images/${type}/${image}.png`}
-          alt={type}
-          height={1400}
-          width={840}
-        />
+        <MobileCoverImage image={image} type={type} />
 
-        <div className={cx('mobile-info')}>
+        <MobileInfo>
           <Text tag="h4" type="h4" className={cx('mobile-band-name')}>
             {(count / 2) % 1 ? `Capricorn Vertical Slum` : fakename}
           </Text>
-        </div>
+        </MobileInfo>
 
         <div className={cx('content')}>
           <div className={cx('band-name-container', 'play-pause-container')}>
@@ -203,7 +201,7 @@ const SectionList = ({ className, showBorders, type }) => {
 
   return (
     <div className={`section-container ${cx('section-list', className, { borders: showBorders })}`}>
-      <div className={cx('mobile-block')} />
+      <MobileBlock />
       <div className={`section`}>
         <div className={`row`}>
           <div className={`col`}>

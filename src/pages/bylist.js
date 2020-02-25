@@ -10,6 +10,7 @@ import PageTransition from '@components/PageTransition'
 import SEO from '@components/seo'
 import Logo from '@components/Logo'
 import SectionList from '@components/SectionList'
+import MobileLogo from '@components/SectionList/MobileLogo'
 import isiOS from '@utils/isiOS'
 
 const cx = classnames.bind({ ...styles, ...layoutStyles })
@@ -62,9 +63,11 @@ const IndexPage = ({ location, showBorders, setHeroRef, FTUI }) => {
           <div className={`section`}>
             <div className={`row`}>
               <div className={`col`}>
-                <div className={cx('logo-container')}>
-                  <Logo ref={localHeroRef} className={cx('logo')} />
-                </div>
+                <MobileLogo>
+                  <div className={cx('logo-container')}>
+                    <Logo ref={localHeroRef} className={cx('logo')} />
+                  </div>
+                </MobileLogo>
               </div>
             </div>
           </div>

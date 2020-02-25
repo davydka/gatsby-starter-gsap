@@ -28,6 +28,118 @@
   }
 }
 
+.mobile-block {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 52.5rem;
+  background-color: $black;
+  width: 100%;
+  z-index: $z-index-2;
+  transform: translate3d(0, -75px, 0);
+  transition: transform calc(200ms * (1 / var(--speed)));
+
+  @include minMax(0, $bp-large) {
+    display: block;
+  }
+  @include extraSmallOnly {
+    height: 40.1rem;
+    transform: translate3d(0, -125px, 0);
+  }
+
+  &.is-tall {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.mobile-info {
+  display: none;
+  opacity: 0;
+  position: fixed;
+  top: 49.2rem;
+  padding-bottom: 1.7rem;
+  width: calc(100% - #{$holder-margin-sides-md * 2});
+  left: 50%;
+  transform: translate3d(-50%, -75px, 0);
+  transition: opacity calc(200ms * (1 / var(--speed))), transform calc(200ms * (1 / var(--speed)));
+  border-bottom: 1px solid $random-grey;
+  text-align: center;
+  z-index: $z-index-3;
+  pointer-events: none;
+
+  @include minMax(0, $bp-large) {
+    display: block;
+  }
+
+  @include extraSmallOnly {
+    transform: translate3d(-50%, -125px, 0);
+    top: 36.8rem;
+  }
+
+  &.is-tall {
+    transform: translate3d(-50%, 0, 0);
+
+    @include extraSmallOnly {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+}
+
+.mobile-logo {
+  display: none;
+  margin-top: 0;
+  transition: transform calc(200ms * (1 / var(--speed)));
+
+  @include minMax(0, $bp-large) {
+    display: block;
+    position: fixed;
+    top: $menu-height-sm;
+    z-index: $z-index-3;
+    left: 50%;
+    transform: translate3d(-50%, -75px, 0);
+  }
+
+  @include extraSmallOnly {
+    transform: translate3d(-50%, -125px, 0);
+  }
+
+  &.is-tall {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.cover-image {
+  height: 60%;
+  display: block;
+  width: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  z-index: 0;
+  opacity: 0;
+  transition: opacity calc(200ms * (1 / var(--speed)));
+
+  @include minMax(0, $bp-large) {
+    transition: opacity calc(200ms * (1 / var(--speed))), transform calc(200ms * (1 / var(--speed)));
+    top: $menu-height-sm + 10;
+    transform: translate3d(-50%, -75px, 0);
+    height: 26rem;
+    z-index: $z-index-3;
+    pointer-events: none;
+  }
+  @include extraSmallOnly {
+    top: $menu-height-xs + 10;
+    height: 18.2rem;
+    transform: translate3d(-50%, -125px, 0);
+  }
+
+  &.is-tall {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 .section-list {
   .content-container {
     @include minMax(0, $bp-large) {
@@ -39,77 +151,10 @@
     }
   }
 
-  .mobile-info {
-    display: none;
-    opacity: 0;
-    position: fixed;
-    top: 49.2rem;
-    padding-bottom: 1.7rem;
-    width: calc(100% - #{$holder-margin-sides-md * 2});
-    left: 50%;
-    transform: translate3d(-50%, 0, 0);
-    transition: opacity calc(200ms * (1 / var(--speed)));
-    border-bottom: 1px solid $random-grey;
-    text-align: center;
-    z-index: $z-index-3;
-    pointer-events: none;
-
-    @include minMax(0, $bp-large) {
-      display: block;
-    }
-
-    @include extraSmallOnly {
-      top: 36.8rem;
-    }
-  }
-
-  .mobile-block {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: $black;
-    height: 52.5rem;
-    width: 100%;
-    z-index: $z-index-2;
-
-    @include minMax(0, $bp-large) {
-      display: block;
-    }
-    @include extraSmallOnly {
-      height: 40.1rem;
-    }
-  }
-
   .vinyl,
   .cassette {
     position: relative;
     white-space: nowrap;
-
-    .cover-image {
-      height: 60%;
-      display: block;
-      width: auto;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate3d(-50%, -50%, 0);
-      z-index: 0;
-      opacity: 0;
-      transition: opacity calc(200ms * (1 / var(--speed)));
-
-      @include minMax(0, $bp-large) {
-        top: $menu-height-sm + 10;
-        transform: translate3d(-50%, 0, 0);
-        height: 26rem;
-        z-index: $z-index-3;
-        pointer-events: none;
-      }
-      @include extraSmallOnly {
-        top: $menu-height-xs + 10;
-        height: 18.2rem;
-      }
-    }
 
     .content {
       min-height: 4rem;

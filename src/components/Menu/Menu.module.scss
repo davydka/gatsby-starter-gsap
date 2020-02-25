@@ -250,10 +250,6 @@ $mobile-menu-height: 16rem;
   }
 }
 
-.bylist {
-  transform: translate3d(0, 0, 0) !important;
-}
-
 .dark {
   ul .menu-link.selected::before {
     background-color: $grey;
