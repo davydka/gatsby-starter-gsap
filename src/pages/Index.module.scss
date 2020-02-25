@@ -40,38 +40,77 @@
 }
 
 .no-ftui {
- &.index-page {
-   padding-top: calc(25vh);
+  &.index-page {
+    padding-top: calc(25vh);
 
-   .section-spacer {
-     display: none;
-   }
+    .section-spacer {
+      display: none;
+    }
 
-   .logo-container {
-     display: none;
-     height: 6.87rem;
+    .logo-container {
+      display: none;
+      height: 6.87rem;
 
-     @include extraSmallOnly {
-       display: block;
-       margin: $menu-height-xs 0 $menu-height-xs/3.3;
-     }
-     @include smallOnly {
-       display: block;
-       margin: $menu-height-sm 0 $menu-height-sm/2;
-     }
-     @include mediumOnly {
-       display: block;
-       margin: $menu-height-md 0 $menu-height-md/2;
-     }
-   }
+      @include extraSmallOnly {
+        display: block;
+        margin: $menu-height-xs 0 $menu-height-xs/3.3;
+      }
+      @include smallOnly {
+        display: block;
+        margin: $menu-height-sm 0 $menu-height-sm/2;
+      }
+      @include mediumOnly {
+        display: block;
+        margin: $menu-height-md 0 $menu-height-md/2;
+      }
+    }
 
-   @include extraSmallOnly  { padding-top: 0 }
-   @include smallOnly       { padding-top: 0 }
-   @include mediumOnly      { padding-top: 0 }
- }
+    @include extraSmallOnly {
+      padding-top: 0
+    }
+    @include smallOnly {
+      padding-top: 0
+    }
+    @include mediumOnly {
+      padding-top: 0
+    }
+  }
+
   &.bylist-page {
     padding-top: $menu-height + 4;
+
+    @include minMax($bp-small, $bp-large) {
+      padding-top: $menu-height-sm + 10;
+    }
+
+    @include extraSmallOnly {
+      padding-top: $menu-height-xs + 8;
+    }
+
+    .logo-container {
+      display: none;
+      margin-top: 0;
+
+      @include minMax(0, $bp-large) {
+        display: block;
+        position: fixed;
+        top: $menu-height-sm;
+        z-index: $z-index-3;
+        left: 50%;
+        transform: translate3d(-50%, 0, 0);
+      }
+
+      .logo {
+        fill: white;
+
+        g {
+          fill: white;
+        }
+      }
+    }
+    // END logo-container
   }
+  // END bylist
 }
 
 
@@ -81,4 +120,5 @@
     border: 1px solid red;
   }
 }
+
 /* stylelint-enable */

@@ -44,8 +44,6 @@ const IndexPage = ({ location, showBorders, setHeroRef, FTUI }) => {
         className={cx('index-page', 'bylist-page', {
           'page-borders': showBorders,
           'mobile-safari': isiOS(),
-          FTUI,
-          'ftui-complete': !FTUI && initialFTUI,
         })}
       >
         <SEO title="A List of Records, Tapes" />

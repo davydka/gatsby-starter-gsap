@@ -10,7 +10,7 @@
 
   .vinyl,
   .cassette {
-    .band-name {
+    .band-name-container {
       border: 1px solid red;
     }
 
@@ -30,7 +30,55 @@
 
 .section-list {
   .content-container {
-    // something
+    @include minMax(0, $bp-large) {
+      padding-top: 39rem;
+    }
+
+    @include extraSmallOnly {
+      padding-top: 29rem;
+    }
+  }
+
+  .mobile-info {
+    display: none;
+    opacity: 0;
+    position: fixed;
+    top: 49.2rem;
+    padding-bottom: 1.7rem;
+    width: calc(100% - #{$holder-margin-sides-md * 2});
+    left: 50%;
+    transform: translate3d(-50%, 0, 0);
+    transition: opacity calc(200ms * (1 / var(--speed)));
+    border-bottom: 1px solid $random-grey;
+    text-align: center;
+    z-index: $z-index-3;
+    pointer-events: none;
+
+    @include minMax(0, $bp-large) {
+      display: block;
+    }
+
+    @include extraSmallOnly {
+      top: 36.8rem;
+    }
+  }
+
+  .mobile-block {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: $black;
+    height: 52.5rem;
+    width: 100%;
+    z-index: $z-index-2;
+
+    @include minMax(0, $bp-large) {
+      display: block;
+    }
+    @include extraSmallOnly {
+      height: 40.1rem;
+    }
   }
 
   .vinyl,
@@ -49,6 +97,18 @@
       z-index: 0;
       opacity: 0;
       transition: opacity calc(200ms * (1 / var(--speed)));
+
+      @include minMax(0, $bp-large) {
+        top: $menu-height-sm + 10;
+        transform: translate3d(-50%, 0, 0);
+        height: 26rem;
+        z-index: $z-index-3;
+        pointer-events: none;
+      }
+      @include extraSmallOnly {
+        top: $menu-height-xs + 10;
+        height: 18.2rem;
+      }
     }
 
     .content {
@@ -60,12 +120,24 @@
       z-index: 1;
     }
 
-    .band-name {
+    .band-name-container {
       width: 25%;
       text-transform: capitalize; // temporary ?
 
-      @include minMax($bp-small, $bp-extra-large) {
+      @include largeOnly {
         width: 28%;
+      }
+      @include minMax($bp-small, $bp-large) {
+        width: 90%;
+      }
+      @include extraSmallOnly {
+        width: 100%;
+      }
+
+      .band-name {
+        @include minMax(0, $bp-large) {
+          margin-left: 6rem;
+        }
       }
     }
 
@@ -76,8 +148,11 @@
       transition: opacity calc(200ms * (1 / var(--speed)));
       padding-left: 6.5rem;
 
-      @include minMax($bp-small, $bp-extra-large) {
+      @include largeOnly {
         width: 62%;
+      }
+      @include minMax(0, $bp-large) {
+        display: none;
       }
     }
 
@@ -94,7 +169,7 @@
       width: 10%;
       text-align: right;
 
-      @include minMax($bp-small, $bp-extra-large) {
+      @include minMax(0, $bp-extra-large) {
         display: none;
       }
     }
@@ -103,6 +178,10 @@
       width: 10%;
       text-transform: uppercase;
       text-align: right;
+
+      @include extraSmallOnly {
+        display: none;
+      }
     }
 
     .play-pause {
@@ -148,6 +227,18 @@
       .content { opacity: 1; }
       .title { opacity: 1; }
       .play-pause { opacity: 1; }
+      .mobile-info { opacity: 1; }
+    }
+
+    &.hovered {
+      @include minMax(0, $bp-large) {
+        .cover-image { opacity: 1; }
+        .type { opacity: 1; }
+        .content { opacity: 1; }
+        .title { opacity: 1; }
+        .play-pause { opacity: 1; }
+        .mobile-info { opacity: 1; }
+      }
     }
 
     .pause { display: none; }
@@ -161,7 +252,23 @@
           fill: $violet-light;
         }
       }
+      .mobile-info { opacity: 1; }
     }
+
+    .desktop-playpause {
+      @include minMax(0, $bp-large) {
+        display: none;
+      }
+    }
+
+    .mobile-playpause {
+      display: none;
+
+      @include minMax(0, $bp-large) {
+        display: block;
+      }
+    }
+
   }
 }
 

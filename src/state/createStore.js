@@ -21,6 +21,11 @@ const reducer = (state, action) => {
       mobileOpen: typeof action.payload !== 'undefined' ? action.payload : initialState.mobileOpen,
     })
   }
+  if (action.type === `SETMOBILEMENUSHOW`) {
+    return Object.assign({}, state, {
+      mobileMenuShow: typeof action.payload !== 'undefined' ? action.payload : initialState.mobileOpen,
+    })
+  }
   if (action.type === `SETPREVLOCATION`) {
     return Object.assign({}, state, {
       prevLocation: typeof action.payload !== 'undefined' ? action.payload : initialState.prevLocation,
@@ -102,6 +107,7 @@ const initialState = {
   currentScroll: 0,
   lastScroll: 0,
   mobileOpen: false,
+  mobileMenuShow: true,
   FTUI: storage ? storage.getItem('FTUI') === 'true' : false,
   param1: 0.0,
   param2: 0.0,

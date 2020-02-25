@@ -1,4 +1,4 @@
-import React, { useRef, createRef, forwardRef } from 'react'
+import React, { useLayoutEffect, useRef, createRef, forwardRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
@@ -27,9 +27,30 @@ const SectionList = ({ className, showBorders, type }) => {
     })
   }
 
+  const handleMouseEnter = sku => {
+    return () => {
+      itemsArray.map((item, index) => {
+        const targetRef = elRef.current[index]
+
+        if (!targetRef.current) return
+
+        if (item.sku === sku) {
+          targetRef.current.classList.add(cx('hovered'))
+        } else {
+          targetRef.current.classList.remove(cx('hovered'))
+        }
+      })
+    }
+  }
+
+  useLayoutEffect(() => {
+    handleMouseEnter(itemsArray[0].sku)()
+  }, [])
+
+  const [fakename] = useState(`${faker.hacker.verb()} ${faker.hacker.noun()}`)
   const List = forwardRef(({ sku, type, image, count }, ref) => {
     return (
-      <div ref={ref} className={cx(type)}>
+      <div ref={ref} className={cx(type)} onMouseEnter={handleMouseEnter(sku)}>
         <img
           className={cx('cover-image')}
           src={`/moon-glyph/images/${type}/${image}.png`}
@@ -38,26 +59,44 @@ const SectionList = ({ className, showBorders, type }) => {
           width={840}
         />
 
+        <div className={cx('mobile-info')}>
+          <Text tag="h4" type="h4" className={cx('mobile-band-name')}>
+            {(count / 2) % 1 ? `Capricorn Vertical Slum` : fakename}
+          </Text>
+        </div>
+
         <div className={cx('content')}>
-          <Link to="/" className={cx('band-name')}>
-            <Text tag="h4" type="h2">
-              {(count / 2) % 1 ? `Capricorn Vertical Slum` : `${faker.hacker.verb()} ${faker.hacker.noun()}`}
-            </Text>
-          </Link>
+          <div className={cx('band-name-container', 'play-pause-container')}>
+            <div className={cx('mobile-playpause')}>
+              <button className={cx('play-pause', 'play')} onClick={() => handleClick(sku)}>
+                <Play />
+              </button>
+
+              <button className={cx('play-pause', 'pause')} onClick={() => handleClick(false)}>
+                <Pause />
+              </button>
+            </div>
+
+            <Link to="/">
+              <Text tag="h4" type="h2" className={cx('band-name')}>
+                {(count / 2) % 1 ? `Capricorn Vertical Slum` : fakename}
+              </Text>
+            </Link>
+          </div>
 
           <div className={cx('title', 'play-pause-container')}>
-            <button className={cx('play-pause', 'play')} onClick={() => handleClick(sku)}>
-              <Play />
-            </button>
+            <div className={cx('desktop-playpause')}>
+              <button className={cx('play-pause', 'play')} onClick={() => handleClick(sku)}>
+                <Play />
+              </button>
 
-            <button className={cx('play-pause', 'pause')} onClick={() => handleClick(false)}>
-              <Pause />
-            </button>
+              <button className={cx('play-pause', 'pause')} onClick={() => handleClick(false)}>
+                <Pause />
+              </button>
+            </div>
 
             <Text tag="h4" type="h2">
-              {(count / 2) % 1
-                ? `Various Portals & Sleazo Inputs Vol.1: Tourism`
-                : `${faker.hacker.ingverb()} ${faker.random.word()}`}
+              {(count / 2) % 1 ? `Various Portals & Sleazo Inputs Vol.1: Tourism` : fakename}
             </Text>
           </div>
 
@@ -164,6 +203,7 @@ const SectionList = ({ className, showBorders, type }) => {
 
   return (
     <div className={`section-container ${cx('section-list', className, { borders: showBorders })}`}>
+      <div className={cx('mobile-block')} />
       <div className={`section`}>
         <div className={`row`}>
           <div className={`col`}>
@@ -185,7 +225,7 @@ const mapStateToProps = ({ showBorders }) => {
   return { showBorders }
 }
 
-// SectionCover.whyDidYouRender = {
+// SectionList.whyDidYouRender = {
 //   logOnDifferentValues: true,
 // }
 

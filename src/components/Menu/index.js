@@ -87,6 +87,7 @@ const Menu = ({ className, showBorders, menuRef, setMobileOpen, mobileOpen, FTUI
       className={`section-container ${cx('menu-container', className, {
         light: theme === 'light',
         dark: theme === 'dark',
+        bylist: parsed.bylist,
         borders: showBorders,
         'mobile-open': mobileOpen,
       })}`}

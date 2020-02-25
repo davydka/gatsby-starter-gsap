@@ -245,8 +245,13 @@ $mobile-menu-height: 16rem;
       transition: opacity calc(800ms * (1 / var(--speed)));
       display: block !important;
       opacity: 1;
+      cursor: pointer;
     }
   }
+}
+
+.bylist {
+  transform: translate3d(0, 0, 0) !important;
 }
 
 .dark {
@@ -271,6 +276,36 @@ $mobile-menu-height: 16rem;
       border: 1px solid $grey;
     }
   }
+
+  /* stylelint-disable */
+  .logo {
+    fill: white;
+
+    g {
+      fill: white;
+    }
+  }
+  .close svg {
+    fill: white !important;
+
+    g {
+      fill: white !important;
+      stroke: white !important;
+    }
+  }
+
+  .cart-logo {
+    g {
+      stroke: white;
+    }
+  }
+
+  .peace-logo {
+    path {
+      fill: white !important;
+    }
+  }
+  /* stylelint-enable */
 }
 
 .FTUI {

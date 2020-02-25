@@ -159,7 +159,8 @@ export const handleScroll = (
   menuRef,
   heightRef,
   canvasElement,
-  mobileOpen
+  mobileOpen,
+  setMobileMenuShow
 ) => {
   const currentScroll = window.pageYOffset || document.documentElement.scrollTop
   const topThreshold = heightRef.current.offsetHeight - window.innerHeight
@@ -179,11 +180,14 @@ export const handleScroll = (
   const debounceMs = 10
   const debounceOpts = { leading: true, trailing: false }
   const hideMenu = () => {
-    if ((getBreakpoint() === 'xs' || getBreakpoint() === 'sm') && !mobileOpen)
+    if ((getBreakpoint() === 'xs' || getBreakpoint() === 'sm') && !mobileOpen) {
       menuRef.current.style.transform = `translate3d(0, -${menuSize + 1}px, 0)`
+      setMobileMenuShow(false)
+    }
   }
   const showMenu = () => {
     menuRef.current.style.transform = 'translate3d(0, 0, 0)'
+    setMobileMenuShow(true)
   }
 
   const initialCanvas = () => {
@@ -322,7 +326,8 @@ export const useShowBorders = (
   menuRef,
   heightRef,
   canvasElement,
-  mobileOpen
+  mobileOpen,
+  setMobileMenuShow
 ) => {
   useEffect(() => {
     showBordersRef.current = showBorders // ref here for eventlistener not updating with Redux Store state
@@ -334,7 +339,8 @@ export const useShowBorders = (
       menuRef,
       heightRef,
       canvasElement,
-      mobileOpen
+      mobileOpen,
+      setMobileMenuShow
     )
 
     if (axisHelper.current) {

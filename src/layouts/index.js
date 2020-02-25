@@ -49,6 +49,7 @@ const Layout = ({
   setStoreMobileOpen,
   // pageTransitionURLTarget,
   mobileOpen,
+  setMobileMenuShow,
   FTUI,
   setFTUI,
   setTheme,
@@ -252,7 +253,8 @@ const Layout = ({
     menuRef,
     heightRef,
     canvasElement,
-    mobileOpen
+    mobileOpen,
+    setMobileMenuShow
   )
   useParam1(param1, scene, inlets)
   useParam2(param2, scene, inlets)
@@ -279,7 +281,8 @@ const Layout = ({
       menuRef,
       heightRef,
       canvasElement,
-      mobileOpen
+      mobileOpen,
+      setMobileMenuShow
     )
     inletsHolder.current.browserWidth = window.innerWidth
     inletsHolder.current.breakpoint = getBreakpoint()
@@ -379,6 +382,7 @@ Layout.propTypes = {
   pageTransitioning: PropTypes.bool,
   pageTransitionURLTarget: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   setStoreMobileOpen: PropTypes.func,
+  setMobileMenuShow: PropTypes.func,
   setCurrentScroll: PropTypes.func,
   currentScroll: PropTypes.number,
   mobileOpen: PropTypes.bool,
@@ -424,6 +428,7 @@ const mapDispatchToProps = dispatch => {
     setPrevLocation: loc => dispatch({ type: `SETPREVLOCATION`, payload: loc }),
     setCurrentScroll: target => dispatch({ type: `SETCURRENTSCROLL`, payload: target }),
     setStoreMobileOpen: target => dispatch({ type: `SETMOBILEOPEN`, payload: target }),
+    setMobileMenuShow: target => dispatch({ type: `SETMOBILEMENUSHOW`, payload: target }),
     setFTUI: target => dispatch({ type: `SETFTUI`, payload: target }),
     setTheme: target => dispatch({ type: `SETTHEME`, payload: target }),
   }
