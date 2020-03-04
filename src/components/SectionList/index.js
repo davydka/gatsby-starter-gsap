@@ -12,7 +12,7 @@ import Pause from '@components/Logo/Pause'
 
 import MobileBlock from './MobileBlock'
 import MobileInfo from './MobileInfo'
-import MobileCoverImage from './MobileCoverImage'
+import CoverImage from './CoverImage'
 
 const cx = classnames.bind(styles)
 
@@ -54,8 +54,8 @@ const SectionList = ({ className, showBorders, type }) => {
   const [fakename] = useState(`${faker.hacker.verb()} ${faker.hacker.noun()}`)
   const List = forwardRef(({ sku, type, image, count }, ref) => {
     return (
-      <div ref={ref} className={cx(type)} onMouseEnter={handleMouseEnter(sku)}>
-        <MobileCoverImage image={image} type={type} />
+      <div ref={ref} className={cx(type)} /*onMouseEnter={handleMouseEnter(sku)}*/>
+        <CoverImage image={image} type={type} />
 
         <MobileInfo>
           <Text tag="h4" type="h4" className={cx('mobile-band-name')}>

@@ -26,6 +26,11 @@ const reducer = (state, action) => {
       mobileMenuShow: typeof action.payload !== 'undefined' ? action.payload : initialState.mobileOpen,
     })
   }
+  if (action.type === `SETATPAGETOP`) {
+    return Object.assign({}, state, {
+      atPageTop: typeof action.payload !== 'undefined' ? action.payload : initialState.atPageTop,
+    })
+  }
   if (action.type === `SETPREVLOCATION`) {
     return Object.assign({}, state, {
       prevLocation: typeof action.payload !== 'undefined' ? action.payload : initialState.prevLocation,
@@ -108,6 +113,7 @@ const initialState = {
   lastScroll: 0,
   mobileOpen: false,
   mobileMenuShow: true,
+  atPageTop: false,
   FTUI: storage ? storage.getItem('FTUI') === 'true' : false,
   param1: 0.0,
   param2: 0.0,

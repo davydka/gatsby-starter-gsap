@@ -160,7 +160,8 @@ export const handleScroll = (
   heightRef,
   canvasElement,
   mobileOpen,
-  setMobileMenuShow
+  setMobileMenuShow,
+  setAtPageTop
 ) => {
   const currentScroll = window.pageYOffset || document.documentElement.scrollTop
   const topThreshold = heightRef.current.offsetHeight - window.innerHeight
@@ -173,6 +174,11 @@ export const handleScroll = (
   const end = () => {
     if (currentScroll !== lastScroll) {
       setLastScroll(currentScroll)
+    }
+    if (currentScroll <= initialThreshold) {
+      setAtPageTop(true)
+    } else {
+      setAtPageTop(false)
     }
     return true
   }
@@ -327,7 +333,8 @@ export const useShowBorders = (
   heightRef,
   canvasElement,
   mobileOpen,
-  setMobileMenuShow
+  setMobileMenuShow,
+  setAtPageTop
 ) => {
   useEffect(() => {
     showBordersRef.current = showBorders // ref here for eventlistener not updating with Redux Store state
@@ -340,7 +347,8 @@ export const useShowBorders = (
       heightRef,
       canvasElement,
       mobileOpen,
-      setMobileMenuShow
+      setMobileMenuShow,
+      setAtPageTop
     )
 
     if (axisHelper.current) {

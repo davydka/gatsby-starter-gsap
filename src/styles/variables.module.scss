@@ -50,9 +50,10 @@ $holder-margin-top: 2rem;
 //$holder-margin-top: 0.01rem; // 0 margin-top breaks iOS canvas at the moment
 $holder-margin-bottom: 4rem;
 $holder-margin-sides: 4rem;
-$holder-margin-sides-xl: 4vmax; //
+$holder-margin-sides-xl: 2.5vmax; // per design updates
 //$holder-margin-sides-xl: 4rem; // 40px at 1440px
-$holder-margin-sides-lg: 4rem;
+$holder-margin-sides-lg: 2.5vmax; // per design updates
+//$holder-margin-sides-lg: 4rem;
 $holder-margin-sides-md: 3rem; // 30px at 768px
 $holder-margin-sides-sm: 3rem;
 $holder-margin-sides-xs: 3rem; // 30px at 375px

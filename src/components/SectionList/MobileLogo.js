@@ -7,17 +7,18 @@ import styles from './SectionList.module.scss'
 
 const cx = classnames.bind(styles)
 
-const MobileLogo = ({ mobileMenuShow, children }) => {
-  return <div className={cx('mobile-logo', { 'is-tall': mobileMenuShow })}>{children}</div>
+const MobileLogo = ({ atPageTop, mobileMenuShow, children }) => {
+  return <div className={cx('mobile-logo', { 'is-tall': mobileMenuShow, 'at-top': atPageTop })}>{children}</div>
 }
 
 MobileLogo.propTypes = {
   children: PropTypes.node,
+  atPageTop: PropTypes.bool,
   mobileMenuShow: PropTypes.bool,
 }
 
-const mapStateToProps = ({ showBorders, mobileMenuShow }) => {
-  return { showBorders, mobileMenuShow }
+const mapStateToProps = ({ showBorders, mobileMenuShow, atPageTop }) => {
+  return { showBorders, mobileMenuShow, atPageTop }
 }
 
 export default connect(mapStateToProps)(MobileLogo)

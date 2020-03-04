@@ -50,6 +50,7 @@ const Layout = ({
   // pageTransitionURLTarget,
   mobileOpen,
   setMobileMenuShow,
+  setAtPageTop,
   FTUI,
   setFTUI,
   setTheme,
@@ -254,7 +255,8 @@ const Layout = ({
     heightRef,
     canvasElement,
     mobileOpen,
-    setMobileMenuShow
+    setMobileMenuShow,
+    setAtPageTop
   )
   useParam1(param1, scene, inlets)
   useParam2(param2, scene, inlets)
@@ -282,7 +284,8 @@ const Layout = ({
       heightRef,
       canvasElement,
       mobileOpen,
-      setMobileMenuShow
+      setMobileMenuShow,
+      setAtPageTop
     )
     inletsHolder.current.browserWidth = window.innerWidth
     inletsHolder.current.breakpoint = getBreakpoint()
@@ -385,11 +388,12 @@ Layout.propTypes = {
   setMobileMenuShow: PropTypes.func,
   setCurrentScroll: PropTypes.func,
   currentScroll: PropTypes.number,
+  setAtPageTop: PropTypes.func,
   mobileOpen: PropTypes.bool,
-  FTUI: PropTypes.bool,
-  setFTUI: PropTypes.func,
   setTheme: PropTypes.func,
+  setFTUI: PropTypes.func,
   theme: PropTypes.string,
+  FTUI: PropTypes.bool,
 }
 
 const mapStateToProps = ({
@@ -429,6 +433,7 @@ const mapDispatchToProps = dispatch => {
     setCurrentScroll: target => dispatch({ type: `SETCURRENTSCROLL`, payload: target }),
     setStoreMobileOpen: target => dispatch({ type: `SETMOBILEOPEN`, payload: target }),
     setMobileMenuShow: target => dispatch({ type: `SETMOBILEMENUSHOW`, payload: target }),
+    setAtPageTop: target => dispatch({ type: `SETATPAGETOP`, payload: target }),
     setFTUI: target => dispatch({ type: `SETFTUI`, payload: target }),
     setTheme: target => dispatch({ type: `SETTHEME`, payload: target }),
   }

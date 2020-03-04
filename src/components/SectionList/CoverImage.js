@@ -7,10 +7,10 @@ import styles from './SectionList.module.scss'
 
 const cx = classnames.bind(styles)
 
-const MobileCoverImage = ({ mobileMenuShow, image, type }) => {
+const CoverImage = ({ atPageTop, mobileMenuShow, image, type }) => {
   return (
     <img
-      className={cx('cover-image', { 'is-tall': mobileMenuShow })}
+      className={cx('cover-image', { 'is-tall': mobileMenuShow, 'at-top': atPageTop })}
       src={`/moon-glyph/images/${type}/${image}.png`}
       alt={type}
       height={1400}
@@ -19,15 +19,16 @@ const MobileCoverImage = ({ mobileMenuShow, image, type }) => {
   )
 }
 
-MobileCoverImage.propTypes = {
+CoverImage.propTypes = {
+  atPageTop: PropTypes.bool,
   children: PropTypes.node,
   mobileMenuShow: PropTypes.bool,
   image: PropTypes.string,
   type: PropTypes.string,
 }
 
-const mapStateToProps = ({ showBorders, mobileMenuShow }) => {
-  return { showBorders, mobileMenuShow }
+const mapStateToProps = ({ showBorders, mobileMenuShow, atPageTop }) => {
+  return { showBorders, mobileMenuShow, atPageTop }
 }
 
-export default connect(mapStateToProps)(MobileCoverImage)
+export default connect(mapStateToProps)(CoverImage)
